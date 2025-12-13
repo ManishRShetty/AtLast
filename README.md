@@ -95,7 +95,11 @@ uvicorn main:app --reload
 
 ```
 ### 3. Frontend Setup
-
+```bash
+cd ../frontend
+npm install
+npm run dev
+```
 ### 4. Environment Variables
 
 ### 🤝 Contributing
