@@ -1,4 +1,4 @@
-# 🌍 Atlas-Agents: The Infinite, Self-Validating Trivia Engine
+# 🌍 AtLast: The Infinite, Self-Validating Trivia Engine
 
 > **A Multi-Agent System that plays "Where in the World?"**
 >
@@ -10,17 +10,17 @@
 
 ## 📖 Overview
 
-**Atlas-Agents** is not just a quiz app; it is an autonomous content generation pipeline. Unlike traditional trivia games with static databases, this system uses a **Hierarchical Agent Graph** to generate, research, and validate geography riddles in real-time.
+**AtLast** is not just a quiz app; it is an autonomous content generation pipeline. Unlike traditional trivia games with static databases, this system uses a **Hierarchical Agent Graph** to generate, research, and validate geography riddles in real-time.
 
 It solves two critical problems in Generative AI:
-1.  **Hallucination:** By implementing an "Adversary" agent that fact-checks the content before it reaches the user.
+1.  **Hallucination:** By implementing an "Adversary" node that fact-checks the content before it reaches the user.
 2.  **Latency:** By utilizing a Redis-backed prefetching architecture to decouple generation time from user interaction time.
 
 ---
 
 ## 🏗️ System Architecture
 
-The core of the system is a **Stateful Agent Graph** (built with LangGraph) that mimics a writer's room.
+The core of the system is a **Stateful Graph** (built with LangGraph) that mimics a writer's room.
 
 ```mermaid
 graph TD
@@ -28,9 +28,9 @@ graph TD
     B -- Hit --> C[Serve Cached Question]
     B -- Miss --> D[Trigger Background Generation]
     
-    subgraph "The Agentic Loop (Python/FastAPI)"
-    D --> E[Generator Agent]
-    E -->|Draft Riddle| F[Adversary Agent]
+    subgraph "The Reasoning Loop (Python/FastAPI)"
+    D --> E[Generator Node]
+    E -->|Draft Riddle| F[Adversary Node]
     F -- "Ambiguous/False" --> E
     F -- "Approved" --> G[Push to Redis]
     end
