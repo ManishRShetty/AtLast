@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NetRunner Command Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              mono: ['Fira Code', 'monospace'],
+            },
+            colors: {
+              glass: {
+                dark: 'rgba(20, 20, 20, 0.65)',
+                light: 'rgba(255, 255, 255, 0.65)',
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v3.1.2/mapbox-gl.css' rel='stylesheet' />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+      
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: 'Inter', sans-serif;
+        background-color: #000;
+        transition: background-color 0.5s ease;
+      }
+
+      /* Apple-style smooth scrolling */
+      .scroll-smooth {
+        -webkit-overflow-scrolling: touch;
+      }
+      
+      /* Hide scrollbar but keep functionality for cleaner look in panels */
+      .no-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .no-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .no-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(100, 100, 100, 0.3);
+        border-radius: 10px;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.31.0",
+    "react-map-gl": "https://aistudiocdn.com/react-map-gl@^8.1.0",
+    "framer-motion": "https://esm.sh/framer-motion@11.3.24?external=react,react-dom"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

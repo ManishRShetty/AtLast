@@ -1,0 +1,5 @@
+{
+  "name": "NetRunner: Command Center",
+  "description": "A cyberpunk-themed geography game featuring an AI-driven agent debate and interactive globe interface powered by Gemini.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,33 @@
+/* Import Mapbox GL CSS */
+@import 'mapbox-gl/dist/mapbox-gl.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply m-0 p-0 overflow-hidden bg-black;
+        transition: background-color 0.5s ease;
+        font-family: var(--font-inter), 'Inter', sans-serif;
+    }
+}
+
+/* Apple-style smooth scrolling */
+.scroll-smooth {
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar but keep functionality for cleaner look in panels */
+.no-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.no-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.no-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(100, 100, 100, 0.3);
+    border-radius: 10px;
+}
