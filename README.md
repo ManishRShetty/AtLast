@@ -79,3 +79,13 @@ We treat "Factuality" as a unit test. The Adversary node acts as a semantic filt
 ```bash
 git clone [https://github.com/yourusername/atlast.git](https://github.com/yourusername/atlast.git)
 cd atlast
+
+### 2. Backend Setup
+
+### 3. Frontend Setup
+
+### 4. Environment Variables
+
+### 🤝 Contributing
+
+### 📄 License
