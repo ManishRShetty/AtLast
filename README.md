@@ -79,9 +79,21 @@ We treat "Factuality" as a unit test. The Adversary node acts as a semantic filt
 ```bash
 git clone [https://github.com/yourusername/atlast.git](https://github.com/yourusername/atlast.git)
 cd atlast
-
+```
 ### 2. Backend Setup
+```bash
+cd backend
+python -m venv venv
+source venv/bin/activate  # or venv\Scripts\activate on Windows
+pip install -r requirements.txt
 
+# Start Redis (using Docker)
+docker run -d -p 6379:6379 redis
+
+# Run the API
+uvicorn main:app --reload
+
+```
 ### 3. Frontend Setup
 
 ### 4. Environment Variables
