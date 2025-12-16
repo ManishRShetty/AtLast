@@ -1,5 +1,5 @@
-/* Import Mapbox GL CSS */
-@import 'mapbox-gl/dist/mapbox-gl.css';
+/* Import Leaflet CSS for map styling */
+@import 'leaflet/dist/leaflet.css';
 
 @tailwind base;
 @tailwind components;
