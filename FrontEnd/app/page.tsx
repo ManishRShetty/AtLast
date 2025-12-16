@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { CommandMap } from '@/components/CommandMap';
 import { Terminal } from '@/components/Terminal';
 import { MissionHUD } from '@/components/MissionHUD';
+import { MissionBriefing } from '@/components/MissionBriefing';
 import { TARGETS, DEFAULT_MAPBOX_TOKEN } from '@/constants';
 import { generateRiddle, streamAgentDebate } from '@/services/geminiService';
 import { calculateDistance } from '@/utils/geo';
@@ -38,21 +39,28 @@ export default function App() {
         setLogs(prev => [...prev, { id: Date.now().toString() + Math.random(), sender, message, timestamp: new Date(), type }]);
     };
 
-    const startGame = async () => {
-        setGameState('SEARCHING');
+    const startGame = () => {
+        setGameState('BRIEFING');
         setScore(0);
         setLogs([]);
-        addLog('SYSTEM', 'Initializing Global Search Protocol...', 'alert');
 
+        // Select target but don't start search yet
         const target = TARGETS[Math.floor(Math.random() * TARGETS.length)];
         setCurrentTarget(target);
+    };
+
+    const startMission = async () => {
+        if (!currentTarget) return;
+
+        setGameState('SEARCHING');
+        addLog('SYSTEM', 'Initializing Global Search Protocol...', 'alert');
 
         try {
             addLog('NETWORK', 'Connecting to Oracle Intelligence...', 'info');
 
-            const riddlePromise = generateRiddle(target.name);
+            const riddlePromise = generateRiddle(currentTarget.name);
 
-            streamAgentDebate(target.name, (chunk) => {
+            streamAgentDebate(currentTarget.name, (chunk) => {
                 if (chunk.includes(':')) {
                     const [agent, msg] = chunk.split(':');
                     addLog(agent.trim(), msg.trim(), 'info');
@@ -70,6 +78,10 @@ export default function App() {
             addLog('SYSTEM', 'Connection disrupted. Using fallback data.', 'error');
             setRiddle(`Target location unknown. Signal lost.`);
         }
+    };
+
+    const skipBriefing = () => {
+        startMission();
     };
 
     const handleMapClick = (lat: number, lng: number) => {
@@ -93,6 +105,13 @@ export default function App() {
 
     return (
         <div className={`relative w-screen h-screen overflow-hidden transition-colors duration-500 ${isDark ? 'bg-black' : 'bg-gray-100'}`}>
+
+            {/* Mission Briefing */}
+            <AnimatePresence>
+                {gameState === 'BRIEFING' && (
+                    <MissionBriefing onBeginMission={startMission} onSkip={skipBriefing} />
+                )}
+            </AnimatePresence>
 
             {/* Background Map */}
             <div className="absolute inset-0 z-0">
@@ -118,9 +137,9 @@ export default function App() {
                             <ShieldCheck size={18} />
                         </div>
                         <div>
-                            <h1 className="text-sm font-bold tracking-wide">NETRUNNER</h1>
+                            <h1 className="text-sm font-bold tracking-wide">Operation</h1>
                             <div className={`text-[10px] uppercase tracking-wider font-semibold ${isDark ? 'text-zinc-500' : 'text-zinc-400'}`}>
-                                Command Center
+                                AtLast
                             </div>
                         </div>
                     </motion.div>

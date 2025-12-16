@@ -15,7 +15,7 @@ const firaCode = Fira_Code({
 });
 
 export const metadata: Metadata = {
-    title: 'NetRunner Command Center',
+    title: 'Operation AtLast',
     description: 'A cyberpunk-style global intelligence game powered by Gemini AI',
 };
 
