@@ -1,14 +1,13 @@
 'use client';
+import React, { useState, useEffect } from 'react';
+import { CommandMap } from '../components/CommandMap';
+import { Terminal } from '../components/Terminal';
+import { MissionHUD } from '../components/MissionHUD';
+import { TARGETS, DEFAULT_MAPBOX_TOKEN } from '../constants';
+import { startSession, getQuestion, streamLogs } from '../services/apiService';
 
-import React, { useState, useEffect, useRef } from 'react';
-import { CommandMap } from '@/components/CommandMap';
-import { Terminal } from '@/components/Terminal';
-import { MissionHUD } from '@/components/MissionHUD';
-import { MissionBriefing } from '@/components/MissionBriefing';
-import { TARGETS, DEFAULT_MAPBOX_TOKEN } from '@/constants';
-import { startSession, getQuestion, streamLogs } from '@/services/apiService';
-import { calculateDistance } from '@/utils/geo';
-import { TargetLocation, GameState, LogMessage } from '@/types';
+import { calculateDistance } from '../utils/geo';
+import { TargetLocation, GameState, LogMessage } from '../types';
 import { Moon, Sun, Play, RefreshCw, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -21,7 +20,6 @@ export default function App() {
     const [isDark, setIsDark] = useState(true);
     const [showMapTokenWarning, setShowMapTokenWarning] = useState(false);
     const [sessionId, setSessionId] = useState<string | null>(null);
-    const cleanupRef = useRef<(() => void) | null>(null);
 
     // Initialize & Theme Handling
     useEffect(() => {
@@ -35,73 +33,61 @@ export default function App() {
         }
     }, [isDark]);
 
-    // Cleanup SSE connection on unmount
-    useEffect(() => {
-        return () => {
-            if (cleanupRef.current) {
-                cleanupRef.current();
-            }
-        };
-    }, []);
-
     const toggleTheme = () => setIsDark(!isDark);
 
     const addLog = (sender: string, message: string, type: 'info' | 'alert' | 'success' | 'error' = 'info') => {
         setLogs(prev => [...prev, { id: Date.now().toString() + Math.random(), sender, message, timestamp: new Date(), type }]);
     };
 
-    const startGame = () => {
-        setGameState('BRIEFING');
+    const startGame = async () => {
+        setGameState('SEARCHING');
         setScore(0);
         setLogs([]);
-
-        // Select target but don't start search yet
-        const target = TARGETS[Math.floor(Math.random() * TARGETS.length)];
-        setCurrentTarget(target);
-    };
-
-    const startMission = async () => {
-        if (!currentTarget) return;
-
-        setGameState('SEARCHING');
         addLog('SYSTEM', 'Initializing Global Search Protocol...', 'alert');
 
+        const target = TARGETS[Math.floor(Math.random() * TARGETS.length)];
+        setCurrentTarget(target);
+
         try {
-            // Step 1: Start backend session
-            addLog('NETWORK', 'Connecting to Backend Intelligence...', 'info');
+            addLog('NETWORK', 'Establishing connection to backend server...', 'info');
+
+            // Start backend session
             const newSessionId = await startSession();
             setSessionId(newSessionId);
-            addLog('SYSTEM', `Session ${newSessionId.substring(0, 8)} established.`, 'success');
+            addLog('NETWORK', `Session ${newSessionId.slice(0, 8)} established.`, 'success');
 
-            // Step 2: Start streaming logs via SSE
+            // Start streaming agent logs
             const cleanup = streamLogs(
                 newSessionId,
                 (logMessage) => {
-                    // Parse and display agent logs in real-time
-                    addLog('AGENT', logMessage, 'info');
+                    // Parse agent messages that may come in format "Agent: Message"
+                    if (logMessage.includes(':')) {
+                        const [agent, msg] = logMessage.split(':', 2);
+                        addLog(agent.trim(), msg.trim(), 'info');
+                    } else {
+                        addLog('AGENT', logMessage, 'info');
+                    }
                 },
                 (error) => {
-                    addLog('SYSTEM', error.message, 'error');
+                    console.error('Log stream error:', error);
+                    addLog('SYSTEM', 'Agent communication interrupted.', 'error');
                 }
             );
-            cleanupRef.current = cleanup;
 
-            // Step 3: Get the riddle (with automatic polling)
-            addLog('ORACLE', 'Requesting target profile...', 'info');
+            // Get riddle from backend
+            addLog('ORACLE', 'Requesting target intelligence...', 'info');
             const riddleData = await getQuestion(newSessionId);
             setRiddle(riddleData.riddle);
             addLog('ORACLE', 'Target profile decrypted successfully.', 'success');
-            addLog('ORACLE', `Difficulty: ${riddleData.difficulty} | Topic: ${riddleData.topic}`, 'info');
+
+            // Store cleanup function for later use (optional: you may want to call this on unmount)
+            // For now, we'll let it stream until component unmounts
 
         } catch (error) {
             console.error(error);
-            addLog('SYSTEM', 'Connection disrupted. Using fallback data.', 'error');
-            setRiddle(`Target location unknown. Signal lost.`);
+            addLog('SYSTEM', 'Connection disrupted. Ensure backend server is running.', 'error');
+            setRiddle(`Target location unknown. Backend offline.`);
         }
-    };
-
-    const skipBriefing = () => {
-        startMission();
     };
 
     const handleMapClick = (lat: number, lng: number) => {
@@ -126,13 +112,6 @@ export default function App() {
     return (
         <div className={`relative w-screen h-screen overflow-hidden transition-colors duration-500 ${isDark ? 'bg-black' : 'bg-gray-100'}`}>
 
-            {/* Mission Briefing */}
-            <AnimatePresence>
-                {gameState === 'BRIEFING' && (
-                    <MissionBriefing onBeginMission={startMission} onSkip={skipBriefing} />
-                )}
-            </AnimatePresence>
-
             {/* Background Map */}
             <div className="absolute inset-0 z-0">
                 <CommandMap
@@ -144,10 +123,10 @@ export default function App() {
             </div>
 
             {/* Foreground UI Layer */}
-            <div className="absolute inset-0 z-10 pointer-events-none flex flex-col p-4 md:p-6 lg:p-8">
+            <div className="absolute inset-0 z-10 pointer-events-none flex flex-col p-4 md:p-6 lg:p-8 h-full">
 
                 {/* Top Header Bar */}
-                <header className="flex justify-between items-center pointer-events-auto mb-6">
+                <header className="flex justify-between items-center pointer-events-auto mb-4 shrink-0">
                     <motion.div
                         initial={{ y: -50, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
@@ -187,10 +166,10 @@ export default function App() {
                 </header>
 
                 {/* Main Content Area */}
-                <div className="flex-1 flex flex-col md:flex-row gap-6 relative">
+                <div className="flex-1 flex flex-col md:flex-row gap-6 relative min-h-0">
 
                     {/* Left Panel: Mission Brief */}
-                    <div className="w-full md:w-1/3 max-w-md pointer-events-auto flex flex-col justify-end md:justify-start">
+                    <div className="w-full md:w-1/3 max-w-md pointer-events-auto flex flex-col justify-end md:justify-start shrink-0">
                         <AnimatePresence>
                             {gameState !== 'IDLE' && (
                                 <motion.div
@@ -250,17 +229,23 @@ export default function App() {
                         </AnimatePresence>
                     </div>
 
-                    {/* Right Panel: Terminal Feed */}
-                    <div className="w-full md:w-1/3 max-w-md pointer-events-auto flex flex-col justify-end">
+                    {/* Right Panel: Terminal Feed - CORRECTED */}
+                    {/* 1. min-h-0 prevents parent blowout */}
+                    {/* 2. overflow-hidden forces clamping, so Terminal.tsx scrollbar works */}
+                    <div className="w-full md:w-1/3 max-w-md pointer-events-auto flex flex-col justify-end md:h-full shrink-0 min-h-0">
                         <AnimatePresence>
                             {(gameState === 'SEARCHING' || gameState === 'RESOLVED') && (
                                 <motion.div
                                     initial={{ x: 50, opacity: 0, filter: "blur(10px)" }}
                                     animate={{ x: 0, opacity: 1, filter: "blur(0px)" }}
                                     transition={{ type: "spring", stiffness: 300, damping: 30, delay: 0.2 }}
-                                    className="h-2/3 md:h-3/4"
+                                    // Ensure motion div flexes to fill available space but doesn't exceed it
+                                    className="max-h-[40vh] md:max-h-full flex flex-col"
                                 >
-                                    <Terminal logs={logs} isDark={isDark} />
+                                    {/* WRAPPER: overflow-hidden is key here! */}
+                                    <div className="flex-1 min-h-0 overflow-hidden rounded-lg shadow-xl backdrop-blur-md">
+                                        <Terminal logs={logs} isDark={isDark} />
+                                    </div>
                                 </motion.div>
                             )}
                         </AnimatePresence>
@@ -271,16 +256,18 @@ export default function App() {
 
             {/* Notifications */}
             <AnimatePresence>
-                {showMapTokenWarning && (
-                    <motion.div
-                        initial={{ y: -100 }} animate={{ y: 0 }}
-                        className="absolute top-4 left-1/2 -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-full shadow-xl flex items-center gap-3 z-50 pointer-events-none"
-                    >
-                        <AlertTriangle size={18} />
-                        <span className="text-sm font-medium">Mapbox Token Missing - Visuals Limited</span>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </div>
+                {
+                    showMapTokenWarning && (
+                        <motion.div
+                            initial={{ y: -100 }} animate={{ y: 0 }}
+                            className="absolute top-4 left-1/2 -translate-x-1/2 bg-red-500 text-white px-6 py-3 rounded-full shadow-xl flex items-center gap-3 z-50 pointer-events-none"
+                        >
+                            <AlertTriangle size={18} />
+                            <span className="text-sm font-medium">Mapbox Token Missing - Visuals Limited</span>
+                        </motion.div>
+                    )
+                }
+            </AnimatePresence >
+        </div >
     );
 }
