@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { CommandMap } from '@/components/CommandMap';
 import { Terminal } from '@/components/Terminal';
 import { MissionHUD } from '@/components/MissionHUD';
 import { MissionBriefing } from '@/components/MissionBriefing';
 import { TARGETS, DEFAULT_MAPBOX_TOKEN } from '@/constants';
-import { generateRiddle, streamAgentDebate } from '@/services/geminiService';
+import { startSession, getQuestion, streamLogs } from '@/services/apiService';
 import { calculateDistance } from '@/utils/geo';
 import { TargetLocation, GameState, LogMessage } from '@/types';
 import { Moon, Sun, Play, RefreshCw, AlertTriangle, ShieldCheck } from 'lucide-react';
@@ -20,6 +20,8 @@ export default function App() {
     const [score, setScore] = useState<number>(0);
     const [isDark, setIsDark] = useState(true);
     const [showMapTokenWarning, setShowMapTokenWarning] = useState(false);
+    const [sessionId, setSessionId] = useState<string | null>(null);
+    const cleanupRef = useRef<(() => void) | null>(null);
 
     // Initialize & Theme Handling
     useEffect(() => {
@@ -32,6 +34,15 @@ export default function App() {
             addLog('SYSTEM', 'NetRunner OS v4.0 ready. Standing by.', 'info');
         }
     }, [isDark]);
+
+    // Cleanup SSE connection on unmount
+    useEffect(() => {
+        return () => {
+            if (cleanupRef.current) {
+                cleanupRef.current();
+            }
+        };
+    }, []);
 
     const toggleTheme = () => setIsDark(!isDark);
 
@@ -56,22 +67,31 @@ export default function App() {
         addLog('SYSTEM', 'Initializing Global Search Protocol...', 'alert');
 
         try {
-            addLog('NETWORK', 'Connecting to Oracle Intelligence...', 'info');
+            // Step 1: Start backend session
+            addLog('NETWORK', 'Connecting to Backend Intelligence...', 'info');
+            const newSessionId = await startSession();
+            setSessionId(newSessionId);
+            addLog('SYSTEM', `Session ${newSessionId.substring(0, 8)} established.`, 'success');
 
-            const riddlePromise = generateRiddle(currentTarget.name);
-
-            streamAgentDebate(currentTarget.name, (chunk) => {
-                if (chunk.includes(':')) {
-                    const [agent, msg] = chunk.split(':');
-                    addLog(agent.trim(), msg.trim(), 'info');
-                } else {
-                    addLog('INTERCEPT', chunk, 'info');
+            // Step 2: Start streaming logs via SSE
+            const cleanup = streamLogs(
+                newSessionId,
+                (logMessage) => {
+                    // Parse and display agent logs in real-time
+                    addLog('AGENT', logMessage, 'info');
+                },
+                (error) => {
+                    addLog('SYSTEM', error.message, 'error');
                 }
-            });
+            );
+            cleanupRef.current = cleanup;
 
-            const generatedRiddle = await riddlePromise;
-            setRiddle(generatedRiddle);
+            // Step 3: Get the riddle (with automatic polling)
+            addLog('ORACLE', 'Requesting target profile...', 'info');
+            const riddleData = await getQuestion(newSessionId);
+            setRiddle(riddleData.riddle);
             addLog('ORACLE', 'Target profile decrypted successfully.', 'success');
+            addLog('ORACLE', `Difficulty: ${riddleData.difficulty} | Topic: ${riddleData.topic}`, 'info');
 
         } catch (error) {
             console.error(error);
