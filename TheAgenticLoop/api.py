@@ -10,6 +10,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from sse_starlette.sse import EventSourceResponse
 import redis.asyncio as redis
 
+# Import Polyglot AI riddle generator (multi-provider: Groq, Cohere, Gemini)
+from polyglot_ai import generate_riddle
+
 # ==========================================
 # CONFIGURATION & CONSTANTS
 # ==========================================
@@ -67,61 +70,99 @@ app.add_middleware(
 
 async def mock_agent_generation(session_id: str, topic: str = "Geography") -> Dict[str, Any]:
     """
-    Simulates a heavy LangGraph agent.
+    AI-powered LangGraph agent.
     1. Publishes thought logs to Redis Pub/Sub.
-    2. Returns the final JSON payload with location data.
+    2. Generates riddle using AI.
+    3. Returns the final JSON payload with location data.
     """
     channel = f"{LOG_CHANNEL_PREFIX}:{session_id}"
     
-    # Target locations for riddles
+    # Expanded target locations - 32 diverse global cities
     LOCATIONS = [
-        {"name": "Paris", "lat": 48.8566, "lng": 2.3522, 
-         "riddle": "City of lights where iron lady stands tall, romance and art enchant one and all."},
-        {"name": "Tokyo", "lat": 35.6762, "lng": 139.6503,
-         "riddle": "Neon-lit streets where tradition meets tech, cherry blossoms bloom and anime's the beck."},
-        {"name": "New York", "lat": 40.7128, "lng": -74.0060,
-         "riddle": "Concrete jungle where dreams are made, the big apple's skyline never will fade."},
-        {"name": "London", "lat": 51.5074, "lng": -0.1278,
-         "riddle": "Where Big Ben chimes and double-deckers roam, the Thames flows through this ancient home."},
-        {"name": "Sydney", "lat": -33.8688, "lng": 151.2093,
-         "riddle": "Opera house shells by the harbor blue, kangaroos hop in the outback too."},
-        {"name": "Cairo", "lat": 30.0444, "lng": 31.2357,
-         "riddle": "Ancient pyramids stand in desert sand, the Nile flows through this timeless land."},
-        {"name": "Rio de Janeiro", "lat": -22.9068, "lng": -43.1729,
-         "riddle": "Christ the Redeemer watches the bay, samba rhythms night and day."},
-        {"name": "Moscow", "lat": 55.7558, "lng": 37.6173,
-         "riddle": "Red Square's domes in winter's grasp, the Kremlin holds history's clasp."},
-        {"name": "Dubai", "lat": 25.2048, "lng": 55.2708,
-         "riddle": "Tallest tower in desert's heart, luxury shopping in every mart."},
-        {"name": "Mumbai", "lat": 19.0760, "lng": 72.8777,
-         "riddle": "Bollywood dreams and Gateway grand, monsoon rains kiss this vibrant land."},
+        # Asia
+        {"name": "Tokyo", "lat": 35.6762, "lng": 139.6503},
+        {"name": "Kyoto", "lat": 35.0116, "lng": 135.7681},
+        {"name": "Mumbai", "lat": 19.0760, "lng": 72.8777},
+        {"name": "Bangkok", "lat": 13.7563, "lng": 100.5018},
+        {"name": "Singapore", "lat": 1.3521, "lng": 103.8198},
+        {"name": "Seoul", "lat": 37.5665, "lng": 126.9780},
+        {"name": "Beijing", "lat": 39.9042, "lng": 116.4074},
+        {"name": "Shanghai", "lat": 31.2304, "lng": 121.4737},
+        {"name": "Hong Kong", "lat": 22.3193, "lng": 114.1694},
+        {"name": "Bali", "lat": -8.3405, "lng": 115.0920},
+        
+        # Europe
+        {"name": "Paris", "lat": 48.8566, "lng": 2.3522},
+        {"name": "London", "lat": 51.5074, "lng": -0.1278},
+        {"name": "Moscow", "lat": 55.7558, "lng": 37.6173},
+        {"name": "Rome", "lat": 41.9028, "lng": 12.4964},
+        {"name": "Barcelona", "lat": 41.3851, "lng": 2.1734},
+        {"name": "Amsterdam", "lat": 52.3676, "lng": 4.9041},
+        {"name": "Prague", "lat": 50.0755, "lng": 14.4378},
+        {"name": "Vienna", "lat": 48.2082, "lng": 16.3738},
+        {"name": "Athens", "lat": 37.9838, "lng": 23.7275},
+        {"name": "Istanbul", "lat": 41.0082, "lng": 28.9784},
+        
+        # Americas
+        {"name": "New York", "lat": 40.7128, "lng": -74.0060},
+        {"name": "Rio de Janeiro", "lat": -22.9068, "lng": -43.1729},
+        {"name": "Mexico City", "lat": 19.4326, "lng": -99.1332},
+        {"name": "Toronto", "lat": 43.6532, "lng": -79.3832},
+        {"name": "Buenos Aires", "lat": -34.6037, "lng": -58.3816},
+        {"name": "San Francisco", "lat": 37.7749, "lng": -122.4194},
+        
+        # Middle East & Africa
+        {"name": "Dubai", "lat": 25.2048, "lng": 55.2708},
+        {"name": "Cairo", "lat": 30.0444, "lng": 31.2357},
+        {"name": "Marrakech", "lat": 31.6295, "lng": -7.9811},
+        {"name": "Cape Town", "lat": -33.9249, "lng": 18.4241},
+        
+        # Oceania
+        {"name": "Sydney", "lat": -33.8688, "lng": 151.2093},
+        {"name": "Auckland", "lat": -36.8485, "lng": 174.7633},
     ]
     
-    # 1. Simulation: Initial Analysis
-    if redis_client:
-        await redis_client.publish(channel, f"Analyzing request for topic: {topic}...")
-    await asyncio.sleep(1.0) # Simulate LLM latency
-    
-    # 2. Simulation: Tool Usage
-    if redis_client:
-        await redis_client.publish(channel, "Searching global locations database...")
-    await asyncio.sleep(1.0) 
-    
-    # 3. Simulation: Riddle Generation
-    if redis_client:
-        await redis_client.publish(channel, "Generating cryptic location riddle...")
-    await asyncio.sleep(1.0)
-    
-    # 4. Final Result
-    if redis_client:
-        await redis_client.publish(channel, "Generation complete.")
-    
-    # Select random location
+    # 1. Analysis: Select random city
     import random
     location = random.choice(LOCATIONS)
     
+    if redis_client:
+        await redis_client.publish(channel, f"Analyzing request for topic: {topic}...")
+        await redis_client.publish(channel, f"Selected target city: {location['name']}")
+    await asyncio.sleep(0.5)
+    
+    # 3. Generate riddle using Polyglot AI (this uses Groq/Cohere/Gemini intelligently)
+    if redis_client:
+        await redis_client.publish(channel, "🚀 Invoking Polyglot AI System (Groq + Cohere + Gemini)...")
+    await asyncio.sleep(0.5)
+    
+    if redis_client:
+        await redis_client.publish(channel, "Generator agent: Crafting cryptic riddle...")
+    
+    # Run polyglot AI generation in executor to avoid blocking
+    loop = asyncio.get_event_loop()
+    riddle_result = await loop.run_in_executor(None, generate_riddle, location["name"])
+    
+    # Extract riddle and stats
+    riddle_text = riddle_result["riddle"]
+    stats = riddle_result["stats"]
+    
+    if redis_client:
+        await redis_client.publish(
+            channel, 
+            f"Adversary agent: Validating riddle quality using {stats['critic_provider'].upper()}..."
+        )
+    await asyncio.sleep(0.5)
+    
+    # 4. Final Result
+    if redis_client:
+        await redis_client.publish(
+            channel, 
+            f"✅ Riddle generated in {stats['total_time_ms']}ms! (Generator: {stats['generator_provider']}, Critic: {stats['critic_provider']})"
+        )
+    
     return {
-        "riddle": location["riddle"],
+        "riddle": riddle_text,
         "answer": location["name"],
         "difficulty": "Medium",
         "topic": topic,
@@ -129,7 +170,8 @@ async def mock_agent_generation(session_id: str, topic: str = "Geography") -> Di
             "name": location["name"],
             "lat": location["lat"],
             "lng": location["lng"]
-        }
+        },
+        "provider_stats": stats  # Include performance metrics
     }
 
 async def buffer_worker(session_id: str, count: int = 1):

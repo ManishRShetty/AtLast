@@ -1,4 +1,4 @@
-import { SessionResponse, QuestionResponse, RiddleData } from '@/types';
+import { SessionResponse, QuestionResponse, RiddleData, AnswerResponse } from '@/types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -89,4 +89,35 @@ export const streamLogs = (
     return () => {
         eventSource.close();
     };
+};
+
+/**
+ * Submit an answer to verify if it's correct
+ */
+export const submitAnswer = async (
+    sessionId: string,
+    userAnswer: string
+): Promise<AnswerResponse> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/verify_answer`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                session_id: sessionId,
+                user_answer: userAnswer,
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data: AnswerResponse = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Failed to submit answer:', error);
+        throw new Error('Failed to verify answer with backend.');
+    }
 };

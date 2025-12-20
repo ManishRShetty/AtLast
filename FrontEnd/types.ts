@@ -5,7 +5,7 @@ export interface TargetLocation {
   lng: number;
 }
 
-export type GameState = 'IDLE' | 'BRIEFING' | 'SEARCHING' | 'RESOLVED';
+export type GameState = 'IDLE' | 'BRIEFING' | 'ANSWERING' | 'REVEALED' | 'RESOLVED';
 
 export interface LogMessage {
   id: string;
@@ -33,6 +33,11 @@ export interface RiddleData {
   answer: string;
   difficulty: string;
   topic: string;
+  location?: {
+    name: string;
+    lat: number;
+    lng: number;
+  };
 }
 
 export interface QuestionResponse {
@@ -41,4 +46,15 @@ export interface QuestionResponse {
   queue_status?: string;
   message?: string;
   retry_after?: number;
+}
+
+export interface AnswerResponse {
+  correct: boolean;
+  location?: {
+    name: string;
+    lat: number;
+    lng: number;
+  };
+  attempts: number;
+  message: string;
 }

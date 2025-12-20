@@ -19,7 +19,7 @@ if not os.getenv("GOOGLE_API_KEY"):
 # Initialize the Gemini Model
 # We use temperature=0.7 for the generator (creativity) 
 # and temperature=0.0 for the adversary (strict logic).
-llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0.7)
+llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash-lite", temperature=0.7)
 
 # ------------------------------------------------------------------
 # DATA MODELS (Pydantic & TypedDict)
@@ -159,6 +159,34 @@ workflow.add_conditional_edges(
 
 # Compile
 app = workflow.compile()
+
+# ------------------------------------------------------------------
+# PUBLIC API
+# ------------------------------------------------------------------
+
+def generate_riddle(city_name: str) -> str:
+    """
+    Generate a cryptic riddle for a given city using the AI workflow.
+    
+    Args:
+        city_name: Name of the city to generate a riddle for
+        
+    Returns:
+        The generated riddle text
+    """
+    initial_state = {
+        "target_city": city_name,
+        "draft_riddle": "",
+        "feedback": "",
+        "iteration_count": 0,
+        "is_acceptable": False
+    }
+    
+    final_state = app.invoke(initial_state)
+    
+    # Return the riddle regardless of acceptance status
+    # (better to have a potentially imperfect riddle than fail)
+    return final_state['draft_riddle']
 
 # ------------------------------------------------------------------
 # EXECUTION
