@@ -12,6 +12,7 @@ const config: Config = {
             fontFamily: {
                 sans: ['Inter', 'sans-serif'],
                 mono: ['Fira Code', 'monospace'],
+                display: ['var(--font-rajdhani)', 'sans-serif'],
             },
             colors: {
                 glass: {

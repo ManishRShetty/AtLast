@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { Globe, AlertTriangle, Volume2, Settings, Pause, Terminal, Plus, Minus, Crosshair, Send, Lock, Radar } from 'lucide-react';
 
 const BattleModePage = () => {
     const router = useRouter();
@@ -18,7 +19,7 @@ const BattleModePage = () => {
             <header className="flex-none flex items-center justify-between whitespace-nowrap border-b border-solid border-[#233348] bg-ui-panel px-6 py-3 z-20 shadow-md">
                 <div className="flex items-center gap-4 text-white">
                     <div className="size-8 flex items-center justify-center bg-primary/20 rounded text-primary">
-                        <span className="material-symbols-outlined text-2xl">globe_asia</span>
+                        <Globe size={24} />
                     </div>
                     <div>
                         <h2 className="text-white text-lg font-bold leading-tight tracking-[-0.015em]">AtLast: Protocol Omega</h2>
@@ -30,7 +31,7 @@ const BattleModePage = () => {
                 </div>
                 <div className="absolute left-1/2 top-3 -translate-x-1/2 flex flex-col items-center">
                     <div className="flex items-center gap-2 bg-black/40 px-4 py-1 rounded-full border border-red-500/30">
-                        <span className="material-symbols-outlined text-red-500 text-sm animate-pulse">warning</span>
+                        <AlertTriangle size={14} className="text-red-500 animate-pulse" />
                         <span className="text-red-500 text-xs font-bold tracking-widest">DEFCON 1 ACTIVE</span>
                     </div>
                     <div className="text-3xl font-bold tracking-widest font-mono mt-1 text-white tabular-nums">
@@ -39,13 +40,13 @@ const BattleModePage = () => {
                 </div>
                 <div className="flex gap-2">
                     <button className="flex items-center justify-center overflow-hidden rounded-lg h-9 w-9 bg-[#233348] hover:bg-[#34465d] text-white transition-colors">
-                        <span className="material-symbols-outlined text-[20px]">volume_up</span>
+                        <Volume2 size={20} />
                     </button>
                     <button className="flex items-center justify-center overflow-hidden rounded-lg h-9 w-9 bg-[#233348] hover:bg-[#34465d] text-white transition-colors">
-                        <span className="material-symbols-outlined text-[20px]">settings</span>
+                        <Settings size={20} />
                     </button>
                     <button className="flex items-center justify-center overflow-hidden rounded-lg h-9 w-9 bg-primary hover:bg-blue-600 text-white transition-colors ml-2">
-                        <span className="material-symbols-outlined text-[20px]">pause</span>
+                        <Pause size={20} />
                     </button>
                 </div>
             </header>
@@ -56,7 +57,7 @@ const BattleModePage = () => {
                 <aside className="w-[30%] min-w-[350px] max-w-[500px] flex flex-col border-r border-[#233348] bg-terminal-bg relative z-10 shadow-2xl">
                     <div className="px-5 py-3 border-b border-[#233348] flex justify-between items-center bg-[#0d1219]">
                         <div className="flex items-center gap-2">
-                            <span className="material-symbols-outlined text-primary text-sm">terminal</span>
+                            <Terminal size={14} className="text-primary" />
                             <h3 className="text-xs font-bold tracking-widest text-primary uppercase">Decryption Stream // OMEGA-7</h3>
                         </div>
                         <div className="flex gap-1">
@@ -81,7 +82,7 @@ const BattleModePage = () => {
                         </div>
                         <div className="mb-4 text-yellow-500">
                             &gt; WARNING: Trace attempt detected.<br />
-                            &gt; Rerouting via proxy: Singapor... Done.<br />
+                            &gt; Rerouting via proxy: Singapore... Done.<br />
                             &gt; Rerouting via proxy: Helsinki... Done.
                         </div>
                         <div className="mb-2">
@@ -112,19 +113,19 @@ const BattleModePage = () => {
                             <div className="bg-background-dark/80 backdrop-blur-md border border-[#233348] rounded-lg p-3 pointer-events-auto">
                                 <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Target Region</div>
                                 <div className="text-xl font-bold text-white flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-primary">radar</span>
+                                    <Radar size={24} className="text-primary" />
                                     LATAM SECTOR 4
                                 </div>
                             </div>
                             <div className="flex flex-col gap-2 pointer-events-auto">
                                 <button className="size-10 bg-background-dark/80 backdrop-blur-md border border-[#233348] rounded-lg text-white hover:bg-[#233348] flex items-center justify-center">
-                                    <span className="material-symbols-outlined">add</span>
+                                    <Plus size={24} />
                                 </button>
                                 <button className="size-10 bg-background-dark/80 backdrop-blur-md border border-[#233348] rounded-lg text-white hover:bg-[#233348] flex items-center justify-center">
-                                    <span className="material-symbols-outlined">remove</span>
+                                    <Minus size={24} />
                                 </button>
                                 <button className="size-10 bg-background-dark/80 backdrop-blur-md border border-[#233348] rounded-lg text-white hover:bg-[#233348] flex items-center justify-center mt-2">
-                                    <span className="material-symbols-outlined">my_location</span>
+                                    <Crosshair size={24} />
                                 </button>
                             </div>
                         </div>
@@ -133,7 +134,7 @@ const BattleModePage = () => {
                                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-70"></div>
                                 <div className="flex flex-col items-center gap-3">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <span className="material-symbols-outlined text-primary animate-pulse text-lg">lock</span>
+                                        <Lock size={18} className="text-primary animate-pulse" />
                                         <span className="text-primary text-xs font-bold tracking-[0.2em] uppercase">Encrypted Transmission</span>
                                     </div>
                                     <h2 className="text-white text-2xl md:text-3xl font-medium leading-relaxed font-display">
@@ -158,9 +159,9 @@ const BattleModePage = () => {
                                     </div>
                                     <input autoFocus className="w-full bg-transparent border-none text-white font-mono text-lg py-5 px-4 focus:ring-0 placeholder-slate-600" placeholder="TYPE CITY OR COORDINATES..." spellCheck="false" type="text" />
                                     <div className="pr-2 flex items-center">
-                                         <button onClick={handleSend} className="bg-primary hover:bg-blue-600 text-white px-6 py-2.5 rounded-lg font-bold text-sm tracking-wide transition-colors flex items-center gap-2 shadow-lg">
+                                        <button onClick={handleSend} className="bg-primary hover:bg-blue-600 text-white px-6 py-2.5 rounded-lg font-bold text-sm tracking-wide transition-colors flex items-center gap-2 shadow-lg">
                                             SEND
-                                            <span className="material-symbols-outlined text-sm">send</span>
+                                            <Send size={14} />
                                         </button>
                                     </div>
                                 </div>

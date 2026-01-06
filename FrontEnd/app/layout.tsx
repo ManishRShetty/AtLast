@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Inter, Fira_Code } from 'next/font/google';
+import { Inter, Fira_Code, Rajdhani } from 'next/font/google';
 import './globals.css';
 
 const inter = Inter({
@@ -11,6 +11,13 @@ const inter = Inter({
 const firaCode = Fira_Code({
     subsets: ['latin'],
     variable: '--font-fira-code',
+    display: 'swap',
+});
+
+const rajdhani = Rajdhani({
+    subsets: ['latin'],
+    weight: ['400', '500', '600', '700'],
+    variable: '--font-rajdhani',
     display: 'swap',
 });
 
@@ -26,7 +33,7 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" className="dark">
-            <body className={`${inter.variable} ${firaCode.variable} font-sans antialiased`}>
+            <body className={`${inter.variable} ${firaCode.variable} ${rajdhani.variable} font-sans antialiased`}>
                 {children}
             </body>
         </html>

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { Radar, AlertTriangle, Settings, Unlock, WifiOff, Cpu, ShieldAlert, Lock } from 'lucide-react';
 
 const BreachPage = () => {
     return (
@@ -15,20 +16,20 @@ const BreachPage = () => {
             <header className="relative z-30 flex items-center justify-between border-b border-[#233348]/50 bg-[#111822]/80 backdrop-blur-sm px-6 py-3 w-full">
                 <div className="flex items-center gap-4">
                     <div className="size-6 text-primary">
-                        <span className="material-symbols-outlined text-2xl">radar</span>
+                        <Radar />
                     </div>
                     <h2 className="text-white text-lg font-bold tracking-widest uppercase">AtLast: Protocol Omega</h2>
                 </div>
                 <div className="flex items-center gap-6">
                     <div className="hidden md:flex items-center gap-2 px-3 py-1 rounded bg-red-900/20 border border-red-500/50">
-                        <span className="material-symbols-outlined text-red-500 text-sm">warning</span>
+                        <AlertTriangle size={14} className="text-red-500" />
                         <span className="text-red-500 text-xs font-bold tracking-wider">SYSTEM BREACH DETECTED</span>
                     </div>
                     <div className="text-[#92a9c9] text-xs font-mono">
                         <span className="opacity-50">LAT:</span> 45.92 <span className="opacity-50">LON:</span> -12.04
                     </div>
                     <div className="size-8 rounded bg-[#233348] flex items-center justify-center border border-[#324867]">
-                        <span className="material-symbols-outlined text-sm text-primary">settings</span>
+                        <Settings size={14} className="text-primary" />
                     </div>
                 </div>
             </header>
@@ -58,6 +59,10 @@ const BreachPage = () => {
                     </div>
                     <div className="flex flex-col items-center gap-6 mt-4 w-full max-w-md">
                         <div className="w-full flex flex-col gap-2">
+                            <div className="flex items-center gap-2 mb-2">
+                                <Lock size={18} className="text-primary animate-pulse" />
+                                <span className="text-primary text-xs font-bold tracking-[0.2em] uppercase">Encrypted Transmission</span>
+                            </div>
                             <div className="flex justify-between items-end px-1">
                                 <span className="text-xs font-mono text-primary font-bold">DECRYPTION SEQUENCE</span>
                                 <span className="text-xs font-mono text-white">87%</span>
@@ -73,7 +78,7 @@ const BreachPage = () => {
                         <Link href="/intro" className="group relative overflow-hidden rounded-lg bg-primary hover:bg-primary/90 text-white font-bold py-4 px-12 transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_rgba(19,109,236,0.4)] border border-primary/50">
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
                             <span className="relative z-10 flex items-center gap-3 tracking-widest text-lg">
-                                <span className="material-symbols-outlined">lock_open</span>
+                                <Unlock />
                                 INITIATE PROTOCOL
                             </span>
                         </Link>
@@ -84,7 +89,7 @@ const BreachPage = () => {
                 <div className="hidden xl:flex flex-col gap-4 absolute left-10 top-1/2 -translate-y-1/2 w-64">
                     <div className="border border-[#324867] bg-[#111822]/90 p-4 rounded-lg backdrop-blur-md">
                         <div className="flex items-center gap-2 mb-2 pb-2 border-b border-[#324867]">
-                            <span className="material-symbols-outlined text-red-500 text-sm">wifi_tethering_off</span>
+                            <WifiOff size={14} className="text-red-500" />
                             <span className="text-xs font-bold text-[#92a9c9]">SIGNAL STRENGTH</span>
                         </div>
                         <div className="text-2xl font-bold text-red-500 tracking-wider">CRITICAL</div>
@@ -92,7 +97,7 @@ const BreachPage = () => {
                     </div>
                     <div className="border border-[#324867] bg-[#111822]/90 p-4 rounded-lg backdrop-blur-md">
                         <div className="flex items-center gap-2 mb-2 pb-2 border-b border-[#324867]">
-                            <span className="material-symbols-outlined text-primary text-sm">memory</span>
+                            <Cpu size={14} className="text-primary" />
                             <span className="text-xs font-bold text-[#92a9c9]">PACKET LOSS</span>
                         </div>
                         <div className="text-2xl font-bold text-white tracking-wider">99.9%</div>
@@ -105,7 +110,7 @@ const BreachPage = () => {
                     <div className="border border-[#324867] bg-[#111822]/90 p-4 rounded-lg backdrop-blur-md">
                         <div className="flex items-center justify-end gap-2 mb-2 pb-2 border-b border-[#324867]">
                             <span className="text-xs font-bold text-[#92a9c9]">THREAT LEVEL</span>
-                            <span className="material-symbols-outlined text-red-500 text-sm">gpp_maybe</span>
+                            <ShieldAlert size={14} className="text-red-500" />
                         </div>
                         <div className="text-2xl font-bold text-red-500 tracking-wider">OMEGA</div>
                         <div className="text-[10px] font-mono text-[#92a9c9] mt-1">CLASSIFIED // EYES ONLY</div>
@@ -129,7 +134,7 @@ const BreachPage = () => {
                     <span className="hidden md:inline">SERVER: US-EAST-4</span>
                 </div>
                 <div className="uppercase text-center">
-                    WARNING: Unathorized Access Attempt
+                    WARNING: Unauthorized Access Attempt
                 </div>
                 <div className="flex items-center gap-4">
                     <span>VER: 4.0.2</span>
