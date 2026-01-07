@@ -1,5 +1,6 @@
 import React from 'react';
-import { AlertTriangle, XCircle, Volume2, Settings, RotateCcw, Terminal, ShieldAlert, Radar, Plus, Minus } from 'lucide-react';
+import { XCircle, ShieldAlert, Radar, Plus, Minus } from 'lucide-react';
+import TerminalPanel from './TerminalPanel';
 
 interface IncorrectViewProps {
     resetGame: () => void;
@@ -13,103 +14,18 @@ const IncorrectView: React.FC<IncorrectViewProps> = ({ resetGame }) => {
             <div className="fixed inset-0 pointer-events-none z-50 mix-blend-overlay opacity-10 bg-[url('/carbon-fibre.png')]"></div>
             <div className="fixed bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-transparent via-red-500/80 to-transparent z-50 animate-pulse"></div>
 
-            {/* Header */}
-            <header className="flex-none flex items-center justify-between whitespace-nowrap border-b border-solid border-red-500/30 bg-ui-panel px-6 py-3 z-20 shadow-[0_4px_20px_rgba(220,38,38,0.2)]">
-                <div className="flex items-center gap-4 text-white">
-                    <div className="size-8 flex items-center justify-center bg-red-500/20 rounded text-red-500 animate-pulse">
-                        <AlertTriangle size={24} />
-                    </div>
-                    <div>
-                        <h2 className="text-white text-lg font-bold leading-tight tracking-[-0.015em] text-red-500">SYSTEM ALERT</h2>
-                        <div className="flex items-center gap-2 text-xs text-red-500/80">
-                            <span className="inline-block size-2 rounded-full bg-red-500 animate-ping"></span>
-                            <span>SERVER: COMPROMISED</span>
-                        </div>
-                    </div>
+            {/* Status Overlay */}
+            <div className="absolute top-24 left-1/2 -translate-x-1/2 flex flex-col items-center z-40 pointer-events-none">
+                <div className="flex items-center gap-2 bg-red-500/10 px-4 py-1 rounded-full border border-red-500">
+                    <XCircle size={14} className="text-red-500 animate-pulse-fast" />
+                    <span className="text-red-500 text-xs font-bold tracking-widest">BREACH DETECTED</span>
                 </div>
-                <div className="absolute left-1/2 top-3 -translate-x-1/2 flex flex-col items-center">
-                    <div className="flex items-center gap-2 bg-red-500/10 px-4 py-1 rounded-full border border-red-500">
-                        <XCircle size={14} className="text-red-500 animate-pulse-fast" />
-                        <span className="text-red-500 text-xs font-bold tracking-widest">BREACH DETECTED</span>
-                    </div>
-                    <div className="relative mt-1">
-                        <div className="text-3xl font-bold tracking-widest font-mono text-red-500 tabular-nums drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]">
-                            00:59:35
-                        </div>
-                        <div className="absolute -right-16 top-1/2 -translate-y-1/2 flex flex-col items-center animate-bounce">
-                            <span className="text-red-500 font-bold text-xl font-mono">-10s</span>
-                            <span className="text-[10px] text-red-500 uppercase tracking-wider bg-black/60 px-1 rounded">Penalty</span>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex gap-2">
-                    <button className="flex items-center justify-center overflow-hidden rounded-lg h-9 w-9 bg-[#233348] hover:bg-[#34465d] text-white transition-colors">
-                        <Volume2 size={20} />
-                    </button>
-                    <button className="flex items-center justify-center overflow-hidden rounded-lg h-9 w-9 bg-[#233348] hover:bg-[#34465d] text-white transition-colors">
-                        <Settings size={20} />
-                    </button>
-                    <button onClick={resetGame} className="flex items-center justify-center overflow-hidden rounded-lg h-9 w-9 bg-red-500 hover:bg-red-600 text-white transition-colors ml-2 shadow-[0_0_10px_rgba(220,38,38,0.5)]">
-                        <RotateCcw size={20} />
-                    </button>
-                </div>
-            </header>
+            </div>
 
             {/* Main Content */}
             <main className="flex-1 flex overflow-hidden relative">
                 {/* Aside */}
-                <aside className="w-[30%] min-w-[350px] max-w-[500px] flex flex-col border-r border-red-500/30 bg-terminal-bg relative z-10 shadow-2xl">
-                    <div className="px-5 py-3 border-b border-red-500/30 flex justify-between items-center bg-[#1a0505]">
-                        <div className="flex items-center gap-2">
-                            <Terminal size={14} className="text-red-500" />
-                            <h3 className="text-xs font-bold tracking-widest text-red-500 uppercase">System Log // ERROR</h3>
-                        </div>
-                        <div className="flex gap-1">
-                            <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
-                            <div className="w-2 h-2 rounded-full bg-red-500/50"></div>
-                            <div className="w-2 h-2 rounded-full bg-red-500/30"></div>
-                        </div>
-                    </div>
-                    <div className="flex-1 p-5 overflow-y-auto font-mono text-sm leading-relaxed text-slate-300 bg-scanlines bg-[length:100%_4px]">
-                        <div className="opacity-50 mb-4 text-xs">Login successful. User ID: 994-Alpha.</div>
-                        <div className="mb-2">
-                            <span className="text-primary font-bold">root@omega:~$</span> initiate_protocol --force
-                        </div>
-                        <div className="mb-4 text-emerald-500 opacity-50">
-                            &gt; Establishing secure connection...<br />
-                            &gt; Encrypted packet received.<br />
-                            &gt; Brute-forcing SHA-256 signatures...
-                        </div>
-                        <div className="mb-4 pl-2 border-l-2 border-red-500/50 opacity-60">
-                            <span className="text-xs uppercase text-red-500 mb-1 block">Intercepted Transmission</span>
-                            <p className="text-slate-400">"Target is located in the Southern Hemisphere. Prepare for immediate extraction upon coordinate verification."</p>
-                        </div>
-                        <div className="mb-2">
-                            <span className="text-primary font-bold">root@omega:~$</span> decrypt_target_list
-                        </div>
-                        <div className="text-emerald-500 mb-4 opacity-50">
-                            &gt; 3 Potential matches found.<br />
-                            &gt; Displaying options on main HUD.
-                        </div>
-                        <div className="mb-2">
-                            <span className="text-primary font-bold">root@omega:~$</span> verify_target --id="OPT-C"
-                        </div>
-                        <div className="text-red-500 font-bold mt-2">
-                            &gt; VERIFYING HASH... FAILED.<br />
-                            &gt; CRITICAL ERROR: TARGET MISMATCH DETECTED.<br />
-                            &gt; GEOLOCATION SIGNATURE DOES NOT MATCH DECRYPTED STREAM.<br />
-                            &gt; INITIATING PENALTY PROTOCOL...<br />
-                            &gt; <span className="bg-red-500 text-black px-1">PENALTY APPLIED: -10 SECONDS</span><br />
-                            &gt; SYSTEM LOCKDOWN IMMINENT.<span className="terminal-cursor"></span>
-                        </div>
-                    </div>
-                    <div className="p-3 border-t border-red-500/30 bg-[#1a0505]">
-                        <div className="flex items-center gap-2 bg-background-dark border border-red-500/50 rounded px-3 py-2">
-                            <span className="text-red-500 text-xs">&gt;</span>
-                            <div className="h-4 w-32 bg-red-500/20 rounded animate-pulse"></div>
-                        </div>
-                    </div>
-                </aside>
+                <TerminalPanel />
 
                 {/* Section */}
                 <section className="flex-1 relative bg-background-dark flex flex-col overflow-hidden">

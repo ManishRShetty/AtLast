@@ -1,102 +1,56 @@
 import React from 'react';
-import { Globe, AlertTriangle, Volume2, Settings, Pause, Terminal, Plus, Minus, Crosshair, Send, Lock, Radar } from 'lucide-react';
+import { AlertTriangle, Plus, Minus, Crosshair, Send, Lock, Radar } from 'lucide-react';
+import TerminalPanel from './TerminalPanel';
 
 interface PlayViewProps {
     handleSend: () => void;
+    timeRemaining: number;
 }
 
-const PlayView: React.FC<PlayViewProps> = ({ handleSend }) => {
+const PlayView: React.FC<PlayViewProps> = ({ handleSend, timeRemaining }) => {
+    // Format time as MM:SS (or just SS since it's 60s max usually)
+    const formatTime = (seconds: number) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    const [feedbackActive, setFeedbackActive] = React.useState<string | null>(null);
+
+    const handleMapInteraction = (id: string) => {
+        setFeedbackActive(id);
+        setTimeout(() => setFeedbackActive(null), 2000);
+    };
+
+    const renderFeedback = () => (
+        <div className="absolute right-full top-0 mr-4 bg-red-500/90 text-white text-xs font-bold px-3 py-2 rounded shadow-lg whitespace-nowrap animate-in fade-in slide-in-from-right-4 z-50">
+            You don't have time to play with this.
+            <div className="absolute right-[-4px] top-1/2 w-2 h-2 bg-red-500/90 rotate-45 transform -translate-y-1/2"></div>
+        </div>
+    );
+
+
+
     return (
         <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden h-screen flex flex-col">
-            {/* Header */}
-            <header className="flex-none flex items-center justify-between whitespace-nowrap border-b border-solid border-[#233348] bg-ui-panel px-6 py-3 z-20 shadow-md">
-                <div className="flex items-center gap-4 text-white">
-                    <div className="size-8 flex items-center justify-center bg-primary/20 rounded text-primary">
-                        <Globe size={24} />
-                    </div>
-                    <div>
-                        <h2 className="text-white text-lg font-bold leading-tight tracking-[-0.015em]">AtLast: Protocol Omega</h2>
-                        <div className="flex items-center gap-2 text-xs text-slate-400">
-                            <span className="inline-block size-2 rounded-full bg-green-500 animate-pulse"></span>
-                            <span>SERVER: ONLINE</span>
-                        </div>
-                    </div>
-                </div>
-                <div className="absolute left-1/2 top-3 -translate-x-1/2 flex flex-col items-center">
-                    <div className="flex items-center gap-2 bg-black/40 px-4 py-1 rounded-full border border-red-500/30">
-                        <AlertTriangle size={14} className="text-red-500 animate-pulse" />
-                        <span className="text-red-500 text-xs font-bold tracking-widest">DEFCON 1 ACTIVE</span>
-                    </div>
-                    <div className="text-3xl font-bold tracking-widest font-mono mt-1 text-white tabular-nums">
-                        00:59:45
-                    </div>
-                </div>
-                <div className="flex gap-2">
-                    <button className="flex items-center justify-center overflow-hidden rounded-lg h-9 w-9 bg-[#233348] hover:bg-[#34465d] text-white transition-colors">
-                        <Volume2 size={20} />
-                    </button>
-                    <button className="flex items-center justify-center overflow-hidden rounded-lg h-9 w-9 bg-[#233348] hover:bg-[#34465d] text-white transition-colors">
-                        <Settings size={20} />
-                    </button>
-                    <button className="flex items-center justify-center overflow-hidden rounded-lg h-9 w-9 bg-primary hover:bg-blue-600 text-white transition-colors ml-2">
-                        <Pause size={20} />
-                    </button>
-                </div>
-            </header>
+
 
             {/* Main Content */}
             <main className="flex-1 flex overflow-hidden relative">
-                {/* Aside */}
-                <aside className="w-[30%] min-w-[350px] max-w-[500px] flex flex-col border-r border-[#233348] bg-terminal-bg relative z-10 shadow-2xl">
-                    <div className="px-5 py-3 border-b border-[#233348] flex justify-between items-center bg-[#0d1219]">
-                        <div className="flex items-center gap-2">
-                            <Terminal size={14} className="text-primary" />
-                            <h3 className="text-xs font-bold tracking-widest text-primary uppercase">Decryption Stream // OMEGA-7</h3>
-                        </div>
-                        <div className="flex gap-1">
-                            <div className="w-2 h-2 rounded-full bg-slate-600"></div>
-                            <div className="w-2 h-2 rounded-full bg-slate-600"></div>
-                            <div className="w-2 h-2 rounded-full bg-slate-600"></div>
-                        </div>
-                    </div>
-                    <div className="flex-1 p-5 overflow-y-auto font-mono text-sm leading-relaxed text-slate-300 bg-scanlines bg-[length:100%_4px]">
-                        <div className="opacity-50 mb-4 text-xs">Login successful. User ID: 994-Alpha.</div>
-                        <div className="mb-2">
-                            <span className="text-primary font-bold">root@omega:~$</span> initiate_protocol --force
-                        </div>
-                        <div className="mb-4 text-emerald-500">
-                            &gt; Establishing secure connection...<br />
-                            &gt; Encrypted packet received.<br />
-                            &gt; Brute-forcing SHA-256 signatures...
-                        </div>
-                        <div className="mb-4 pl-2 border-l-2 border-primary/30">
-                            <span className="text-xs uppercase text-slate-500 mb-1 block">Intercepted Transmission</span>
-                            <p className="text-white">"Target is located in the Southern Hemisphere. Prepare for immediate extraction upon coordinate verification."</p>
-                        </div>
-                        <div className="mb-4 text-yellow-500">
-                            &gt; WARNING: Trace attempt detected.<br />
-                            &gt; Rerouting via proxy: Singapore... Done.<br />
-                            &gt; Rerouting via proxy: Helsinki... Done.
-                        </div>
-                        <div className="mb-2">
-                            <span className="text-primary font-bold">root@omega:~$</span> decrypt_target_list
-                        </div>
-                        <div className="text-emerald-500">
-                            &gt; Match found.<br />
-                            &gt; Decrypting riddle package...<br />
-                            &gt; <span className="text-white">Outputting to Main Visualizer.</span><span className="terminal-cursor"></span>
-                        </div>
-                    </div>
-                    <div className="p-3 border-t border-[#233348] bg-[#0d1219]">
-                        <div className="flex items-center gap-2 bg-background-dark border border-[#233348] rounded px-3 py-2">
-                            <span className="text-primary text-xs">&gt;</span>
-                            <div className="h-4 w-32 bg-primary/20 rounded animate-pulse"></div>
-                        </div>
-                    </div>
-                </aside>
+                <TerminalPanel />
 
                 {/* Section */}
                 <section className="flex-1 relative bg-background-dark flex flex-col">
+                    {/* Game Status Bar */}
+                    <div className="absolute top-8 w-full z-40 flex flex-col items-center pointer-events-none">
+                        <div className="flex items-center gap-2 bg-black/40 px-4 py-1 rounded-full border border-red-500/30 backdrop-blur-sm">
+                            <AlertTriangle size={14} className="text-red-500 animate-pulse" />
+                            <span className="text-red-500 text-xs font-bold tracking-widest">DEFCON 1 ACTIVE</span>
+                        </div>
+                        <div className="text-4xl font-bold tracking-widest font-mono mt-2 text-white tabular-nums drop-shadow-md text-center">
+                            {formatTime(timeRemaining)}
+                        </div>
+                    </div>
                     <div className="absolute inset-0 z-0 opacity-60">
                         <div className="absolute inset-0 bg-gradient-to-b from-background-dark/80 via-transparent to-background-dark z-10 pointer-events-none"></div>
                         <img alt="Dark satellite view of Earth from space showing city lights and continents" className="w-full h-full object-cover grayscale contrast-125 brightness-75" src="/bg-earth.jpg" />
@@ -110,16 +64,25 @@ const PlayView: React.FC<PlayViewProps> = ({ handleSend }) => {
                                     LATAM SECTOR 4
                                 </div>
                             </div>
-                            <div className="flex flex-col gap-2 pointer-events-auto">
-                                <button className="size-10 bg-background-dark/80 backdrop-blur-md border border-[#233348] rounded-lg text-white hover:bg-[#233348] flex items-center justify-center">
-                                    <Plus size={24} />
-                                </button>
-                                <button className="size-10 bg-background-dark/80 backdrop-blur-md border border-[#233348] rounded-lg text-white hover:bg-[#233348] flex items-center justify-center">
-                                    <Minus size={24} />
-                                </button>
-                                <button className="size-10 bg-background-dark/80 backdrop-blur-md border border-[#233348] rounded-lg text-white hover:bg-[#233348] flex items-center justify-center mt-2">
-                                    <Crosshair size={24} />
-                                </button>
+                            <div className="flex flex-col gap-2 pointer-events-auto items-end">
+                                <div className="relative">
+                                    {feedbackActive === 'plus' && renderFeedback()}
+                                    <button onClick={() => handleMapInteraction('plus')} className="size-10 bg-background-dark/80 backdrop-blur-md border border-[#233348] rounded-lg text-white hover:bg-[#233348] flex items-center justify-center transition-colors">
+                                        <Plus size={24} />
+                                    </button>
+                                </div>
+                                <div className="relative">
+                                    {feedbackActive === 'minus' && renderFeedback()}
+                                    <button onClick={() => handleMapInteraction('minus')} className="size-10 bg-background-dark/80 backdrop-blur-md border border-[#233348] rounded-lg text-white hover:bg-[#233348] flex items-center justify-center transition-colors">
+                                        <Minus size={24} />
+                                    </button>
+                                </div>
+                                <div className="relative mt-2">
+                                    {feedbackActive === 'crosshair' && renderFeedback()}
+                                    <button onClick={() => handleMapInteraction('crosshair')} className="size-10 bg-background-dark/80 backdrop-blur-md border border-[#233348] rounded-lg text-white hover:bg-[#233348] flex items-center justify-center transition-colors">
+                                        <Crosshair size={24} />
+                                    </button>
+                                </div>
                             </div>
                         </div>
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
@@ -143,7 +106,7 @@ const PlayView: React.FC<PlayViewProps> = ({ handleSend }) => {
                                 <div className="absolute left-0 right-0 h-[1px] bg-primary/30"></div>
                             </div>
                         </div>
-                        <div className="mt-auto p-8 pb-12 flex justify-center w-full relative z-30">
+                        <div className="mt-auto p-8 pb-32 flex justify-center w-full relative z-30">
                             <div className="w-full max-w-3xl relative group">
                                 <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 rounded-xl opacity-20 group-hover:opacity-50 transition duration-500 blur"></div>
                                 <div className="relative flex items-center bg-[#101822] border border-[#233348] rounded-xl shadow-2xl overflow-hidden focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/50 transition-all">

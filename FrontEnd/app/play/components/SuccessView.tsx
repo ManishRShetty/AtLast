@@ -1,5 +1,6 @@
 import React from 'react';
-import { Globe, CheckCircle, History, Volume2, Settings, Pause, Terminal, ShieldAlert, Crosshair, Send, Plus, Minus } from 'lucide-react';
+import { CheckCircle, ShieldAlert, Crosshair, Send, Plus, Minus } from 'lucide-react';
+import TerminalPanel from './TerminalPanel';
 
 interface SuccessViewProps {
     resetGame: () => void;
@@ -8,106 +9,18 @@ interface SuccessViewProps {
 const SuccessView: React.FC<SuccessViewProps> = ({ resetGame }) => {
     return (
         <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden h-screen flex flex-col">
-            {/* Header */}
-            <header className="flex-none flex items-center justify-between whitespace-nowrap border-b border-solid border-[#233348] bg-ui-panel px-6 py-3 z-20 shadow-md">
-                <div className="flex items-center gap-4 text-white">
-                    <div className="size-8 flex items-center justify-center bg-primary/20 rounded text-primary">
-                        <Globe size={24} />
-                    </div>
-                    <div>
-                        <h2 className="text-white text-lg font-bold leading-tight tracking-[-0.015em]">AtLast: Protocol Omega</h2>
-                        <div className="flex items-center gap-2 text-xs text-slate-400">
-                            <span className="inline-block size-2 rounded-full bg-green-500 animate-pulse"></span>
-                            <span>SERVER: ONLINE</span>
-                        </div>
-                    </div>
+            {/* Status Overlay */}
+            <div className="absolute top-24 left-1/2 -translate-x-1/2 flex flex-col items-center z-40 pointer-events-none">
+                <div className="flex items-center gap-2 bg-black/40 px-4 py-1 rounded-full border border-emerald-500/30">
+                    <CheckCircle size={14} className="text-emerald-500" />
+                    <span className="text-emerald-500 text-xs font-bold tracking-widest">THREAT RESOLVED</span>
                 </div>
-                <div className="absolute left-1/2 top-3 -translate-x-1/2 flex flex-col items-center">
-                    <div className="flex items-center gap-2 bg-black/40 px-4 py-1 rounded-full border border-emerald-500/30">
-                        <CheckCircle size={14} className="text-emerald-500" />
-                        <span className="text-emerald-500 text-xs font-bold tracking-widest">THREAT RESOLVED</span>
-                    </div>
-                    <div className="relative">
-                        <div className="text-3xl font-bold tracking-widest font-mono mt-1 text-emerald-400 tabular-nums drop-shadow-[0_0_10px_rgba(16,185,129,0.5)]">
-                            01:00:55
-                        </div>
-                        <div className="absolute -right-12 top-1/2 -translate-y-1/2 flex items-center gap-1 text-emerald-400 font-bold text-sm animate-pulse">
-                            <span>+10s</span>
-                            <History size={14} />
-                        </div>
-                    </div>
-                </div>
-                <div className="flex gap-2">
-                    <button className="flex items-center justify-center overflow-hidden rounded-lg h-9 w-9 bg-[#233348] hover:bg-[#34465d] text-white transition-colors">
-                        <Volume2 size={20} />
-                    </button>
-                    <button className="flex items-center justify-center overflow-hidden rounded-lg h-9 w-9 bg-[#233348] hover:bg-[#34465d] text-white transition-colors">
-                        <Settings size={20} />
-                    </button>
-                    <button className="flex items-center justify-center overflow-hidden rounded-lg h-9 w-9 bg-primary hover:bg-blue-600 text-white transition-colors ml-2">
-                        <Pause size={20} />
-                    </button>
-                </div>
-            </header>
+            </div>
 
             {/* Main Content */}
             <main className="flex-1 flex overflow-hidden relative">
                 {/* Aside */}
-                <aside className="w-[30%] min-w-[350px] max-w-[500px] flex flex-col border-r border-[#233348] bg-terminal-bg relative z-10 shadow-2xl">
-                    <div className="px-5 py-3 border-b border-[#233348] flex justify-between items-center bg-[#0d1219]">
-                        <div className="flex items-center gap-2">
-                            <Terminal size={14} className="text-primary" />
-                            <h3 className="text-xs font-bold tracking-widest text-primary uppercase">Decryption Stream // OMEGA-7</h3>
-                        </div>
-                        <div className="flex gap-1">
-                            <div className="w-2 h-2 rounded-full bg-slate-600"></div>
-                            <div className="w-2 h-2 rounded-full bg-slate-600"></div>
-                            <div className="w-2 h-2 rounded-full bg-slate-600"></div>
-                        </div>
-                    </div>
-                    <div className="flex-1 p-5 overflow-y-auto font-mono text-sm leading-relaxed text-slate-300 bg-scanlines bg-[length:100%_4px]">
-                        <div className="opacity-50 mb-4 text-xs">Login successful. User ID: 994-Alpha.</div>
-                        <div className="mb-2">
-                            <span className="text-primary font-bold">root@omega:~$</span> initiate_protocol --force
-                        </div>
-                        <div className="mb-4 text-emerald-500">
-                            &gt; Establishing secure connection...<br />
-                            &gt; Encrypted packet received.<br />
-                            &gt; Brute-forcing SHA-256 signatures...
-                        </div>
-                        <div className="mb-4 pl-2 border-l-2 border-primary/30">
-                            <span className="text-xs uppercase text-slate-500 mb-1 block">Intercepted Transmission</span>
-                            <p className="text-white">"Target is located in the Southern Hemisphere. Prepare for immediate extraction upon coordinate verification."</p>
-                        </div>
-                        <div className="mb-4 text-yellow-500">
-                            &gt; WARNING: Trace attempt detected.<br />
-                            &gt; Rerouting via proxy: Singapore... Done.<br />
-                            &gt; Rerouting via proxy: Helsinki... Done.
-                        </div>
-                        <div className="mb-2">
-                            <span className="text-primary font-bold">root@omega:~$</span> decrypt_target_list
-                        </div>
-                        <div className="text-emerald-500 mb-2">
-                            &gt; 3 Potential matches found.<br />
-                            &gt; Analyzing topography...<br />
-                            &gt; <span className="text-white">Displaying options on main HUD.</span>
-                        </div>
-                        <div className="mb-2">
-                            <span className="text-primary font-bold">root@omega:~$</span> lock_target --opt-c --confirm
-                        </div>
-                        <div className="text-emerald-400 font-bold animate-pulse">
-                            &gt; GEOLOCATION CONFIRMED.<br />
-                            &gt; TARGET NEUTRALIZED SUCCESSFULLY.<br />
-                            &gt; REWARD ALLOCATED.<span className="terminal-cursor"></span>
-                        </div>
-                    </div>
-                    <div className="p-3 border-t border-[#233348] bg-[#0d1219]">
-                        <div className="flex items-center gap-2 bg-background-dark border border-emerald-900/50 rounded px-3 py-2 shadow-[0_0_10px_rgba(16,185,129,0.1)]">
-                            <span className="text-emerald-500 text-xs">&gt;</span>
-                            <span className="text-emerald-500 text-xs">Awaiting next directive...</span>
-                        </div>
-                    </div>
-                </aside>
+                <TerminalPanel />
 
                 {/* Section */}
                 <section className="flex-1 relative bg-background-dark flex flex-col overflow-hidden">
