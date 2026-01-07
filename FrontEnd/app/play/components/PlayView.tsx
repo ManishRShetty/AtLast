@@ -45,7 +45,7 @@ const PlayView: React.FC<PlayViewProps> = ({ handleSend, timeRemaining }) => {
             setTimeout(() => {
                 setIsError(false);
                 setShowTryAgain(false);
-            }, 1500); // 1.5s duration for effect
+            }, 1000); // 1s duration for effect
             newLogs.push({
                 id: `err-${Date.now()}`,
                 type: 'error',
@@ -137,17 +137,25 @@ const PlayView: React.FC<PlayViewProps> = ({ handleSend, timeRemaining }) => {
                             </div>
                         </div>
                         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
-                            <div className="bg-black/60 backdrop-blur-md border border-primary/40 rounded-2xl p-8 max-w-2xl text-center shadow-[0_0_40px_rgba(19,109,236,0.15)] relative pointer-events-auto">
-                                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-70"></div>
-                                <div className="flex flex-col items-center gap-3">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <Lock size={18} className="text-primary animate-pulse" />
+                            <div className="bg-[#0B1016]/90 backdrop-blur-xl border border-primary/50 rounded-lg p-10 max-w-2xl text-center shadow-[0_0_50px_rgba(19,109,236,0.2)] relative pointer-events-auto ring-1 ring-primary/20">
+                                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-80"></div>
+                                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-80"></div>
+
+                                {/* Corner Accents */}
+                                <div className="absolute top-0 left-0 w-4 h-4 border-l-2 border-t-2 border-primary"></div>
+                                <div className="absolute top-0 right-0 w-4 h-4 border-r-2 border-t-2 border-primary"></div>
+                                <div className="absolute bottom-0 left-0 w-4 h-4 border-l-2 border-b-2 border-primary"></div>
+                                <div className="absolute bottom-0 right-0 w-4 h-4 border-r-2 border-b-2 border-primary"></div>
+
+                                <div className="flex flex-col items-center gap-4 relative z-10">
+                                    <div className="flex items-center gap-3 mb-4 bg-primary/10 px-4 py-1.5 rounded-full border border-primary/30">
+                                        <Lock size={16} className="text-primary animate-pulse" />
                                         <span className="text-primary text-xs font-bold tracking-[0.2em] uppercase">Encrypted Transmission</span>
                                     </div>
-                                    <h2 className="text-white text-2xl md:text-3xl font-medium leading-relaxed font-display">
+                                    <h2 className="text-white text-2xl md:text-3xl font-medium leading-relaxed font-display drop-shadow-lg tracking-wide">
                                         "I stand where the silver river widens. A tango is danced in my streets, and my obelisk watches over the widest avenue. Identify me."
                                     </h2>
-                                    <div className="w-12 h-1 bg-primary/30 rounded mt-4"></div>
+                                    <div className="w-16 h-1 bg-primary/40 rounded mt-6"></div>
                                 </div>
                             </div>
                         </div>
@@ -159,14 +167,24 @@ const PlayView: React.FC<PlayViewProps> = ({ handleSend, timeRemaining }) => {
                         </div>
                         <div className="mt-auto p-8 pb-32 flex justify-center w-full relative z-30">
                             <div className="w-full max-w-3xl relative group">
-                                <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 rounded-xl opacity-20 group-hover:opacity-50 transition duration-500 blur"></div>
-                                <div className="relative flex items-center bg-[#101822] border border-[#233348] rounded-xl shadow-2xl overflow-hidden focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/50 transition-all">
-                                    <div className="pl-5 pr-3 text-primary/70 flex items-center pointer-events-none select-none border-r border-[#233348] h-full py-4 bg-[#151e29]">
-                                        <span className="font-mono text-sm tracking-wider">ANSWER //</span>
+                                {/* Glow Effect */}
+                                <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 rounded-xl opacity-20 group-hover:opacity-40 transition duration-500 blur-md"></div>
+
+                                <div className="relative flex items-center bg-[#0B1016]/95 border border-[#233348] rounded-xl shadow-2xl overflow-hidden transition-all backdrop-blur-xl">
+                                    {/* Decoration Lines */}
+                                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
+                                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
+
+                                    {/* Sidebar Label */}
+                                    <div className="pl-6 pr-4 text-primary flex items-center pointer-events-none select-none h-full  shrink-0">
+                                        <span className="font-mono text-sm tracking-widest font-bold drop-shadow-[0_0_5px_rgba(19,109,236,0.5)] whitespace-nowrap">ANSWER //</span>
                                     </div>
+
+                                    <div className="w-[1px] h-8 bg-[#233348]"></div>
+
                                     <input
                                         autoFocus
-                                        className="w-full bg-transparent border-none text-white font-mono text-lg py-5 px-4 focus:ring-0 placeholder-slate-600"
+                                        className="w-full bg-transparent border-none outline-none text-white font-mono text-xl py-6 px-6 focus:ring-0 focus:outline-none focus:border-none placeholder-slate-600 tracking-wider"
                                         placeholder="TYPE CITY OR COORDINATES..."
                                         spellCheck="false"
                                         type="text"
@@ -174,38 +192,57 @@ const PlayView: React.FC<PlayViewProps> = ({ handleSend, timeRemaining }) => {
                                         onChange={(e) => setInputValue(e.target.value)}
                                         onKeyDown={handleKeyDown}
                                     />
-                                    <div className="pr-2 flex items-center">
-                                        <button onClick={onSend} className="bg-primary hover:bg-blue-600 text-white px-6 py-2.5 rounded-lg font-bold text-sm tracking-wide transition-colors flex items-center gap-2 shadow-lg">
-                                            SEND
-                                            <Send size={14} />
+
+                                    <div className="pr-3 pl-2 flex items-center">
+                                        <button
+                                            onClick={onSend}
+                                            disabled={!inputValue.trim()}
+                                            className={`
+                                                relative overflow-hidden px-8 py-3 rounded-lg font-bold text-sm tracking-widest flex items-center gap-2 transition-all duration-300
+                                                ${inputValue.trim()
+                                                    ? 'bg-primary hover:bg-blue-600 text-white shadow-[0_0_20px_rgba(19,109,236,0.4)] hover:shadow-[0_0_30px_rgba(19,109,236,0.6)] translate-y-0 opacity-100'
+                                                    : 'bg-[#1a2332] text-slate-500 cursor-not-allowed shadow-none opacity-80'
+                                                }
+                                            `}
+                                        >
+                                            <span className="relative z-10">SEND</span>
+                                            <Send size={14} className={`relative z-10 transition-transform ${inputValue.trim() ? 'group-hover:translate-x-1' : ''}`} />
+
+                                            {/* Button Glint */}
+                                            {inputValue.trim() && (
+                                                <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent z-0"></div>
+                                            )}
                                         </button>
                                     </div>
                                 </div>
-                                <div className="absolute -bottom-6 left-0 right-0 text-center">
-                                    <p className="text-[10px] text-slate-500 font-mono uppercase tracking-widest">Protocol Omega Verified Input Channel</p>
+
+                                <div className="absolute -bottom-8 left-0 right-0 text-center flex justify-center gap-4">
+                                    <p className="text-[10px] text-slate-500 font-mono uppercase tracking-widest flex items-center gap-2">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/50 animate-pulse"></span>
+                                        Protocol Omega Verified Input Channel
+                                    </p>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    {/* Error Effects Overlay - Moved inside section for correct centering */}
+                    <div className={`absolute inset-0 pointer-events-none z-[60] transition-opacity duration-300 ${isError ? 'opacity-100' : 'opacity-0'}`}>
+                        <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(220,38,38,0.5)] border-4 border-red-500/80 animate-pulse"></div>
+                        <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-transparent via-red-500/80 to-transparent animate-pulse"></div>
+                    </div>
+
+                    {/* Try Again Message Overlay - Moved inside section for correct centering */}
+                    <div className={`absolute inset-0 flex items-center justify-center pointer-events-none z-[70] transition-all duration-1000 transform ${showTryAgain ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+                        <div className="bg-black/80 border border-red-500 px-8 py-4 rounded-lg flex flex-col items-center shadow-[0_0_50px_rgba(220,38,38,0.5)] backdrop-blur-md">
+                            <ShieldAlert size={48} className="text-red-500 mb-2 animate-pulse" />
+                            <h2 className="text-3xl font-bold text-red-500 tracking-widest font-mono glitch-text">ACCESS DENIED</h2>
+                            <p className="text-white/80 text-sm tracking-[0.2em] mt-1">PENALTY APPLIED. TRY AGAIN.</p>
                         </div>
                     </div>
                 </section>
             </main>
 
-            {/* Error Effects Overlay */}
-            <div className={`absolute inset-0 pointer-events-none z-[60] transition-opacity duration-300 ${isError ? 'opacity-100' : 'opacity-0'}`}>
-                <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(220,38,38,0.5)] border-4 border-red-500/80 animate-pulse"></div>
-                <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-transparent via-red-500/80 to-transparent animate-pulse"></div>
-            </div>
-
-            {/* Try Again Message Overlay */}
-            <div className={`absolute inset-0 flex items-center justify-center pointer-events-none z-[70] transition-all duration-300 transform ${showTryAgain ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
-                <div className="bg-black/80 border border-red-500 px-8 py-4 rounded-lg flex flex-col items-center shadow-[0_0_50px_rgba(220,38,38,0.5)] backdrop-blur-md">
-                    <ShieldAlert size={48} className="text-red-500 mb-2 animate-pulse" />
-                    <h2 className="text-3xl font-bold text-red-500 tracking-widest font-mono glitch-text">ACCESS DENIED</h2>
-                    <p className="text-white/80 text-sm tracking-[0.2em] mt-1">PENALTY APPLIED. TRY AGAIN.</p>
-                </div>
-            </div>
-
-            {/* Footer */}
+            {/* Global Footer (Carbon Fibre) */}
             <div className={`fixed inset-0 pointer-events-none z-50 transition-opacity duration-300 ${isError ? 'bg-red-500/10' : 'opacity-0'}`}></div>
             <div className="fixed inset-0 pointer-events-none z-50 mix-blend-overlay opacity-10 bg-[url('/carbon-fibre.png')]"></div>
             <div className="fixed bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent z-50"></div>
