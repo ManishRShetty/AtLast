@@ -8,7 +8,7 @@ interface IncorrectViewProps {
 
 const IncorrectView: React.FC<IncorrectViewProps> = ({ resetGame }) => {
     return (
-        <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden h-screen flex flex-col relative">
+        <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden h-[calc(100vh-60px)] flex flex-col relative">
             {/* Effects */}
             <div className="absolute inset-0 pointer-events-none z-[60] shadow-[inset_0_0_150px_rgba(220,38,38,0.3)] border-4 border-red-500/50 animate-pulse"></div>
             <div className="fixed inset-0 pointer-events-none z-50 mix-blend-overlay opacity-10 bg-[url('/carbon-fibre.png')]"></div>

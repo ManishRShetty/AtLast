@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { AlertTriangle, Plus, Minus, Crosshair, Send, Lock, Radar } from 'lucide-react';
+import { AlertTriangle, Plus, Minus, Crosshair, Send, Lock, Radar, ShieldAlert } from 'lucide-react';
 import TerminalPanel, { LogEntry } from './TerminalPanel';
 
 interface PlayViewProps {
-    handleSend: () => void;
+    handleSend: (command: string) => boolean;
     timeRemaining: number;
 }
 
@@ -16,12 +16,57 @@ const PlayView: React.FC<PlayViewProps> = ({ handleSend, timeRemaining }) => {
     };
 
     const [feedbackActive, setFeedbackActive] = useState<string | null>(null);
+    const [inputValue, setInputValue] = useState('');
+    const [isError, setIsError] = useState(false);
+    const [showTryAgain, setShowTryAgain] = useState(false);
     const [logs, setLogs] = useState<LogEntry[]>([
         { id: 'sys-1', type: 'system', text: 'SYSTEM INITIALIZED' },
         { id: 'cmd-1', type: 'command', text: 'establish_uplink --secure' },
         { id: 'info-1', type: 'info', text: 'Connecting to secure server...' },
         { id: 'success-1', type: 'success', text: 'Connection established.' },
     ]);
+
+    const onSend = () => {
+        if (!inputValue.trim()) return;
+
+        const cmd = inputValue.trim();
+        // Add command log
+        const newLogs: LogEntry[] = [...logs, {
+            id: `cmd-${Date.now()}`,
+            type: 'command',
+            text: cmd
+        }];
+
+        const isCorrect = handleSend(cmd);
+
+        if (!isCorrect) {
+            setIsError(true);
+            setShowTryAgain(true);
+            setTimeout(() => {
+                setIsError(false);
+                setShowTryAgain(false);
+            }, 1500); // 1.5s duration for effect
+            newLogs.push({
+                id: `err-${Date.now()}`,
+                type: 'error',
+                text: 'ACCESS DENIED: Invalid location coordinates.'
+            });
+            newLogs.push({
+                id: `warn-${Date.now()}`,
+                type: 'warning',
+                text: 'PENALTY APPLIED: -10 SECONDS'
+            });
+        }
+
+        setLogs(newLogs);
+        setInputValue('');
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent) => {
+        if (e.key === 'Enter') {
+            onSend();
+        }
+    };
 
     const handleMapInteraction = (id: string) => {
         setFeedbackActive(id);
@@ -38,9 +83,9 @@ const PlayView: React.FC<PlayViewProps> = ({ handleSend, timeRemaining }) => {
 
 
     return (
-        <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden h-screen flex flex-col">
+        <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden h-[calc(100vh-60px)] flex flex-col">
 
-
+            ?
             {/* Main Content */}
             <main className="flex-1 flex overflow-hidden relative">
                 <TerminalPanel logs={logs} />
@@ -48,7 +93,7 @@ const PlayView: React.FC<PlayViewProps> = ({ handleSend, timeRemaining }) => {
                 {/* Section */}
                 <section className="flex-1 relative bg-background-dark flex flex-col">
                     {/* Game Status Bar */}
-                    <div className="absolute top-8 w-full z-40 flex flex-col items-center pointer-events-none">
+                    <div className="absolute top-12 w-full z-40 flex flex-col items-center pointer-events-none">
                         <div className="flex items-center gap-2 bg-black/40 px-4 py-1 rounded-full border border-red-500/30 backdrop-blur-sm">
                             <AlertTriangle size={14} className="text-red-500 animate-pulse" />
                             <span className="text-red-500 text-xs font-bold tracking-widest">DEFCON 1 ACTIVE</span>
@@ -119,9 +164,18 @@ const PlayView: React.FC<PlayViewProps> = ({ handleSend, timeRemaining }) => {
                                     <div className="pl-5 pr-3 text-primary/70 flex items-center pointer-events-none select-none border-r border-[#233348] h-full py-4 bg-[#151e29]">
                                         <span className="font-mono text-sm tracking-wider">ANSWER //</span>
                                     </div>
-                                    <input autoFocus className="w-full bg-transparent border-none text-white font-mono text-lg py-5 px-4 focus:ring-0 placeholder-slate-600" placeholder="TYPE CITY OR COORDINATES..." spellCheck="false" type="text" />
+                                    <input
+                                        autoFocus
+                                        className="w-full bg-transparent border-none text-white font-mono text-lg py-5 px-4 focus:ring-0 placeholder-slate-600"
+                                        placeholder="TYPE CITY OR COORDINATES..."
+                                        spellCheck="false"
+                                        type="text"
+                                        value={inputValue}
+                                        onChange={(e) => setInputValue(e.target.value)}
+                                        onKeyDown={handleKeyDown}
+                                    />
                                     <div className="pr-2 flex items-center">
-                                        <button onClick={handleSend} className="bg-primary hover:bg-blue-600 text-white px-6 py-2.5 rounded-lg font-bold text-sm tracking-wide transition-colors flex items-center gap-2 shadow-lg">
+                                        <button onClick={onSend} className="bg-primary hover:bg-blue-600 text-white px-6 py-2.5 rounded-lg font-bold text-sm tracking-wide transition-colors flex items-center gap-2 shadow-lg">
                                             SEND
                                             <Send size={14} />
                                         </button>
@@ -136,7 +190,23 @@ const PlayView: React.FC<PlayViewProps> = ({ handleSend, timeRemaining }) => {
                 </section>
             </main>
 
+            {/* Error Effects Overlay */}
+            <div className={`absolute inset-0 pointer-events-none z-[60] transition-opacity duration-300 ${isError ? 'opacity-100' : 'opacity-0'}`}>
+                <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(220,38,38,0.5)] border-4 border-red-500/80 animate-pulse"></div>
+                <div className="absolute bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-transparent via-red-500/80 to-transparent animate-pulse"></div>
+            </div>
+
+            {/* Try Again Message Overlay */}
+            <div className={`absolute inset-0 flex items-center justify-center pointer-events-none z-[70] transition-all duration-300 transform ${showTryAgain ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}>
+                <div className="bg-black/80 border border-red-500 px-8 py-4 rounded-lg flex flex-col items-center shadow-[0_0_50px_rgba(220,38,38,0.5)] backdrop-blur-md">
+                    <ShieldAlert size={48} className="text-red-500 mb-2 animate-pulse" />
+                    <h2 className="text-3xl font-bold text-red-500 tracking-widest font-mono glitch-text">ACCESS DENIED</h2>
+                    <p className="text-white/80 text-sm tracking-[0.2em] mt-1">PENALTY APPLIED. TRY AGAIN.</p>
+                </div>
+            </div>
+
             {/* Footer */}
+            <div className={`fixed inset-0 pointer-events-none z-50 transition-opacity duration-300 ${isError ? 'bg-red-500/10' : 'opacity-0'}`}></div>
             <div className="fixed inset-0 pointer-events-none z-50 mix-blend-overlay opacity-10 bg-[url('/carbon-fibre.png')]"></div>
             <div className="fixed bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent z-50"></div>
 

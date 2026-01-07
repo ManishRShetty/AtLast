@@ -9,7 +9,7 @@ interface FailViewProps {
 
 const FailView: React.FC<FailViewProps> = ({ resetGame }) => {
     return (
-        <div className="bg-background-light dark:bg-background-dark font-display text-white overflow-hidden h-screen flex flex-col">
+        <div className="bg-background-light dark:bg-background-dark font-display text-white overflow-hidden h-[calc(100vh-60px)] flex flex-col">
             {/* Main Content */}
             <main className="flex-1 flex overflow-hidden relative">
                 <TerminalPanel logs={[

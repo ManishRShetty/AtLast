@@ -8,7 +8,7 @@ interface SuccessViewProps {
 
 const SuccessView: React.FC<SuccessViewProps> = ({ resetGame }) => {
     return (
-        <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden h-screen flex flex-col">
+        <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden h-[calc(100vh-60px)] flex flex-col">
             {/* Status Overlay */}
             <div className="absolute top-24 left-1/2 -translate-x-1/2 flex flex-col items-center z-40 pointer-events-none">
                 <div className="flex items-center gap-2 bg-black/40 px-4 py-1 rounded-full border border-emerald-500/30">

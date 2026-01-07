@@ -25,13 +25,14 @@ const Battlespace = () => {
         return () => clearInterval(interval);
     }, [gameState, timeRemaining]);
 
-    const handleSend = () => {
-        // Keeping random state for testing/demo purposes as requested previously, 
-        // but now timer is the main fail driver. 
-        // Use manual trigger for success/incorrect for now.
-        const states: GameState[] = ['success', 'incorrect'];
-        const randomState = states[Math.floor(Math.random() * states.length)];
-        setGameState(randomState);
+    const handleSend = (command: string): boolean => {
+        if (command.toLowerCase().trim() === 'buenos aires') {
+            setGameState('success');
+            return true;
+        } else {
+            setTimeRemaining((prev) => Math.max(0, prev - 10));
+            return false;
+        }
     };
 
     const resetGame = () => {
