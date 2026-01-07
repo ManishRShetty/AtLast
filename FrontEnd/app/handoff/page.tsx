@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { AudioWaveform, LocateFixed, TriangleAlert, Power } from 'lucide-react';
 
 const HandoffPage = () => {
     return (
@@ -73,15 +74,15 @@ const HandoffPage = () => {
                             <div className="absolute inset-0 opacity-20">
                                 <div className="w-full h-full bg-[repeating-linear-gradient(90deg,transparent,transparent_2px,#136dec_2px,#136dec_4px)]"></div>
                             </div>
-                            <span className="material-symbols-outlined text-4xl text-primary animate-pulse">graphic_eq</span>
+                            <AudioWaveform className="text-primary animate-pulse size-9" />
                         </div>
                     </div>
                     <div className="hidden xl:flex flex-col absolute right-10 top-1/2 -translate-y-1/2 w-64 gap-4 pointer-events-none opacity-60">
                         <div className="border border-[#233348] bg-surface-dark/50 rounded-lg overflow-hidden h-48 relative">
                             <img alt="Abstract dark topographic map visualization" className="w-full h-full object-cover opacity-40 mix-blend-luminosity" src="/topo-map.png" />
                             <div className="absolute inset-0 flex items-center justify-center">
-                                <span className="material-symbols-outlined text-red-500 text-4xl animate-ping opacity-75 absolute">my_location</span>
-                                <span className="material-symbols-outlined text-white text-4xl relative z-10">my_location</span>
+                                <LocateFixed className="text-red-500 size-9 animate-ping opacity-75 absolute" />
+                                <LocateFixed className="text-white size-9 relative z-10" />
                             </div>
                             <div className="absolute bottom-2 right-2 bg-black/80 px-2 py-1 rounded text-[10px] text-white font-mono border border-gray-700">
                                 LOC: 34.0522° N, 118.2437° W
@@ -97,9 +98,9 @@ const HandoffPage = () => {
                         <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-primary rounded-br-lg"></div>
                         <div className="bg-gradient-to-r from-red-900/40 via-red-900/10 to-red-900/40 border-b border-red-500/20 py-3 px-6 text-center">
                             <h2 className="text-red-400 text-lg md:text-xl font-bold leading-tight tracking-[0.1em] flex items-center justify-center gap-3">
-                                <span className="material-symbols-outlined">warning</span>
+                                <TriangleAlert className="size-6" />
                                 WARNING: BATTLE MODE ENGAGED
-                                <span className="material-symbols-outlined">warning</span>
+                                <TriangleAlert className="size-6" />
                             </h2>
                         </div>
                         <div className="p-8 md:p-12 flex flex-col items-center">
@@ -148,8 +149,8 @@ const HandoffPage = () => {
                                 <div className="flex justify-center relative group/btn">
                                     <div className="absolute -inset-1 bg-gradient-to-r from-primary to-blue-400 rounded-lg blur opacity-25 group-hover/btn:opacity-75 transition duration-500"></div>
                                     <Link href="/play" className="relative flex w-full max-w-[320px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-8 bg-primary hover:bg-blue-600 transition-all duration-300 text-white text-lg font-bold leading-normal tracking-widest uppercase shadow-xl transform active:scale-95 border-b-4 border-blue-800 hover:border-blue-900">
-                                        <span className="material-symbols-outlined mr-3 animate-pulse">power_settings_new</span>
-                                        <span className="truncate">Initiate Link</span>
+                                        <Power className="mr-3 animate-pulse size-6" />
+                                        <span className="truncate">Initiate Mission</span>
                                     </Link>
                                 </div>
                                 <div className="text-[10px] text-gray-600 font-mono">
