@@ -8,7 +8,10 @@ interface SuccessViewProps {
 
 const SuccessView: React.FC<SuccessViewProps> = ({ resetGame }) => {
     return (
-        <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden h-[calc(100vh-60px)] flex flex-col">
+        <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden h-[calc(100vh-60px)] flex flex-col relative animate-in fade-in duration-500">
+            {/* Green Glow Effects */}
+            <div className="absolute inset-0 pointer-events-none z-[60] shadow-[inset_0_0_150px_rgba(16,185,129,0.3)] border-4 border-emerald-500/50 animate-pulse"></div>
+
             {/* Status Overlay */}
             <div className="absolute top-24 left-1/2 -translate-x-1/2 flex flex-col items-center z-40 pointer-events-none">
                 <div className="flex items-center gap-2 bg-black/40 px-4 py-1 rounded-full border border-emerald-500/30">
@@ -36,7 +39,7 @@ const SuccessView: React.FC<SuccessViewProps> = ({ resetGame }) => {
                         <div className="absolute inset-0 bg-gradient-to-b from-background-dark/30 via-transparent to-background-dark z-10 pointer-events-none"></div>
                         <img alt="Dark satellite view of Earth from space showing city lights and continents" className="w-full h-full object-cover grayscale contrast-125 brightness-75 scale-[2] origin-[35%_75%] transition-transform duration-[2000ms] ease-out" src="/bg-earth.jpg" />
                     </div>
-                    <div className="absolute inset-0 z-30 flex flex-col items-center justify-center pointer-events-none">
+                    <div className="absolute inset-0 z-30 flex flex-col items-center justify-end pb-48 pointer-events-none">
                         <div className="relative flex flex-col items-center animate-[bounce_1s_infinite]">
                             <div className="bg-emerald-600/90 backdrop-blur-md border-y-4 border-emerald-400 text-white shadow-[0_0_60px_rgba(16,185,129,0.6)] transform -skew-x-12">
                                 <div className="px-20 py-6 transform skew-x-12">
@@ -95,7 +98,7 @@ const SuccessView: React.FC<SuccessViewProps> = ({ resetGame }) => {
 
             {/* Footer */}
             <div className="fixed inset-0 pointer-events-none z-50 mix-blend-overlay opacity-10 bg-[url('/carbon-fibre.png')]"></div>
-            <div className="fixed bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent z-50"></div>
+            <div className="fixed bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-transparent via-emerald-500/80 to-transparent z-50 animate-pulse"></div>
         </div>
     );
 };
