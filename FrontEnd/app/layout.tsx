@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter, Fira_Code, Rajdhani } from 'next/font/google';
 import './globals.css';
 import Navbar from '../components/Navbar';
+import SecurityLayer from '../components/SecurityLayer';
 
 const inter = Inter({
     subsets: ['latin'],
@@ -35,6 +36,7 @@ export default function RootLayout({
     return (
         <html lang="en" className="dark">
             <body className={`${inter.variable} ${firaCode.variable} ${rajdhani.variable} font-sans antialiased bg-black`}>
+                <SecurityLayer />
                 <Navbar />
                 <div className="pt-[60px] min-h-screen">
                     {children}

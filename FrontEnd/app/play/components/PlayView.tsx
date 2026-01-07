@@ -85,7 +85,7 @@ const PlayView: React.FC<PlayViewProps> = ({ handleSend, timeRemaining }) => {
     return (
         <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden h-[calc(100vh-60px)] flex flex-col">
 
-            ?
+
             {/* Main Content */}
             <main className="flex-1 flex overflow-hidden relative">
                 <TerminalPanel logs={logs} />
