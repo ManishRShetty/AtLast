@@ -25,7 +25,16 @@ const IncorrectView: React.FC<IncorrectViewProps> = ({ resetGame }) => {
             {/* Main Content */}
             <main className="flex-1 flex overflow-hidden relative">
                 {/* Aside */}
-                <TerminalPanel />
+                <TerminalPanel logs={[
+                    { id: '1', type: 'system', text: 'Login successful. User ID: 994-Alpha.' },
+                    { id: '2', type: 'command', text: 'verify_target --id="OPT-C"' },
+                    { id: 'err1', type: 'error', text: 'VERIFYING HASH... FAILED.' },
+                    { id: 'err2', type: 'error', text: 'CRITICAL ERROR: TARGET MISMATCH DETECTED.' },
+                    { id: 'err3', type: 'error', text: 'GEOLOCATION SIGNATURE DOES NOT MATCH DECRYPTED STREAM.' },
+                    { id: 'err4', type: 'error', text: 'INITIATING PENALTY PROTOCOL...' },
+                    { id: 'err5', type: 'error', text: 'PENALTY APPLIED: -10 SECONDS' },
+                    { id: 'err6', type: 'error', text: 'SYSTEM LOCKDOWN IMMINENT.' }
+                ]} />
 
                 {/* Section */}
                 <section className="flex-1 relative bg-background-dark flex flex-col overflow-hidden">

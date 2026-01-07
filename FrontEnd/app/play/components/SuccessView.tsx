@@ -20,7 +20,15 @@ const SuccessView: React.FC<SuccessViewProps> = ({ resetGame }) => {
             {/* Main Content */}
             <main className="flex-1 flex overflow-hidden relative">
                 {/* Aside */}
-                <TerminalPanel />
+                <TerminalPanel logs={[
+                    { id: '1', type: 'system', text: 'Login successful. User ID: 994-Alpha.' },
+                    { id: '2', type: 'command', text: 'initiate_protocol --force' },
+                    { id: '3', type: 'info', text: 'Establishing secure connection...' },
+                    { id: 'success1', type: 'command', text: 'lock_target --opt-c --confirm' },
+                    { id: 'success2', type: 'success', text: 'GEOLOCATION CONFIRMED.' },
+                    { id: 'success3', type: 'success', text: 'TARGET NEUTRALIZED SUCCESSFULLY.' },
+                    { id: 'success4', type: 'success', text: 'REWARD ALLOCATED.' }
+                ]} />
 
                 {/* Section */}
                 <section className="flex-1 relative bg-background-dark flex flex-col overflow-hidden">

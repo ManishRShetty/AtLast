@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AlertTriangle, Plus, Minus, Crosshair, Send, Lock, Radar } from 'lucide-react';
-import TerminalPanel from './TerminalPanel';
+import TerminalPanel, { LogEntry } from './TerminalPanel';
 
 interface PlayViewProps {
     handleSend: () => void;
@@ -15,7 +15,13 @@ const PlayView: React.FC<PlayViewProps> = ({ handleSend, timeRemaining }) => {
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
 
-    const [feedbackActive, setFeedbackActive] = React.useState<string | null>(null);
+    const [feedbackActive, setFeedbackActive] = useState<string | null>(null);
+    const [logs, setLogs] = useState<LogEntry[]>([
+        { id: 'sys-1', type: 'system', text: 'SYSTEM INITIALIZED' },
+        { id: 'cmd-1', type: 'command', text: 'establish_uplink --secure' },
+        { id: 'info-1', type: 'info', text: 'Connecting to secure server...' },
+        { id: 'success-1', type: 'success', text: 'Connection established.' },
+    ]);
 
     const handleMapInteraction = (id: string) => {
         setFeedbackActive(id);
@@ -37,7 +43,7 @@ const PlayView: React.FC<PlayViewProps> = ({ handleSend, timeRemaining }) => {
 
             {/* Main Content */}
             <main className="flex-1 flex overflow-hidden relative">
-                <TerminalPanel />
+                <TerminalPanel logs={logs} />
 
                 {/* Section */}
                 <section className="flex-1 relative bg-background-dark flex flex-col">

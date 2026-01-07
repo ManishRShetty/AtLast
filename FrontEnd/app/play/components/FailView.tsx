@@ -12,7 +12,13 @@ const FailView: React.FC<FailViewProps> = ({ resetGame }) => {
         <div className="bg-background-light dark:bg-background-dark font-display text-white overflow-hidden h-screen flex flex-col">
             {/* Main Content */}
             <main className="flex-1 flex overflow-hidden relative">
-                <TerminalPanel />
+                <TerminalPanel logs={[
+                    { id: '1', type: 'system', text: 'Login successful. User ID: 994-Alpha.' },
+                    { id: 'fail1', type: 'error', text: 'CONNECTION TERMINATED' },
+                    { id: 'fail2', type: 'error', text: 'SIGNAL LOST' },
+                    { id: 'fail3', type: 'error', text: 'TARGET: CITY DETONATED' },
+                    { id: 'fail4', type: 'system', text: 'System Halted // Terminal ID: OMEGA-9 // ERROR_CODE: 0x4B2' }
+                ]} />
 
                 {/* Content Section */}
                 <div className="flex-1 flex flex-col items-center justify-center p-4 relative bg-background-dark">
