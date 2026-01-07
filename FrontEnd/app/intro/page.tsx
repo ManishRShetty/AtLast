@@ -6,8 +6,9 @@ import { Lock, ShieldCheck, Wifi, Satellite, Activity } from 'lucide-react';
 
 const WakeUpPage = () => {
     return (
-        <div className="relative flex h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-hidden tech-grid-bg text-white">
-            {/* Header */}
+        <div className="relative flex min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-hidden tech-grid-bg text-white">
+            {/* Header Removed - Replaced by Global Navbar */}
+            {/*
             <header className="w-full border-b border-border-tech/50 bg-background-dark/80 backdrop-blur-sm z-10">
                 <div className="layout-container flex w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-3 justify-between items-center">
                     <div className="flex items-center gap-2">
@@ -20,6 +21,7 @@ const WakeUpPage = () => {
                     </div>
                 </div>
             </header>
+            */}
 
             {/* Main Content */}
             <main className="flex-1 flex flex-col items-center justify-center p-4 relative overflow-y-auto">

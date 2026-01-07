@@ -11,7 +11,7 @@ const HandoffPage = () => {
             <div className="absolute inset-0 grid-bg pointer-events-none z-0"></div>
             <div className="relative z-10 flex flex-col h-full grow">
                 {/* Header */}
-                <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#233348] bg-[#111822]/90 backdrop-blur-sm px-6 lg:px-10 py-3 sticky top-0 z-50">
+                {/* <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#233348] bg-[#111822]/90 backdrop-blur-sm px-6 lg:px-10 py-3 sticky top-0 z-50">
                     <div className="flex items-center gap-4 text-white">
                         <div className="size-6 text-primary animate-pulse">
                             <svg className="size-full" fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -50,7 +50,7 @@ const HandoffPage = () => {
                             </div>
                         </div>
                     </div>
-                </header>
+                </header> */}
 
                 {/* Main Content */}
                 <main className="flex-1 flex flex-col items-center justify-center p-4 lg:p-8 relative">
@@ -131,7 +131,7 @@ const HandoffPage = () => {
                                             <div className="absolute top-0 w-full h-1/2 bg-gradient-to-b from-white/5 to-transparent"></div>
                                             <p className="text-white text-5xl md:text-7xl font-bold tracking-tighter text-glow">60</p>
                                         </div>
-                                        <p className="text-primary text-xs font-mono uppercase tracking-widest font-bold">SEC</p>
+                                        <p className="text-primary text-gray-400 text-xs font-mono uppercase tracking-widest font-bold">SEC</p>
                                     </div>
                                 </div>
                                 <div className="mt-6 flex justify-between items-center text-xs font-mono text-gray-500 border-t border-gray-800 pt-2 px-2">

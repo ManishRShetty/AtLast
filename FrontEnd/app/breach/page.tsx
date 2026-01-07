@@ -6,13 +6,14 @@ import { Radar, AlertTriangle, Settings, Unlock, WifiOff, Cpu, ShieldAlert, Lock
 
 const BreachPage = () => {
     return (
-        <div className="bg-background-light dark:bg-background-dark text-white font-display overflow-hidden h-screen w-screen flex flex-col">
+        <div className="bg-background-light dark:bg-background-dark text-white font-display overflow-hidden min-h-screen w-screen flex flex-col">
             {/* Effects */}
             <div className="absolute inset-0 z-50 pointer-events-none scanlines opacity-30"></div>
             <div className="absolute inset-0 z-40 pointer-events-none vignette"></div>
             <div className="absolute inset-0 z-0 opacity-10" style={{ backgroundSize: '40px 40px', backgroundImage: 'linear-gradient(to right, #324867 1px, transparent 1px), linear-gradient(to bottom, #324867 1px, transparent 1px)' }}></div>
 
-            {/* Header */}
+            {/* Header Removed - Replaced by Global Navbar */}
+            {/* 
             <header className="relative z-30 flex items-center justify-between border-b border-[#233348]/50 bg-[#111822]/80 backdrop-blur-sm px-6 py-3 w-full">
                 <div className="flex items-center gap-4">
                     <div className="size-6 text-primary">
@@ -33,6 +34,7 @@ const BreachPage = () => {
                     </div>
                 </div>
             </header>
+            */}
 
             {/* Main Content */}
             <main className="relative z-10 flex-1 flex flex-col items-center justify-center p-6 w-full max-w-[1400px] mx-auto">

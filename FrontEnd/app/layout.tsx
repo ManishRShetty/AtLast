@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Fira_Code, Rajdhani } from 'next/font/google';
 import './globals.css';
+import Navbar from '../components/Navbar';
 
 const inter = Inter({
     subsets: ['latin'],
@@ -33,8 +34,11 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" className="dark">
-            <body className={`${inter.variable} ${firaCode.variable} ${rajdhani.variable} font-sans antialiased`}>
-                {children}
+            <body className={`${inter.variable} ${firaCode.variable} ${rajdhani.variable} font-sans antialiased bg-black`}>
+                <Navbar />
+                <div className="pt-[60px] min-h-screen">
+                    {children}
+                </div>
             </body>
         </html>
     );
