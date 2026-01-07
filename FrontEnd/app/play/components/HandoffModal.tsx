@@ -6,13 +6,22 @@ interface HandoffModalProps {
 }
 
 const HandoffModal: React.FC<HandoffModalProps> = ({ onStart }) => {
+    const [isExiting, setIsExiting] = React.useState(false);
+
+    const handleStart = () => {
+        setIsExiting(true);
+        setTimeout(() => {
+            onStart();
+        }, 500); // Match duration
+    };
+
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center">
+        <div className={`fixed inset-0 z-[100] flex items-center justify-center transition-all duration-500 ${isExiting ? 'pointer-events-none' : ''}`}>
             {/* Backdrop with Blur */}
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-md transition-all duration-500"></div>
+            <div className={`absolute inset-0 bg-black/60 backdrop-blur-md transition-all duration-500 ${isExiting ? 'opacity-0' : 'animate-in fade-in duration-500'}`}></div>
 
             {/* Content Container */}
-            <div className="relative z-10 w-full max-w-4xl p-4 animate-in zoom-in-95 duration-300">
+            <div className={`relative z-10 w-full max-w-4xl p-4 ${isExiting ? 'animate-out fade-out zoom-out-95 duration-500 fill-mode-forwards' : 'animate-in zoom-in-95 duration-500'}`}>
                 {/* Side Panels (Simplified for Modal) */}
                 {/* <div className="hidden xl:flex flex-col absolute -left-32 top-1/2 -translate-y-1/2 w-64 gap-4 pointer-events-none opacity-60">
                     <div className="border border-[#233348] bg-surface-dark/90 p-4 rounded-lg backdrop-blur">
@@ -39,7 +48,7 @@ const HandoffModal: React.FC<HandoffModalProps> = ({ onStart }) => {
                     <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-primary rounded-br-lg"></div>
 
                     {/* Header Banner */}
-                    <div className="bg-gradient-to-r from-red-900/40 via-red-900/10 to-red-900/40 border-b border-red-500/20 py-4 px-6 text-center relative overflow-hidden">
+                    <div className="bg-gradient-to-r from-red-900/40 via-red-900/10 to-red-900/40 border-b border-red-500/20 py-4 px-6 text-center relative overflow-hidden animate-in slide-in-from-top-4 fade-in duration-700 delay-200 fill-mode-both">
                         <div className="absolute inset-0 bg-[url('/carbon-fibre.png')] opacity-10 mix-blend-overlay"></div>
                         <h2 className="text-red-400 text-lg md:text-xl font-bold leading-tight tracking-[0.1em] flex items-center justify-center gap-3 relative z-10">
                             <TriangleAlert className="size-6 animate-pulse" />
@@ -52,7 +61,7 @@ const HandoffModal: React.FC<HandoffModalProps> = ({ onStart }) => {
                         {/* Background Grid */}
                         <div className="absolute inset-0 grid-bg opacity-10 pointer-events-none"></div>
 
-                        <div className="relative w-full max-w-lg mx-auto mb-10">
+                        <div className="relative w-full max-w-lg mx-auto mb-10 animate-in slide-in-from-bottom-8 fade-in duration-700 delay-300 fill-mode-both">
                             <div className="absolute -inset-4 bg-primary/10 blur-xl rounded-full"></div>
                             <div className="flex gap-4 relative z-10">
                                 <div className="flex flex-1 flex-col items-center gap-2 group/timer">
@@ -90,7 +99,7 @@ const HandoffModal: React.FC<HandoffModalProps> = ({ onStart }) => {
                             </div>
                         </div>
 
-                        <div className="text-center w-full max-w-md mx-auto space-y-8 relative z-10">
+                        <div className="text-center w-full max-w-md mx-auto space-y-8 relative z-10 animate-in slide-in-from-bottom-8 fade-in duration-700 delay-500 fill-mode-both">
                             <div>
                                 <h2 className="text-white text-2xl md:text-3xl font-bold leading-tight mb-2 tracking-wide font-display">WAITING FOR OPERATOR INPUT...</h2>
                                 <p className="text-gray-400 text-sm">Control has been transferred to your terminal. Initialize the link to begin the mission.</p>
@@ -98,7 +107,7 @@ const HandoffModal: React.FC<HandoffModalProps> = ({ onStart }) => {
                             <div className="flex justify-center relative group/btn">
                                 <div className="absolute -inset-1 bg-gradient-to-r from-primary to-blue-400 rounded-lg blur opacity-25 group-hover/btn:opacity-75 transition duration-500"></div>
                                 <button
-                                    onClick={onStart}
+                                    onClick={handleStart}
                                     className="relative flex w-full max-w-[320px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-8 bg-primary hover:bg-blue-600 transition-all duration-300 text-white text-lg font-bold leading-normal tracking-widest uppercase shadow-xl transform active:scale-95 border-b-4 border-blue-800 hover:border-blue-900"
                                 >
                                     <Power className="mr-3 animate-pulse size-6" />
