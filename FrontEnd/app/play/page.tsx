@@ -11,19 +11,20 @@ type GameState = 'playing' | 'success' | 'fail' | 'incorrect';
 const Battlespace = () => {
     const [gameState, setGameState] = useState<GameState>('playing');
     const [timeRemaining, setTimeRemaining] = useState(60);
+    const [isGameStarted, setIsGameStarted] = useState(false);
 
     // Timer Logic
     React.useEffect(() => {
         let interval: NodeJS.Timeout;
-        if (gameState === 'playing' && timeRemaining > 0) {
+        if (isGameStarted && gameState === 'playing' && timeRemaining > 0) {
             interval = setInterval(() => {
                 setTimeRemaining((prev) => prev - 1);
             }, 1000);
-        } else if (timeRemaining === 0 && gameState === 'playing') {
+        } else if (timeRemaining === 0 && gameState === 'playing' && isGameStarted) {
             setGameState('fail');
         }
         return () => clearInterval(interval);
-    }, [gameState, timeRemaining]);
+    }, [gameState, timeRemaining, isGameStarted]);
 
     const handleSend = (command: string): boolean => {
         if (command.toLowerCase().trim() === 'buenos aires') {
@@ -38,6 +39,7 @@ const Battlespace = () => {
     const resetGame = () => {
         setGameState('playing');
         setTimeRemaining(60);
+        setIsGameStarted(false); // Reset to show handoff again? Or maybe just restart timer? User intention unclear, assuming full reset.
     };
 
     if (gameState === 'success') {
@@ -52,7 +54,14 @@ const Battlespace = () => {
         return <IncorrectView resetGame={resetGame} />;
     }
 
-    return <PlayView handleSend={handleSend} timeRemaining={timeRemaining} />;
+    return (
+        <PlayView
+            handleSend={handleSend}
+            timeRemaining={timeRemaining}
+            isGameStarted={isGameStarted}
+            onStartGame={() => setIsGameStarted(true)}
+        />
+    );
 };
 
 export default Battlespace;

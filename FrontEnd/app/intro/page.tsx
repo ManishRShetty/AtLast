@@ -105,7 +105,7 @@ const WakeUpPage = () => {
 
                     {/* Action Area */}
                     <div className="flex justify-center pt-4 pb-8">
-                        <Link href="/handoff" className="group relative flex items-center justify-center overflow-hidden rounded-md h-14 px-8 bg-primary hover:bg-primary/90 transition-all duration-300 shadow-[0_0_20px_rgba(19,109,236,0.3)] hover:shadow-[0_0_30px_rgba(19,109,236,0.5)]">
+                        <Link href="/play" className="group relative flex items-center justify-center overflow-hidden rounded-md h-14 px-8 bg-primary hover:bg-primary/90 transition-all duration-300 shadow-[0_0_20px_rgba(19,109,236,0.3)] hover:shadow-[0_0_30px_rgba(19,109,236,0.5)]">
                             <div className="absolute top-0 left-0 h-2 w-2 border-t border-l border-white/50"></div>
                             <div className="absolute bottom-0 right-0 h-2 w-2 border-b border-r border-white/50"></div>
                             <div className="flex flex-col items-center">

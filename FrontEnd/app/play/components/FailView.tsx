@@ -82,7 +82,7 @@ const FailView: React.FC<FailViewProps> = ({ resetGame }) => {
                                     <List className="mr-2" size={16} />
                                     <span>Mission Log</span>
                                 </button>
-                                <Link href="/handoff" className="flex-1 flex cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-[#233348] hover:bg-red-900/20 border border-[#324867] hover:border-red-500/50 text-[#92a9c9] hover:text-red-500 transition-all text-sm font-bold uppercase tracking-wide">
+                                <Link href="/" className="flex-1 flex cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-[#233348] hover:bg-red-900/20 border border-[#324867] hover:border-red-500/50 text-[#92a9c9] hover:text-red-500 transition-all text-sm font-bold uppercase tracking-wide">
                                     <LogOut className="mr-2" size={16} />
                                     <span>Abort</span>
                                 </Link>
