@@ -8,8 +8,20 @@
 @layer base {
     body {
         @apply m-0 p-0 overflow-hidden bg-black select-none;
+        cursor: url('/cursor.png'), auto;
         transition: background-color 0.5s ease;
         font-family: var(--font-inter), 'Inter', sans-serif;
+    }
+
+    /* Force custom cursor on all interactive elements */
+    a,
+    button,
+    [role="button"],
+    input,
+    select,
+    textarea,
+    .cursor-pointer {
+        cursor: url('/cursor.png'), auto !important;
     }
 
     /* Allow selection in inputs */
@@ -36,4 +48,16 @@
 .no-scrollbar::-webkit-scrollbar-thumb {
     background: rgba(100, 100, 100, 0.3);
     border-radius: 10px;
+}
+
+/* Utiltiy to fully hide scrollbar */
+.scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hidden {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }

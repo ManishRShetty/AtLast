@@ -9,9 +9,15 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sse_starlette.sse import EventSourceResponse
 import redis.asyncio as redis
+from pydantic import BaseModel
+try:
+    from fakeredis import FakeAsyncRedis
+    FAKEREDIS_AVAILABLE = True
+except ImportError:
+    FAKEREDIS_AVAILABLE = False
 
 # Import Polyglot AI riddle generator (multi-provider: Groq, Cohere, Gemini)
-from polyglot_ai import generate_riddle
+from polyglot_ai import generate_riddle_with_timeout
 
 # ==========================================
 # CONFIGURATION & CONSTANTS
@@ -38,13 +44,22 @@ async def lifespan(app: FastAPI):
     
     # --- STARTUP LOGIC ---
     try:
-        redis_client = redis.from_url(REDIS_URL, decode_responses=True)
-        # Fast ping to ensure connection
-        await redis_client.ping()
-        print(f"✅ Connected to Redis at {REDIS_URL}")
+        # Try connecting to real Redis
+        client = redis.from_url(REDIS_URL, decode_responses=True)
+        await client.ping()
+        print(f"✅ Connected to Real Redis at {REDIS_URL}")
+        redis_client = client
     except Exception as e:
-        print(f"❌ Failed to connect to Redis: {e}")
-        # In production, we would crash the pod here.
+        print(f"⚠️ Failed to connect to Real Redis: {e}")
+        
+        if FAKEREDIS_AVAILABLE:
+            print("🚀 Switching to In-Memory Redis (FakeRedis)...")
+            # Create a shared state for FakeRedis
+            redis_client = FakeAsyncRedis(decode_responses=True)
+            print("✅ Connected to FakeRedis (In-Memory)")
+        else:
+            print("❌ FakeRedis not installed. App will fail.")
+            # In production, we would crash the pod here.
     
     yield  # Application runs here
     
@@ -68,113 +83,71 @@ app.add_middleware(
 # MOCK AGENT & BACKGROUND WORKERS
 # ==========================================
 
-async def mock_agent_generation(session_id: str, topic: str = "Geography") -> Dict[str, Any]:
+
+# ==========================================
+# AGENTIC WORKERS
+# ==========================================
+
+async def agent_riddle_generation(session_id: str, difficulty: str = "Medium", topic: str = "Geography") -> Dict[str, Any]:
     """
-    AI-powered LangGraph agent.
+    Real Agentic Workflow (Polyglot AI + Supabase).
     1. Publishes thought logs to Redis Pub/Sub.
-    2. Generates riddle using AI.
-    3. Returns the final JSON payload with location data.
+    2. Generates city + riddle using AI (with difficulty level).
+    3. Handles fallback to Supabase if generation fails.
     """
     channel = f"{LOG_CHANNEL_PREFIX}:{session_id}"
     
-    # Expanded target locations - 32 diverse global cities
-    LOCATIONS = [
-        # Asia
-        {"name": "Tokyo", "lat": 35.6762, "lng": 139.6503},
-        {"name": "Kyoto", "lat": 35.0116, "lng": 135.7681},
-        {"name": "Mumbai", "lat": 19.0760, "lng": 72.8777},
-        {"name": "Bangkok", "lat": 13.7563, "lng": 100.5018},
-        {"name": "Singapore", "lat": 1.3521, "lng": 103.8198},
-        {"name": "Seoul", "lat": 37.5665, "lng": 126.9780},
-        {"name": "Beijing", "lat": 39.9042, "lng": 116.4074},
-        {"name": "Shanghai", "lat": 31.2304, "lng": 121.4737},
-        {"name": "Hong Kong", "lat": 22.3193, "lng": 114.1694},
-        {"name": "Bali", "lat": -8.3405, "lng": 115.0920},
-        
-        # Europe
-        {"name": "Paris", "lat": 48.8566, "lng": 2.3522},
-        {"name": "London", "lat": 51.5074, "lng": -0.1278},
-        {"name": "Moscow", "lat": 55.7558, "lng": 37.6173},
-        {"name": "Rome", "lat": 41.9028, "lng": 12.4964},
-        {"name": "Barcelona", "lat": 41.3851, "lng": 2.1734},
-        {"name": "Amsterdam", "lat": 52.3676, "lng": 4.9041},
-        {"name": "Prague", "lat": 50.0755, "lng": 14.4378},
-        {"name": "Vienna", "lat": 48.2082, "lng": 16.3738},
-        {"name": "Athens", "lat": 37.9838, "lng": 23.7275},
-        {"name": "Istanbul", "lat": 41.0082, "lng": 28.9784},
-        
-        # Americas
-        {"name": "New York", "lat": 40.7128, "lng": -74.0060},
-        {"name": "Rio de Janeiro", "lat": -22.9068, "lng": -43.1729},
-        {"name": "Mexico City", "lat": 19.4326, "lng": -99.1332},
-        {"name": "Toronto", "lat": 43.6532, "lng": -79.3832},
-        {"name": "Buenos Aires", "lat": -34.6037, "lng": -58.3816},
-        {"name": "San Francisco", "lat": 37.7749, "lng": -122.4194},
-        
-        # Middle East & Africa
-        {"name": "Dubai", "lat": 25.2048, "lng": 55.2708},
-        {"name": "Cairo", "lat": 30.0444, "lng": 31.2357},
-        {"name": "Marrakech", "lat": 31.6295, "lng": -7.9811},
-        {"name": "Cape Town", "lat": -33.9249, "lng": 18.4241},
-        
-        # Oceania
-        {"name": "Sydney", "lat": -33.8688, "lng": 151.2093},
-        {"name": "Auckland", "lat": -36.8485, "lng": 174.7633},
-    ]
-    
-    # 1. Analysis: Select random city
-    import random
-    location = random.choice(LOCATIONS)
-    
+    # ------------------------------------------------------------------
+    # AGENTIC WORKFLOW
+    # ------------------------------------------------------------------
+    # 1. Agent: Select Target City (AI Generated)
     if redis_client:
-        await redis_client.publish(channel, f"Analyzing request for topic: {topic}...")
-        await redis_client.publish(channel, f"Selected target city: {location['name']}")
+        await redis_client.publish(channel, f"Mission Control: Scouting global targets related to {topic} [Difficulty: {difficulty.upper()}]...")
     await asyncio.sleep(0.5)
-    
-    # 3. Generate riddle using Polyglot AI (this uses Groq/Cohere/Gemini intelligently)
+
+    # 2. Agent: Generate Riddle (Polyglot System + DB Fallback)
     if redis_client:
         await redis_client.publish(channel, "🚀 Invoking Polyglot AI System (Groq + Cohere + Gemini)...")
-    await asyncio.sleep(0.5)
+    await asyncio.sleep(0.3)
     
-    if redis_client:
-        await redis_client.publish(channel, "Generator agent: Crafting cryptic riddle...")
-    
-    # Run polyglot AI generation in executor to avoid blocking
+    # Run in executor to avoid blocking the event loop
     loop = asyncio.get_event_loop()
-    riddle_result = await loop.run_in_executor(None, generate_riddle, location["name"])
+    from polyglot_ai import generate_riddle_with_timeout
     
-    # Extract riddle and stats
+    # This function now handles: Dynamic City, Difficulty, Riddle Gen, Validation, DB Fallback/Save
+    # We pass difficulty to it.
+    riddle_result = await loop.run_in_executor(None, generate_riddle_with_timeout, 15, difficulty)
+    
+    # Extract data
     riddle_text = riddle_result["riddle"]
     stats = riddle_result["stats"]
+    location = riddle_result["location"]
     
+    # Log the result
     if redis_client:
-        await redis_client.publish(
-            channel, 
-            f"Adversary agent: Validating riddle quality using {stats['critic_provider'].upper()}..."
-        )
-    await asyncio.sleep(0.5)
-    
-    # 4. Final Result
-    if redis_client:
-        await redis_client.publish(
-            channel, 
-            f"✅ Riddle generated in {stats['total_time_ms']}ms! (Generator: {stats['generator_provider']}, Critic: {stats['critic_provider']})"
-        )
-    
+        # Check if fallback was used
+        if stats["generator_provider"] in ["supabase_backup", "supabase_cache"]:
+            await redis_client.publish(channel, f"⚠️ Generation slow. Fetched from Secure Vault (Supabase).")
+        else:
+            await redis_client.publish(
+                channel, 
+                f"✅ Target Locked: {location['name']}. Riddle generated in {stats['total_time_ms']}ms!"
+            )
+            await redis_client.publish(
+                channel,
+                f"📊 Stats: Gen={stats['generator_provider']}, Critic={stats['critic_provider']}"
+            )
+
     return {
         "riddle": riddle_text,
         "answer": location["name"],
-        "difficulty": "Medium",
+        "difficulty": difficulty,
         "topic": topic,
-        "location": {
-            "name": location["name"],
-            "lat": location["lat"],
-            "lng": location["lng"]
-        },
-        "provider_stats": stats  # Include performance metrics
+        "location": location,
+        "provider_stats": stats
     }
 
-async def buffer_worker(session_id: str, count: int = 1):
+async def buffer_worker(session_id: str, difficulty: str = "Medium", count: int = 1):
     """
     Background Task:
     Generates 'count' questions and pushes them to the Redis List (Queue).
@@ -183,11 +156,11 @@ async def buffer_worker(session_id: str, count: int = 1):
         print("❌ Worker failed: No Redis connection")
         return
 
-    print(f"⚙️ Background Task: Generating {count} questions for {session_id}")
+    print(f"⚙️ Background Task: Generating {count} questions for {session_id} [{difficulty}]")
     
     for _ in range(count):
         # Generate the content (Slow operation)
-        riddle_data = await mock_agent_generation(session_id)
+        riddle_data = await agent_riddle_generation(session_id, difficulty)
         
         # Serialize and Push to Redis List (Right Push)
         queue_key = f"{QUEUE_PREFIX}:{session_id}"
@@ -199,22 +172,40 @@ async def buffer_worker(session_id: str, count: int = 1):
 # ENDPOINTS
 # ==========================================
 
+
+class StartSessionRequest(BaseModel):
+    difficulty: str = "Medium" # Default if not provided
+
 @app.post("/start_session")
-async def start_session(background_tasks: BackgroundTasks):
+async def start_session(request: Request, background_tasks: BackgroundTasks):
     """
-    Initializes a user session and triggers the 'Cold Start' fill.
-    We immediately start generating BUFFER_SIZE (3) questions.
+    Initializes a user session with a specific difficulty.
     """
+    # Parse body manually or use Pydantic model above if we change signature
+    # But since we used Request before, let's stick to it or switch to Body
+    try:
+        body = await request.json()
+        difficulty = body.get("difficulty", "Medium")
+    except:
+        difficulty = "Medium"
+
     session_id = str(uuid.uuid4())
     
+    # Store session config (difficulty) in Redis so we know what to generate later
+    if redis_client:
+        config_key = f"config:{session_id}"
+        await redis_client.hset(config_key, mapping={"difficulty": difficulty})
+        await redis_client.expire(config_key, 3600) # 1 hour session
+
     # Fire and forget: Fill the buffer immediately
-    background_tasks.add_task(buffer_worker, session_id, BUFFER_SIZE)
+    background_tasks.add_task(buffer_worker, session_id, difficulty, BUFFER_SIZE)
     
     return {
         "session_id": session_id,
         "status": "initializing",
-        "message": "Session started. Agents are pre-fetching content."
+        "message": f"Session started [{difficulty}]. Agents are pre-fetching content."
     }
+
 
 @app.get("/get_question/{session_id}")
 async def get_question(session_id: str, background_tasks: BackgroundTasks):
@@ -251,7 +242,12 @@ async def get_question(session_id: str, background_tasks: BackgroundTasks):
         
         # CRITICAL: Trigger a background refill to ensure the user 
         # doesn't wait for the NEXT question.
-        background_tasks.add_task(buffer_worker, session_id, 1)
+        # Retrieve difficulty from config
+        config_key = f"config:{session_id}"
+        difficulty = await redis_client.hget(config_key, "difficulty")
+        if not difficulty: difficulty = "Medium"
+        
+        background_tasks.add_task(buffer_worker, session_id, difficulty, 1)
         
         return {
             "status": "ready",
@@ -262,7 +258,11 @@ async def get_question(session_id: str, background_tasks: BackgroundTasks):
     else:
         # === CACHE MISS ===
         # The user consumed content faster than we generated, or this is a cold start.
-        background_tasks.add_task(buffer_worker, session_id, 1)
+        config_key = f"config:{session_id}"
+        difficulty = await redis_client.hget(config_key, "difficulty")
+        if not difficulty: difficulty = "Medium"
+        
+        background_tasks.add_task(buffer_worker, session_id, difficulty, 1)
         
         return JSONResponse(
             status_code=status.HTTP_202_ACCEPTED,

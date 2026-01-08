@@ -28,6 +28,9 @@ const rajdhani = Rajdhani({
 export const metadata: Metadata = {
     title: 'Operation AtLast',
     description: 'A cyberpunk-style global intelligence game powered by Gemini AI',
+    icons: {
+        icon: '/SVG/logoicon.svg',
+    },
 };
 
 export default function RootLayout({

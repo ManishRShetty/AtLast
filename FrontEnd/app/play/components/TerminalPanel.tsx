@@ -33,9 +33,10 @@ const Typewriter = ({ text, delay = 30, onComplete }: { text: string; delay?: nu
 interface TerminalPanelProps {
     logs: LogEntry[];
     className?: string; // Allow custom classNames for positioning/size overrides if needed
+    variant?: 'sidebar' | 'standalone';
 }
 
-const TerminalPanel: React.FC<TerminalPanelProps> = ({ logs, className }) => {
+const TerminalPanel: React.FC<TerminalPanelProps> = ({ logs, className, variant = 'sidebar' }) => {
     const bottomRef = useRef<HTMLDivElement>(null);
 
     // Auto-scroll to bottom
@@ -45,9 +46,15 @@ const TerminalPanel: React.FC<TerminalPanelProps> = ({ logs, className }) => {
         }
     }, [logs]);
 
+    const baseClasses = "flex flex-col relative z-10 box-border";
+    const sidebarClasses = "w-[30%] min-w-[350px] max-w-[500px] border-r border-[#233348] shadow-2xl bg-terminal-bg";
+    const standaloneClasses = "w-full h-full border border-[#233348] rounded-xl bg-[#0B1016]/95 backdrop-blur-md";
+
+    const variantClasses = variant === 'sidebar' ? sidebarClasses : standaloneClasses;
+
     return (
-        <aside className={`w-[30%] min-w-[350px] max-w-[500px] flex flex-col border-r border-[#233348] bg-terminal-bg relative z-10 shadow-2xl ${className || ''}`}>
-            <div className="px-5 py-3 border-b border-[#233348] flex justify-between items-center bg-[#0d1219]">
+        <aside className={`${baseClasses} ${variantClasses} ${className || ''}`}>
+            <div className={`px-5 py-3 border-b border-[#233348] flex justify-between items-center ${variant === 'standalone' ? 'bg-transparent' : 'bg-[#0d1219]'}`}>
                 <div className="flex items-center gap-2">
                     <Terminal size={14} className="text-primary" />
                     <h3 className="text-xs font-bold tracking-widest text-primary uppercase">Decryption Stream // OMEGA-7</h3>
@@ -58,7 +65,7 @@ const TerminalPanel: React.FC<TerminalPanelProps> = ({ logs, className }) => {
                     <div className="w-2 h-2 rounded-full bg-slate-600"></div>
                 </div>
             </div>
-            <div className="flex-1 p-5 overflow-y-auto font-mono text-sm leading-relaxed text-slate-300 bg-scanlines bg-[length:100%_4px]">
+            <div className="flex-1 p-5 overflow-y-auto font-mono text-sm leading-relaxed text-slate-300 bg-scanlines bg-[length:100%_4px] scrollbar-hidden">
                 {logs.map((log) => (
                     <div key={log.id} className="mb-2 break-words">
                         {log.type === 'command' && (
@@ -100,7 +107,7 @@ const TerminalPanel: React.FC<TerminalPanelProps> = ({ logs, className }) => {
 
                 <div ref={bottomRef} />
             </div>
-            <div className="p-3 border-t border-[#233348] bg-[#0d1219]">
+            <div className={`p-3 border-t border-[#233348] ${variant === 'standalone' ? 'bg-transparent' : 'bg-[#0d1219]'}`}>
                 <div className="flex items-center gap-2 bg-background-dark border border-[#233348] rounded px-3 py-2">
                     <span className="text-primary text-xs">&gt;</span>
                     <div className="h-4 w-32 bg-primary/20 rounded animate-pulse"></div>

@@ -8,7 +8,7 @@ import { Settings, Cpu } from 'lucide-react';
 
 const Navbar = () => {
     const pathname = usePathname();
-    const isLoginPage = pathname === '/' || pathname === '/login'; // Adjust based on actual login route if different
+    const isLoginPage = pathname === '/' || pathname === '/login' || pathname === '/breach';
 
     if (isLoginPage) return null;
 

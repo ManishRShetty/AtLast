@@ -38,6 +38,13 @@ export interface RiddleData {
     lat: number;
     lng: number;
   };
+  provider_stats?: {
+    generator_provider: string;
+    critic_provider: string;
+    total_time_ms: number;
+    iterations: number;
+    accepted: boolean;
+  };
 }
 
 export interface QuestionResponse {
