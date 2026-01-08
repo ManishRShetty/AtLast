@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Skull } from 'lucide-react';
 
 const SecurityLayer = () => {
@@ -21,10 +21,10 @@ const SecurityLayer = () => {
             return () => clearTimeout(timer);
         };
 
-        const handleKeyDown = (e: KeyboardEvent) => {
-            // Prevent some common debug shortcuts if desired, mainly just right click requested though.
-            // Keeping it simple to just right click as requested.
-        };
+        // const handleKeyDown = (e: KeyboardEvent) => {
+        //     // Prevent some common debug shortcuts if desired, mainly just right click requested though.
+        //     // Keeping it simple to just right click as requested.
+        // };
 
         window.addEventListener('contextmenu', handleContextMenu);
 

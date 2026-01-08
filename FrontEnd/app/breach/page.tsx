@@ -1,12 +1,37 @@
 'use client';
 
-import React from 'react';
-import Link from 'next/link';
-import { Radar, AlertTriangle, Settings, Unlock, WifiOff, Cpu, ShieldAlert, Lock } from 'lucide-react';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { Unlock, WifiOff, Cpu, ShieldAlert, Lock } from 'lucide-react';
+import AgentRegistrationModal from '@/components/AgentRegistrationModal';
 
 const BreachPage = () => {
+    const router = useRouter();
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleInitiateProtocol = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleModalComplete = (agentName: string) => {
+        // Save user name securely (simulated here with localStorage)
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('atlast_agent_name', agentName);
+        }
+        setIsModalOpen(false);
+        router.push('/intro');
+    };
+
     return (
-        <div className="bg-background-light dark:bg-background-dark text-white font-display overflow-hidden min-h-screen w-screen flex flex-col">
+        <div className="bg-background-light dark:bg-background-dark text-white font-display overflow-y-auto h-screen w-full flex flex-col">
+            {/* Modal */}
+            <AgentRegistrationModal
+                isOpen={isModalOpen}
+                onComplete={handleModalComplete}
+                onCancel={() => setIsModalOpen(false)}
+            />
+
             {/* Effects */}
             <div className="absolute inset-0 z-50 pointer-events-none scanlines opacity-30"></div>
             <div className="absolute inset-0 z-40 pointer-events-none vignette"></div>
@@ -48,7 +73,7 @@ const BreachPage = () => {
                             Atlast
                         </h1>
                         <p className="text-[#92a9c9] text-sm md:text-base font-mono tracking-[0.2em] uppercase">
-                            Origin Unknown // Decrypting Transmission...
+                            Currently in Development // Only UI Demonstartion // u.0.0.1
                         </p>
                     </div>
                     <div className="relative w-full h-64 md:h-80 bg-black/40 border-y border-[#324867] flex items-center justify-center overflow-hidden backdrop-blur-sm group">
@@ -77,13 +102,16 @@ const BreachPage = () => {
                                 <span>Time: Unknown</span>
                             </div>
                         </div>
-                        <Link href="/intro" className="group relative overflow-hidden rounded-lg bg-primary hover:bg-primary/90 text-white font-bold py-4 px-12 transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_rgba(19,109,236,0.4)] border border-primary/50">
+                        <button
+                            onClick={handleInitiateProtocol}
+                            className="group relative overflow-hidden rounded-lg bg-primary hover:bg-primary/90 text-white font-bold py-4 px-12 transition-all duration-300 transform hover:scale-105 shadow-[0_0_20px_rgba(19,109,236,0.4)] border border-primary/50 w-full"
+                        >
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-                            <span className="relative z-10 flex items-center gap-3 tracking-widest text-lg">
+                            <span className="relative z-10 flex items-center justify-center gap-3 tracking-widest text-lg">
                                 <Unlock />
                                 INITIATE PROTOCOL
                             </span>
-                        </Link>
+                        </button>
                     </div>
                 </div>
 

@@ -5,7 +5,7 @@ export interface TargetLocation {
   lng: number;
 }
 
-export type GameState = 'IDLE' | 'BRIEFING' | 'ANSWERING' | 'REVEALED' | 'RESOLVED';
+export type GameState = 'IDLE' | 'BRIEFING' | 'ANSWERING' | 'REVEALED' | 'RESOLVED' | 'SEARCHING';
 
 export interface LogMessage {
   id: string;

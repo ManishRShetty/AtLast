@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Radar, Settings, ShieldAlert, Cpu } from 'lucide-react';
+import { Settings, Cpu } from 'lucide-react';
+
+import Image from 'next/image';
 
 const Navbar = () => {
     const pathname = usePathname();
@@ -12,11 +13,16 @@ const Navbar = () => {
     if (isLoginPage) return null;
 
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between border-b border-[#233348]/50 bg-[#111822]/80 backdrop-blur-md px-6 py-3 w-full">
+        <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between border-b border-[#233348]/50 bg-[#111822]/80 backdrop-blur-md px-6 py-3 w-full font-display">
             <div className="flex items-center gap-4">
                 <Link href="/" className="flex items-center gap-2 group">
-                    <div className="size-6 text-primary group-hover:text-primary/80 transition-colors">
-                        <Radar />
+                    <div className="relative size-8 transition-transform group-hover:scale-105">
+                        <Image
+                            src="/SVG/logoiconwhite.svg"
+                            alt="AtLast Logo"
+                            fill
+                            className="object-contain"
+                        />
                     </div>
                     <h2 className="text-white text-lg font-bold tracking-widest uppercase group-hover:text-white/80 transition-colors">
                         AtLast: Protocol Omega

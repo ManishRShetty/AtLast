@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { GameState } from '../types';
-import { Target, Lock, Loader2 } from 'lucide-react';
+import { Target, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface MissionHUDProps {

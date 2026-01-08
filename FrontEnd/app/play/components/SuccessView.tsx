@@ -39,11 +39,11 @@ const SuccessView: React.FC<SuccessViewProps> = ({ resetGame }) => {
                         <div className="absolute inset-0 bg-gradient-to-b from-background-dark/30 via-transparent to-background-dark z-10 pointer-events-none"></div>
                         <img alt="Dark satellite view of Earth from space showing city lights and continents" className="w-full h-full object-cover grayscale contrast-125 brightness-75 scale-[2] origin-[35%_75%] transition-transform duration-[2000ms] ease-out" src="/bg-earth.jpg" />
                     </div>
-                    <div className="absolute inset-0 z-30 flex flex-col items-center justify-end pb-48 pointer-events-none">
-                        <div className="relative flex flex-col items-center animate-[bounce_1s_infinite]">
+                    <div className="absolute inset-0 z-30 flex flex-col items-center justify-end pb-16 pointer-events-none">
+                        <div className="relative flex flex-col items-center">
                             <div className="bg-emerald-600/90 backdrop-blur-md border-y-4 border-emerald-400 text-white shadow-[0_0_60px_rgba(16,185,129,0.6)] transform -skew-x-12">
                                 <div className="px-20 py-6 transform skew-x-12">
-                                    <h1 className="text-6xl font-black tracking-[0.2em] drop-shadow-lg">NEUTRALIZED</h1>
+                                    <h1 className="text-6xl font-black tracking-[0.2em] drop-shadow-lg animate-glitch">NEUTRALIZED</h1>
                                 </div>
                             </div>
                             <div className="mt-6 flex items-center gap-2 bg-black/60 backdrop-blur border border-emerald-500/50 rounded-full px-6 py-2">
@@ -99,6 +99,42 @@ const SuccessView: React.FC<SuccessViewProps> = ({ resetGame }) => {
             {/* Footer */}
             <div className="fixed inset-0 pointer-events-none z-50 mix-blend-overlay opacity-10 bg-[url('/carbon-fibre.png')]"></div>
             <div className="fixed bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-transparent via-emerald-500/80 to-transparent z-50 animate-pulse"></div>
+
+            <style jsx global>{`
+                @keyframes glitch-skew {
+                    0% { transform: skew(0deg); }
+                    20% { transform: skew(-2deg); }
+                    40% { transform: skew(2deg); }
+                    60% { transform: skew(-1deg); }
+                    80% { transform: skew(1deg); }
+                    100% { transform: skew(0deg); }
+                }
+                @keyframes glitch-anim {
+                    0% { 
+                        text-shadow: 2px 2px #10b981, -2px -2px #34d399;
+                        transform: translate(0);
+                    }
+                    25% { 
+                        text-shadow: -2px 2px #10b981, 2px -2px #34d399;
+                        transform: translate(-1px, 1px);
+                    }
+                    50% { 
+                        text-shadow: 2px -2px #10b981, -2px 2px #34d399;
+                        transform: translate(1px, -1px);
+                    }
+                    75% { 
+                        text-shadow: -2px -2px #10b981, 2px 2px #34d399;
+                        transform: translate(-1px, -1px);
+                    }
+                    100% { 
+                        text-shadow: 2px 2px #10b981, -2px -2px #34d399;
+                        transform: translate(0);
+                    }
+                }
+                .animate-glitch {
+                    animation: glitch-anim 2s cubic-bezier(.25, .46, .45, .94) both infinite;
+                }
+            `}</style>
         </div>
     );
 };

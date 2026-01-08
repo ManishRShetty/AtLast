@@ -171,7 +171,7 @@ const PlayView: React.FC<PlayViewProps> = ({ handleSend, timeRemaining, isGameSt
                                     <div className="absolute left-0 right-0 h-[1px] bg-primary/30"></div>
                                 </div>
                             </div>
-                            <div className="mt-auto p-8 pb-32 flex justify-center w-full relative z-30">
+                            <div className="mt-auto p-8 pb-12 flex justify-center w-full relative z-30">
                                 <div className="w-full max-w-3xl relative group">
                                     {/* Glow Effect */}
                                     <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 rounded-xl opacity-20 group-hover:opacity-40 transition duration-500 blur-md"></div>
