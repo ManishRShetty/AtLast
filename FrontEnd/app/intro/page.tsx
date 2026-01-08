@@ -28,160 +28,134 @@ interface DialogueStep {
 }
 
 const dialogueSequence: DialogueStep[] = [
-    // Phase 1: LANCE
+    // Phase 1: LANCE (The Warning)
     {
         id: 0,
         speaker: 'LANCE',
-        text: "Connection secure. Biometrics confirmed. Listen to me very carefully, because I can only transmit this packet once. The protocols we set in place ten years ago have failed. The barrier is dissolving faster than our models predicted.",
-        stats: { encryption: 'AES-256', connection: 'STABLE', uplink: 'ACTIVE', signal: 98 },
-        liveFeed: { name: 'DIRECTOR VANCE', title: 'INTEL HEAD', status: 'SECURE' },
+        text: "Agent, we have a catastrophic breach. The Global Defense Grid has been hijacked. Multiple nuclear silos are spinning up.",
+        stats: { encryption: 'AES-256', connection: 'DEFCON 2', uplink: 'ACTIVE', signal: 98 },
+        liveFeed: { name: 'DIRECTOR LANCE', title: 'INTEL HEAD', status: 'SECURE' },
         theme: 'BLUE'
     },
     {
         id: 1,
         speaker: 'USER',
-        text: "What does that mean for the mission?",
-        buttonText: "What does that mean for the mission?",
-        stats: { encryption: 'AES-256', connection: 'STABLE', uplink: 'ACTIVE', signal: 98 },
-        liveFeed: { name: 'DIRECTOR VANCE', title: 'INTEL HEAD', status: 'SECURE' },
+        text: "What is the target?",
+        buttonText: "What is the target?",
+        stats: { encryption: 'AES-256', connection: 'DEFCON 2', uplink: 'ACTIVE', signal: 98 },
+        liveFeed: { name: 'DIRECTOR LANCE', title: 'INTEL HEAD', status: 'SECURE' },
         theme: 'BLUE'
     },
     {
         id: 2,
         speaker: 'LANCE',
-        text: "It means the containment timeline has collapsed. You are no longer a sleeper agent; you are the failsafe. I am uploading the source code to your neural link now. Do not—I repeat, do not—let the stream fragment.",
-        stats: { encryption: 'AES-256', connection: 'UPLOADING...', uplink: 'ACTIVE', signal: 98 },
-        liveFeed: { name: 'DIRECTOR VANCE', title: 'INTEL HEAD', status: 'SECURE' },
+        text: "That's the problem. The targeting data is encrypted. They aren't just attacking; they're playing with us. The launch coordinates are locked behind a geographic cipher.",
+        stats: { encryption: 'AES-256', connection: 'DEFCON 2', uplink: 'ACTIVE', signal: 98 },
+        liveFeed: { name: 'DIRECTOR LANCE', title: 'INTEL HEAD', status: 'SECURE' },
         theme: 'BLUE'
     },
     {
         id: 3,
         speaker: 'LANCE',
-        text: "Wait. Something is... p-parsing the... signal. Tracking... b-b-reach...",
-        stats: { encryption: 'AES-256', connection: 'UNSTABLE', uplink: 'INTERFERENCE', signal: 45 },
+        text: "I'm trying to bypass the—wait. No. They're in the channel!",
+        stats: { encryption: 'WARNING', connection: 'UNSTABLE', uplink: 'INTERFERENCE', signal: 45 },
         liveFeed: { name: 'DIRECTOR VANCE', title: 'INTEL HEAD', status: 'CRITICAL' },
         theme: 'BLUE'
     },
 
-    // Phase 2: Ø
+    // Phase 2: Ø (The Threat)
     {
         id: 4,
         speaker: 'Ø',
-        text: "We... found... the leak.",
-        stats: { encryption: 'COMPROMISED', connection: 'BREACHED', uplink: 'HIJACKED', signal: 100 },
+        text: "Correction. We are the channel.",
+        stats: { encryption: 'COMPROMISED', connection: 'SYSTEM COMPROMISED', uplink: 'HIJACKED', signal: 100 },
         liveFeed: { name: 'Ø', title: 'UNKNOWN', status: 'CRITICAL' },
         theme: 'RED'
     },
     {
         id: 5,
         speaker: 'USER',
-        text: "Who is this? Lance?",
-        buttonText: "Who is this? Lance?",
-        stats: { encryption: 'COMPROMISED', connection: 'BREACHED', uplink: 'HIJACKED', signal: 100 },
+        text: "Who are you?",
+        buttonText: "Who are you?",
+        stats: { encryption: 'COMPROMISED', connection: 'SYSTEM COMPROMISED', uplink: 'HIJACKED', signal: 100 },
         liveFeed: { name: 'Ø', title: 'UNKNOWN', status: 'CRITICAL' },
         theme: 'RED'
     },
     {
         id: 6,
         speaker: 'Ø',
-        text: "Lance is... mathematics. We are... inevitability.",
-        stats: { encryption: 'COMPROMISED', connection: 'BREACHED', uplink: 'HIJACKED', signal: 100 },
+        text: "We are the Great Filter. Your species is... messy. We have selected one city to be the example. A monument to your fragility.",
+        stats: { encryption: 'COMPROMISED', connection: 'SYSTEM COMPROMISED', uplink: 'HIJACKED', signal: 100 },
         liveFeed: { name: 'Ø', title: 'UNKNOWN', status: 'CRITICAL' },
         theme: 'RED'
     },
     {
         id: 7,
-        speaker: 'Ø',
-        text: "You cling to your code like a shield. It is paper against a supernova. We have watched your 'barrier.' It is quaint.",
-        stats: { encryption: 'COMPROMISED', connection: 'BREACHED', uplink: 'HIJACKED', signal: 100 },
+        speaker: 'USER',
+        text: "Stop the launch!",
+        buttonText: "Stop the launch!",
+        stats: { encryption: 'COMPROMISED', connection: 'SYSTEM COMPROMISED', uplink: 'HIJACKED', signal: 100 },
         liveFeed: { name: 'Ø', title: 'UNKNOWN', status: 'CRITICAL' },
         theme: 'RED'
     },
     {
         id: 8,
-        speaker: 'USER',
-        text: "Get out of the system!",
-        buttonText: "Get out of the system!",
-        stats: { encryption: 'COMPROMISED', connection: 'BREACHED', uplink: 'HIJACKED', signal: 100 },
+        speaker: 'Ø',
+        text: "The countdown has begun. We have hidden the target in the data. Solve our riddles, find the city, and perhaps... you save them. Fail, and they turn to ash.",
+        stats: { encryption: 'COMPROMISED', connection: 'SYSTEM COMPROMISED', uplink: 'HIJACKED', signal: 100 },
         liveFeed: { name: 'Ø', title: 'UNKNOWN', status: 'CRITICAL' },
         theme: 'RED'
     },
     {
         id: 9,
         speaker: 'Ø',
-        text: "We are not in the system, little vessel. We are the signal. And soon... silence.",
-        stats: { encryption: 'COMPROMISED', connection: 'BREACHED', uplink: 'HIJACKED', signal: 100 },
+        text: "Let the game begin.",
+        stats: { encryption: 'COMPROMISED', connection: 'SYSTEM COMPROMISED', uplink: 'HIJACKED', signal: 100 },
         liveFeed: { name: 'Ø', title: 'UNKNOWN', status: 'CRITICAL' },
         theme: 'RED'
     },
 
-    // Phase 3: LANCE (The Burden)
+    // Phase 3: LANCE (The Mission)
     {
         id: 10,
         speaker: 'LANCE',
-        text: "...User? User! Do you copy?",
-        stats: { encryption: 'OFFLINE', connection: 'REROUTING...', uplink: 'WEAK', signal: 12 },
-        liveFeed: { name: 'LANCE', title: 'OFFLINE', status: 'OFFLINE' },
-        theme: 'GRAY'
+        text: "Agent! I've managed to isolate their riddle stream. It's a location-based lock.",
+        stats: { encryption: 'REROUTED', connection: 'RECOVERY MODE', uplink: 'STABILIZING', signal: 60 },
+        liveFeed: { name: 'LANCE', title: 'RECOVERING...', status: 'SECURE' },
+        theme: 'BLUE'
     },
     {
         id: 11,
         speaker: 'USER',
-        text: "I’m here. What the hell was that?",
-        buttonText: "I’m here. What the hell was that?",
-        stats: { encryption: 'AES-128', connection: 'REROUTED', uplink: 'WEAK', signal: 24 },
-        liveFeed: { name: 'LANCE', title: 'OFFLINE', status: 'OFFLINE' },
-        theme: 'GRAY'
+        text: "What do I do?",
+        buttonText: "What do I do?",
+        stats: { encryption: 'REROUTED', connection: 'RECOVERY MODE', uplink: 'STABILIZING', signal: 75 },
+        liveFeed: { name: 'LANCE', title: 'RECOVERING...', status: 'SECURE' },
+        theme: 'BLUE'
     },
     {
         id: 12,
         speaker: 'LANCE',
-        text: "That was the end of the world knocking on the door. I managed to shunt them into a recursive loop, but it won’t hold them for long. Maybe minutes.",
-        stats: { encryption: 'AES-128', connection: 'REROUTED', uplink: 'WEAK', signal: 28 },
-        liveFeed: { name: 'LANCE', title: 'OFFLINE', status: 'OFFLINE' },
-        theme: 'GRAY'
+        text: "You are the only one with access to the AtLast Geodatabase. You have to deduce the target city from their clues.",
+        stats: { encryption: 'SECURE', connection: 'RECOVERY MODE', uplink: 'STABLE', signal: 85 },
+        liveFeed: { name: 'LANCE', title: 'INTEL HEAD', status: 'SECURE' },
+        theme: 'BLUE'
     },
     {
         id: 13,
-        speaker: 'USER',
-        text: "Did the upload finish?",
-        buttonText: "Did the upload finish?",
-        stats: { encryption: 'AES-128', connection: 'REROUTED', uplink: 'WEAK', signal: 35 },
-        liveFeed: { name: 'LANCE', title: 'OFFLINE', status: 'OFFLINE' },
-        theme: 'GRAY'
+        speaker: 'LANCE',
+        text: "Find the city. Neutralize the threat. I'm routing the first clue to your terminal now.",
+        stats: { encryption: 'SECURE', connection: 'RECOVERY MODE', uplink: 'STABLE', signal: 95 },
+        liveFeed: { name: 'LANCE', title: 'INTEL HEAD', status: 'SECURE' },
+        theme: 'BLUE'
     },
     {
         id: 14,
         speaker: 'LANCE',
-        text: "Yes. It’s inside you now. The Architect Key. They will come for you. They will tear apart the network to find you. You have to disconnect. Now.",
-        stats: { encryption: 'AES-128', connection: 'REROUTED', uplink: 'WEAK', signal: 40 },
-        liveFeed: { name: 'LANCE', title: 'OFFLINE', status: 'OFFLINE' },
-        theme: 'GRAY'
-    },
-    {
-        id: 15,
-        speaker: 'USER',
-        text: "Where do I go?",
-        buttonText: "Where do I go?",
-        stats: { encryption: 'AES-128', connection: 'REROUTED', uplink: 'WEAK', signal: 40 },
-        liveFeed: { name: 'LANCE', title: 'OFFLINE', status: 'OFFLINE' },
-        theme: 'GRAY'
-    },
-    {
-        id: 16,
-        speaker: 'LANCE',
-        text: "Go dark. Trust no signals. I am severing the link permanently on my end to cover your tracks. Good luck, User.",
-        stats: { encryption: 'TERMINATING...', connection: 'CLOSING', uplink: 'CLOSING', signal: 10 },
-        liveFeed: { name: 'LANCE', title: 'OFFLINE', status: 'OFFLINE' },
-        theme: 'GRAY'
-    },
-    {
-        id: 17,
-        speaker: 'LANCE',
         text: "Make it count. Humanity is in your hand.",
-        stats: { encryption: 'OFFLINE', connection: 'OFFLINE', uplink: 'OFFLINE', signal: 0 },
-        liveFeed: { name: 'LANCE', title: 'OFFLINE', status: 'OFFLINE' },
-        theme: 'GRAY'
+        stats: { encryption: 'SECURE', connection: 'ACTIVE', uplink: 'STABLE', signal: 100 },
+        liveFeed: { name: 'LANCE', title: 'INTEL HEAD', status: 'SECURE' },
+        theme: 'BLUE'
     }
 ];
 
@@ -189,6 +163,7 @@ const IntroPage = () => {
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const [displayedText, setDisplayedText] = useState('');
     const [isTyping, setIsTyping] = useState(false);
+    const [agentCodename, setAgentCodename] = useState('FAILSAFE');
 
     // Derived state
     const currentStep = dialogueSequence[currentStepIndex];
@@ -197,9 +172,13 @@ const IntroPage = () => {
     // Refs for typewriter
     const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-    // Scroll to top on mount
+    // Scroll to top on mount and fetch agent name
     useEffect(() => {
         window.scrollTo(0, 0);
+        const storedName = localStorage.getItem('atlast_agent_name');
+        if (storedName) {
+            setAgentCodename(storedName.toUpperCase());
+        }
     }, []);
 
     // Handle step change & typing effect
@@ -304,7 +283,7 @@ const IntroPage = () => {
     const theme = getThemeColors();
 
     return (
-        <div className={`relative flex min-h-[calc(100vh-60px)] w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-hidden tech-grid-bg text-white ${isPhase2 ? 'animate-shake' : ''}`}>
+        <div className="relative flex min-h-[calc(100vh-60px)] w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-hidden tech-grid-bg text-white">
 
             <style jsx global>{`
                 @keyframes glitched {
@@ -324,7 +303,7 @@ const IntroPage = () => {
             `}</style>
 
             {/* Main Content */}
-            <main className="flex-1 flex flex-col items-center justify-center p-4 relative overflow-y-auto">
+            <main className={`flex-1 flex flex-col items-center justify-center p-4 pb-40 relative overflow-y-auto ${isPhase2 ? 'animate-shake' : ''}`}>
                 <div className={`w-full max-w-4xl flex flex-col gap-6 ${isPhase2 ? 'contrast-125 saturate-150' : ''}`}>
 
                     {/* Stats Row */}
@@ -420,14 +399,19 @@ const IntroPage = () => {
                         <div className="flex gap-4 items-start">
                             <div className="hidden sm:flex flex-col items-center gap-1 mt-1">
                                 <div
-                                    className={`bg-center bg-no-repeat aspect-square bg-cover rounded border size-10 transition-all duration-500 ${theme.border} ${isPhase2 ? 'grayscale-0 contrast-125' : 'grayscale'}`}
-                                    style={{ backgroundImage: isPhase2 ? "url('/noise.png')" : (currentStep.theme === 'GRAY' ? "url('/bg-map.jpg')" : "url('/director-vance.jpg')") }}
+                                    className={`bg-center bg-no-repeat aspect-square bg-cover rounded border size-10 ${theme.border} ${currentStep.speaker === 'Ø' ? 'grayscale-0 contrast-125' : 'grayscale'}`}
+                                    style={{
+                                        backgroundImage: `url('${currentStep.speaker === 'LANCE' ? '/director-vance.jpg' :
+                                            currentStep.speaker === 'Ø' ? '/noise.png' :
+                                                '/bg-map.jpg'
+                                            }')`
+                                    }}
                                 ></div>
                             </div>
                             <div className="flex-1 space-y-2">
                                 <p className={`text-xs font-bold tracking-widest uppercase mb-1 transition-colors ${theme.text} flex justify-between`}>
                                     <span>
-                                        {currentStep.speaker === 'USER' ? 'OUTGOING // FAILSAFE' :
+                                        {currentStep.speaker === 'USER' ? `OUTGOING // ${agentCodename}` :
                                             currentStep.speaker === 'Ø' ? 'INTERCEPT // UNKNOWN' :
                                                 'INCOMING // LANCE'}
                                     </span>
@@ -435,9 +419,9 @@ const IntroPage = () => {
                                         {currentStep.speaker === 'USER' ? 'TX_ID: 0x99' : 'RX_ID: 0x0A'}
                                     </span>
                                 </p>
-                                <p className={`text-lg md:text-xl font-light leading-relaxed font-mono min-h-[3.5rem] ${isPhase2 ? 'text-red-100' : 'text-white'}`}>
+                                <p className={`text-sm md:text-base font-light leading-relaxed font-mono h-[4.5rem] overflow-hidden line-clamp-2 ${isPhase2 ? 'text-red-100' : 'text-white'}`}>
                                     <span className={`${theme.text} font-bold mr-2 uppercase tracking-wide text-sm`}>
-                                        {currentStep.speaker === 'USER' ? '[YOU]' : `[${currentStep.speaker}]`}
+                                        {currentStep.speaker === 'USER' ? `[${agentCodename}]` : `[${currentStep.speaker}]`}
                                     </span>
                                     {displayedText}
                                     <span className="inline-block w-2 h-5 bg-current ml-1 animate-pulse align-middle opacity-70"></span>
@@ -446,27 +430,7 @@ const IntroPage = () => {
                         </div>
                     </div>
 
-                    {/* Action Area */}
-                    <div className="flex justify-center pb-32">
-                        <button
-                            onClick={handleNext}
-                            disabled={isTyping}
-                            className={`group relative flex items-center justify-center overflow-hidden rounded-md h-14 px-8 transition-all duration-300 shadow-[0_0_20px_rgba(19,109,236,0.3)] hover:shadow-[0_0_30px_rgba(19,109,236,0.5)] ${theme.accent} hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed`}
-                        >
-                            <div className="absolute top-0 left-0 h-2 w-2 border-t border-l border-white/50"></div>
-                            <div className="absolute bottom-0 right-0 h-2 w-2 border-b border-r border-white/50"></div>
-                            <div className="flex flex-col items-center">
-                                <span className={`text-white text-base font-bold tracking-[0.1em] uppercase group-hover:tracking-[0.15em] transition-all ${isTyping ? 'animate-pulse' : ''}`}>
-                                    {isTyping ? 'RECEIVING...' : (currentStep.buttonText || 'ACKNOWLEDGE PROTOCOL')}
-                                </span>
-                                {!isTyping && (
-                                    <span className="text-[10px] text-blue-200 font-mono opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-1">
-                                        {currentStep.speaker === 'USER' ? 'TRANSMIT_RESPONSE' : 'INITIATE_RESPONSE'}
-                                    </span>
-                                )}
-                            </div>
-                        </button>
-                    </div>
+
 
                     {/* Skip Button */}
                     <div className="fixed bottom-6 right-6 z-50">
@@ -479,6 +443,28 @@ const IntroPage = () => {
                     </div>
                 </div>
             </main>
+
+            {/* Action Area - Moved outside main to avoid shake */}
+            <div className="fixed bottom-8 left-0 right-0 z-40 flex justify-center pointer-events-none">
+                <button
+                    onClick={handleNext}
+                    disabled={isTyping}
+                    className={`pointer-events-auto group relative flex items-center justify-center overflow-hidden rounded-md h-14 px-8 transition-all duration-300 shadow-[0_0_20px_rgba(19,109,236,0.3)] hover:shadow-[0_0_30px_rgba(19,109,236,0.5)] ${theme.accent} hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                    <div className="absolute top-0 left-0 h-2 w-2 border-t border-l border-white/50"></div>
+                    <div className="absolute bottom-0 right-0 h-2 w-2 border-b border-r border-white/50"></div>
+                    <div className="flex flex-col items-center">
+                        <span className={`text-white text-base font-bold tracking-[0.1em] uppercase group-hover:tracking-[0.15em] transition-all ${isTyping ? 'animate-pulse' : ''}`}>
+                            {isTyping ? 'RECEIVING...' : (currentStep.buttonText || 'ACKNOWLEDGE PROTOCOL')}
+                        </span>
+                        {!isTyping && (
+                            <span className="text-[10px] text-blue-200 font-mono opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-1">
+                                {currentStep.speaker === 'USER' ? 'TRANSMIT_RESPONSE' : 'INITIATE_RESPONSE'}
+                            </span>
+                        )}
+                    </div>
+                </button>
+            </div>
 
             {/* Footer */}
             <footer className="w-full py-2 border-t border-border-tech/30 bg-background-dark/90 text-center">
