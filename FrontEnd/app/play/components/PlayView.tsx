@@ -45,6 +45,12 @@ const PlayView: React.FC<PlayViewProps> = ({ handleSend, timeRemaining, isGameSt
         if (!isCorrect) {
             setIsError(true);
             setShowTryAgain(true);
+
+            // Play Error Sound
+            const errorAudio = new Audio('/audio/error.mp3');
+            errorAudio.volume = 0.5;
+            errorAudio.play().catch(() => { /* Ignore autoplay errors */ });
+
             setTimeout(() => {
                 setIsError(false);
                 setShowTryAgain(false);

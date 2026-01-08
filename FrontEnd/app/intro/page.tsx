@@ -172,14 +172,26 @@ const IntroPage = () => {
 
     // Refs for typewriter
     const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+    const typingAudioRef = useRef<HTMLAudioElement | null>(null);
 
     const [frequency, setFrequency] = useState('142.885');
 
     useEffect(() => {
+        // Initialize Audio
+        typingAudioRef.current = new Audio('/audio/typing.mp3');
+        typingAudioRef.current.loop = true;
+        typingAudioRef.current.volume = 0.2; // Low volume background noise
+
         const interval = setInterval(() => {
             setFrequency((142.800 + Math.random() * 0.199).toFixed(3));
         }, 150);
-        return () => clearInterval(interval);
+        return () => {
+            clearInterval(interval);
+            if (typingAudioRef.current) {
+                typingAudioRef.current.pause();
+                typingAudioRef.current = null;
+            }
+        };
     }, []);
 
     // Scroll to top on mount and fetch agent name
@@ -203,6 +215,12 @@ const IntroPage = () => {
         setDisplayedText('');
         setIsTyping(true);
 
+        // Start Audio
+        if (typingAudioRef.current) {
+            typingAudioRef.current.currentTime = 0;
+            typingAudioRef.current.play().catch(() => { });
+        }
+
         const fullText = currentStep.text;
         let charIndex = 0;
 
@@ -219,12 +237,20 @@ const IntroPage = () => {
                 if (typingIntervalRef.current) {
                     clearInterval(typingIntervalRef.current);
                 }
+                // Stop Audio
+                if (typingAudioRef.current) {
+                    typingAudioRef.current.pause();
+                }
             }
         }, speed);
 
         return () => {
             if (typingIntervalRef.current) {
                 clearInterval(typingIntervalRef.current);
+            }
+            // Stop Audio on cleanup
+            if (typingAudioRef.current) {
+                typingAudioRef.current.pause();
             }
         };
     }, [currentStepIndex]);
@@ -245,6 +271,9 @@ const IntroPage = () => {
         if (isTyping) {
             if (typingIntervalRef.current) {
                 clearInterval(typingIntervalRef.current);
+            }
+            if (typingAudioRef.current) {
+                typingAudioRef.current.pause();
             }
             setDisplayedText(currentStep.text);
             setIsTyping(false);
