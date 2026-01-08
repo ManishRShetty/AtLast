@@ -403,7 +403,7 @@ const IntroPage = () => {
                                     style={{
                                         backgroundImage: `url('${currentStep.speaker === 'LANCE' ? '/director-vance.jpg' :
                                             currentStep.speaker === 'Ø' ? '/noise.png' :
-                                                '/bg-map.jpg'
+                                                '/bg-map.png'
                                             }')`
                                     }}
                                 ></div>
@@ -449,20 +449,25 @@ const IntroPage = () => {
                 <button
                     onClick={handleNext}
                     disabled={isTyping}
-                    className={`pointer-events-auto group relative flex items-center justify-center overflow-hidden rounded-md h-14 px-8 transition-all duration-300 shadow-[0_0_20px_rgba(19,109,236,0.3)] hover:shadow-[0_0_30px_rgba(19,109,236,0.5)] ${theme.accent} hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed`}
+                    className={`pointer-events-auto relative overflow-hidden rounded border transition-all duration-300 ${theme.border} ${currentStep.theme === 'BLUE' ? 'bg-[rgb(37,99,235)]' : theme.bg} w-72 h-16 flex items-center justify-center group hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(0,0,0,0.5)]`}
                 >
-                    <div className="absolute top-0 left-0 h-2 w-2 border-t border-l border-white/50"></div>
-                    <div className="absolute bottom-0 right-0 h-2 w-2 border-b border-r border-white/50"></div>
-                    <div className="flex flex-col items-center">
-                        <span className={`text-white text-base font-bold tracking-[0.1em] uppercase group-hover:tracking-[0.15em] transition-all ${isTyping ? 'animate-pulse' : ''}`}>
-                            {isTyping ? 'RECEIVING...' : (currentStep.buttonText || 'ACKNOWLEDGE PROTOCOL')}
+                    <div className={`absolute top-2 right-2 opacity-50 transition-colors ${currentStep.theme === 'BLUE' ? 'text-white/70' : theme.text}`}>
+                        <Activity size={16} className={isTyping ? "animate-pulse" : ""} />
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <span className={`text-lg font-bold leading-none tracking-tight uppercase transition-all ${isTyping ? 'animate-pulse text-slate-400' : (currentStep.theme === 'BLUE' ? 'text-white' : theme.text)} group-hover:translate-x-1`}>
+                            {isTyping ? 'RECEIVING...' : (currentStep.buttonText || 'ACKNOWLEDGE')}
                         </span>
                         {!isTyping && (
-                            <span className="text-[10px] text-blue-200 font-mono opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-1">
-                                {currentStep.speaker === 'USER' ? 'TRANSMIT_RESPONSE' : 'INITIATE_RESPONSE'}
+                            <span className={`opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 ${theme.text}`}>
+                                →
                             </span>
                         )}
                     </div>
+
+                    {/* Hover Effect Gradient */}
+                    <div className={`absolute inset-0 bg-gradient-to-r ${theme.accent} opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none`}></div>
                 </button>
             </div>
 

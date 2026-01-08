@@ -24,7 +24,7 @@ const FailView: React.FC<FailViewProps> = ({ resetGame }) => {
                 <div className="flex-1 flex flex-col items-center justify-center p-4 relative bg-background-dark">
                     {/* Background Elements */}
                     <div className="absolute inset-0 z-0 opacity-20 bg-noise pointer-events-none" style={{ backgroundImage: "url('/noise.png')" }}></div>
-                    <div className="absolute inset-0 z-0 bg-cover bg-center opacity-10 mix-blend-overlay" style={{ backgroundImage: "url('/bg-map.jpg')" }}></div>
+                    <div className="absolute inset-0 z-0 bg-cover bg-center opacity-10 mix-blend-overlay" style={{ backgroundImage: "url('/bg-map.png')" }}></div>
                     <div className="absolute inset-0 z-0 bg-gradient-to-t from-background-dark via-background-dark/95 to-transparent"></div>
                     {/* Decorative Scanlines */}
                     <div className="absolute inset-0 z-10 pointer-events-none bg-[size:100%_4px] bg-scanline opacity-10"></div>
