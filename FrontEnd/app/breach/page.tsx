@@ -9,18 +9,23 @@ import AgentRegistrationModal from '@/components/AgentRegistrationModal';
 const BreachPage = () => {
     const router = useRouter();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isTransitioning, setIsTransitioning] = useState(false);
 
     const handleInitiateProtocol = () => {
         setIsModalOpen(true);
     };
 
-    const handleModalComplete = (agentName: string) => {
+    const handleModalComplete = (agentName: string, difficulty: string) => {
         // Save user name securely (simulated here with localStorage)
         if (typeof window !== 'undefined') {
             localStorage.setItem('atlast_agent_name', agentName);
+            localStorage.setItem('atlast_difficulty', difficulty);
         }
-        setIsModalOpen(false);
-        router.push('/intro');
+        // setIsModalOpen(false); // Keep modal open during transition
+        setIsTransitioning(true);
+        setTimeout(() => {
+            router.push('/intro');
+        }, 2000);
     };
 
     return (
@@ -31,6 +36,9 @@ const BreachPage = () => {
                 onComplete={handleModalComplete}
                 onCancel={() => setIsModalOpen(false)}
             />
+
+            {/* Transition Overlay */}
+            <div className={`fixed inset-0 z-[100] bg-black pointer-events-none transition-opacity duration-2000 ease-in-out ${isTransitioning ? 'opacity-100' : 'opacity-0'}`}></div>
 
             {/* Effects */}
             <div className="absolute inset-0 z-50 pointer-events-none scanlines opacity-30"></div>
@@ -73,7 +81,7 @@ const BreachPage = () => {
                             Atlast
                         </h1>
                         <p className="text-[#92a9c9] text-sm md:text-base font-mono tracking-[0.2em] uppercase">
-                            Currently in Development // Only UI Demonstartion // u.0.0.1
+                            Currently in Development // Only UI Demonstartion // u.1.0.2
                         </p>
                     </div>
                     <div className="relative w-full h-64 md:h-80 bg-black/40 border-y border-[#324867] flex items-center justify-center overflow-hidden backdrop-blur-sm group">

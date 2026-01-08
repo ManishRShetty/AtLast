@@ -249,6 +249,7 @@ const PlayView: React.FC<PlayViewProps> = ({ handleSend, timeRemaining, isGameSt
                 </main>
 
                 {/* Global Footer (Carbon Fibre) */}
+                <div className={`fixed inset-0 pointer-events-none z-50 transition-opacity duration-1000 ${isGameStarted ? 'opacity-0' : 'opacity-100 bg-black'}`}></div>
                 <div className={`fixed inset-0 pointer-events-none z-50 transition-opacity duration-300 ${isError ? 'bg-red-500/10' : 'opacity-0'}`}></div>
                 <div className="fixed inset-0 pointer-events-none z-50 mix-blend-overlay opacity-10 bg-[url('/carbon-fibre.png')]"></div>
                 <div className="fixed bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent z-50"></div>

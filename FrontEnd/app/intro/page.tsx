@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { ShieldCheck, Wifi, Satellite, Activity, ShieldAlert } from 'lucide-react';
+import { Wifi, Satellite, Activity, ShieldCheck, FastForward } from 'lucide-react';
 
 type Speaker = 'LANCE' | 'Ø' | 'USER' | 'SYSTEM';
 type VisualTheme = 'BLUE' | 'RED' | 'GRAY';
@@ -164,6 +164,7 @@ const IntroPage = () => {
     const [displayedText, setDisplayedText] = useState('');
     const [isTyping, setIsTyping] = useState(false);
     const [agentCodename, setAgentCodename] = useState('FAILSAFE');
+    const [isLoaded, setIsLoaded] = useState(false);
 
     // Derived state
     const currentStep = dialogueSequence[currentStepIndex];
@@ -172,9 +173,19 @@ const IntroPage = () => {
     // Refs for typewriter
     const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
+    const [frequency, setFrequency] = useState('142.885');
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setFrequency((142.800 + Math.random() * 0.199).toFixed(3));
+        }, 150);
+        return () => clearInterval(interval);
+    }, []);
+
     // Scroll to top on mount and fetch agent name
     useEffect(() => {
         window.scrollTo(0, 0);
+        setIsLoaded(true);
         const storedName = localStorage.getItem('atlast_agent_name');
         if (storedName) {
             setAgentCodename(storedName.toUpperCase());
@@ -285,6 +296,9 @@ const IntroPage = () => {
     return (
         <div className="relative flex min-h-[calc(100vh-60px)] w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-hidden tech-grid-bg text-white">
 
+            {/* Fade In Overlay */}
+            <div className={`fixed inset-0 z-[100] bg-black transition-opacity duration-[500ms] pointer-events-none ${isLoaded ? 'opacity-0' : 'opacity-100'}`}></div>
+
             <style jsx global>{`
                 @keyframes glitched {
                     0% { transform: translate(0) }
@@ -337,23 +351,33 @@ const IntroPage = () => {
 
                         <div className="flex flex-col md:flex-row items-stretch">
                             <div className={`relative w-full md:w-2/3 h-64 md:h-auto bg-black/40 flex items-center justify-center p-6 border-b md:border-b-0 md:border-r ${theme.border}`}>
-                                {/* Waveform Background */}
-                                <div className={`absolute inset-0 bg-center bg-cover opacity-80 mix-blend-screen transition-all duration-300 ${isPhase2 ? 'sepia hue-rotate-[320deg] contrast-200' : ''} ${currentStep.theme === 'GRAY' ? 'grayscale opacity-30' : ''}`} style={{ backgroundImage: "url('/waveform.png')" }}></div>
+                                {/* CSS Animated Visualizer */}
+                                <style dangerouslySetInnerHTML={{
+                                    __html: `
+                                    @keyframes equalizer {
+                                        0% { height: 20%; transform: scaleY(0.2); }
+                                        50% { height: 100%; transform: scaleY(1); }
+                                        100% { height: 20%; transform: scaleY(0.2); }
+                                    }
+                                `}} />
+                                <div className="absolute inset-0 flex items-center justify-between gap-0.5 opacity-60 px-2">
+                                    {[...Array(64)].map((_, i) => (
+                                        <div
+                                            key={i}
+                                            className={`w-full rounded-full transition-colors duration-300 ${isPhase2 ? 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]' : (currentStep.theme === 'GRAY' ? 'bg-slate-600' : 'bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.5)]')}`}
+                                            style={{
+                                                height: '40%',
+                                                animation: `equalizer ${1.5 + Math.sin(i * 1324) * 0.8}s ease-in-out infinite`,
+                                                animationDelay: `-${Math.abs(Math.cos(i * 743)) * 2}s`
+                                            }}
+                                        />
+                                    ))}
+                                </div>
                                 <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-background-dark/20"></div>
 
-                                <div className={`absolute bottom-4 right-4 text-xs font-mono hidden md:block ${theme.text} opacity-60`}>FREQ: 142.885 MHz</div>
+                                <div className={`absolute bottom-4 right-4 text-xs font-mono hidden md:block ${theme.text} opacity-60`}>FREQ: {frequency} MHz</div>
 
-                                {/* Center Circle Animation */}
-                                <div className={`relative z-10 size-24 md:size-32 rounded-full border ${isPhase2 ? 'border-red-500/50' : 'border-primary/30'} flex items-center justify-center transition-colors duration-500`}>
-                                    <div className={`size-20 md:size-28 rounded-full border border-dashed animate-[spin_10s_linear_infinite] ${isPhase2 ? 'border-red-500' : (currentStep.theme === 'GRAY' ? 'border-slate-600' : 'border-primary/60')}`}></div>
-                                    {isPhase2 ? (
-                                        <ShieldAlert size={40} className="text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.8)] animate-pulse" />
-                                    ) : currentStep.theme === 'GRAY' ? (
-                                        <Activity size={40} className="text-slate-600" />
-                                    ) : (
-                                        <Activity size={40} className="text-white drop-shadow-[0_0_10px_rgba(19,109,236,0.8)]" />
-                                    )}
-                                </div>
+
                             </div>
 
                             <div className="w-full md:w-1/3 p-6 flex flex-col justify-center gap-4 bg-background-dark/80">
@@ -402,7 +426,7 @@ const IntroPage = () => {
                                     className={`bg-center bg-no-repeat aspect-square bg-cover rounded border size-10 ${theme.border} ${currentStep.speaker === 'Ø' ? 'grayscale-0 contrast-125' : 'grayscale'}`}
                                     style={{
                                         backgroundImage: `url('${currentStep.speaker === 'LANCE' ? '/director-vance.jpg' :
-                                            currentStep.speaker === 'Ø' ? '/noise.png' :
+                                            currentStep.speaker === 'Ø' ? '/alien.png' :
                                                 '/bg-map.png'
                                             }')`
                                     }}
@@ -436,9 +460,7 @@ const IntroPage = () => {
                     <div className="fixed bottom-6 right-6 z-50">
                         <button onClick={handleSkip} className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors group/skip cursor-pointer">
                             <span className="text-[10px] font-mono tracking-widest uppercase">Skip Cutscene</span>
-                            <div className="h-4 w-4 rounded-full border border-slate-600 flex items-center justify-center group-hover/skip:border-white transition-colors">
-                                <div className="h-1.5 w-1.5 bg-slate-500 rounded-full group-hover/skip:bg-white transition-colors"></div>
-                            </div>
+                            <FastForward size={16} className="text-slate-500 group-hover/skip:text-white transition-colors" />
                         </button>
                     </div>
                 </div>
