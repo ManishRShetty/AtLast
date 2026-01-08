@@ -2,15 +2,27 @@ import React, { useState } from 'react';
 import { AlertTriangle, Plus, Minus, Crosshair, Send, Lock, Radar, ShieldAlert } from 'lucide-react';
 import TerminalPanel, { LogEntry } from './TerminalPanel';
 import HandoffModal from './HandoffModal';
+import { RiddleData } from '@/types';
 
 interface PlayViewProps {
-    handleSend: (command: string) => boolean;
+    handleSend: (command: string) => boolean | Promise<boolean>;
     timeRemaining: number;
     isGameStarted: boolean;
     onStartGame: () => void;
+    riddle?: RiddleData | null;
+    agentLogs?: string[];
+    isLoadingRiddle?: boolean;
 }
 
-const PlayView: React.FC<PlayViewProps> = ({ handleSend, timeRemaining, isGameStarted, onStartGame }) => {
+const PlayView: React.FC<PlayViewProps> = ({
+    handleSend,
+    timeRemaining,
+    isGameStarted,
+    onStartGame,
+    riddle,
+    agentLogs = [],
+    isLoadingRiddle = false
+}) => {
     // Format time as MM:SS (or just SS since it's 60s max usually)
     const formatTime = (seconds: number) => {
         const mins = Math.floor(seconds / 60);
@@ -22,53 +34,44 @@ const PlayView: React.FC<PlayViewProps> = ({ handleSend, timeRemaining, isGameSt
     const [inputValue, setInputValue] = useState('');
     const [isError, setIsError] = useState(false);
     const [showTryAgain, setShowTryAgain] = useState(false);
-    const [logs, setLogs] = useState<LogEntry[]>([
-        { id: 'sys-1', type: 'system', text: 'SYSTEM INITIALIZED' },
-        { id: 'cmd-1', type: 'command', text: 'establish_uplink --secure' },
-        { id: 'info-1', type: 'info', text: 'Connecting to secure server...' },
-        { id: 'success-1', type: 'success', text: 'Connection established.' },
-    ]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const onSend = () => {
-        if (!inputValue.trim()) return;
+    // Convert agent logs to terminal entries
+    const logs: LogEntry[] = agentLogs.map((log, index) => ({
+        id: `log-${index}`,
+        type: log.startsWith('ERROR') ? 'error' :
+            log.includes('✅') || log.includes('READY') ? 'success' :
+                log.includes('⚠️') ? 'warning' : 'info',
+        text: log
+    }));
+
+    const onSend = async () => {
+        if (!inputValue.trim() || isSubmitting) return;
 
         const cmd = inputValue.trim();
-        // Add command log
-        const newLogs: LogEntry[] = [...logs, {
-            id: `cmd-${Date.now()}`,
-            type: 'command',
-            text: cmd
-        }];
-
-        const isCorrect = handleSend(cmd);
-
-        if (!isCorrect) {
-            setIsError(true);
-            setShowTryAgain(true);
-
-            // Play Error Sound
-            const errorAudio = new Audio('/audio/error.mp3');
-            errorAudio.volume = 0.5;
-            errorAudio.play().catch(() => { /* Ignore autoplay errors */ });
-
-            setTimeout(() => {
-                setIsError(false);
-                setShowTryAgain(false);
-            }, 1000); // 1s duration for effect
-            newLogs.push({
-                id: `err-${Date.now()}`,
-                type: 'error',
-                text: 'ACCESS DENIED: Invalid location coordinates.'
-            });
-            newLogs.push({
-                id: `warn-${Date.now()}`,
-                type: 'warning',
-                text: 'PENALTY APPLIED: -10 SECONDS'
-            });
-        }
-
-        setLogs(newLogs);
         setInputValue('');
+        setIsSubmitting(true);
+
+        try {
+            const isCorrect = await handleSend(cmd);
+
+            if (!isCorrect) {
+                setIsError(true);
+                setShowTryAgain(true);
+
+                // Play Error Sound
+                const errorAudio = new Audio('/audio/error.mp3');
+                errorAudio.volume = 0.5;
+                errorAudio.play().catch(() => { /* Ignore autoplay errors */ });
+
+                setTimeout(() => {
+                    setIsError(false);
+                    setShowTryAgain(false);
+                }, 1000); // 1s duration for effect
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -105,12 +108,12 @@ const PlayView: React.FC<PlayViewProps> = ({ handleSend, timeRemaining, isGameSt
                     {/* Section */}
                     <section className="flex-1 relative bg-background-dark flex flex-col">
                         {/* Game Status Bar */}
-                        <div className="absolute top-12 w-full z-40 flex flex-col items-center pointer-events-none">
+                        <div className="absolute top-4 w-full z-40 flex flex-col items-center pointer-events-none">
                             <div className="flex items-center gap-2 bg-black/40 px-4 py-1 rounded-full border border-red-500/30 backdrop-blur-sm">
                                 <AlertTriangle size={14} className="text-red-500 animate-pulse" />
                                 <span className="text-red-500 text-xs font-bold tracking-widest">DEFCON 1 ACTIVE</span>
                             </div>
-                            <div className="text-4xl font-bold tracking-widest font-mono mt-2 text-white tabular-nums drop-shadow-md text-center">
+                            <div className="text-3xl font-bold tracking-widest font-mono mt-1 text-white tabular-nums drop-shadow-md text-center">
                                 {formatTime(timeRemaining)}
                             </div>
                         </div>
@@ -164,8 +167,14 @@ const PlayView: React.FC<PlayViewProps> = ({ handleSend, timeRemaining, isGameSt
                                             <Lock size={16} className="text-primary animate-pulse" />
                                             <span className="text-primary text-xs font-bold tracking-[0.2em] uppercase">Encrypted Transmission</span>
                                         </div>
-                                        <h2 className="text-white text-2xl md:text-3xl font-medium leading-relaxed font-display drop-shadow-lg tracking-wide">
-                                            "I stand where the silver river widens. A tango is danced in my streets, and my obelisk watches over the widest avenue. Identify me."
+                                        <h2 className="text-white text-lg md:text-xl font-medium leading-relaxed font-display drop-shadow-lg tracking-wide max-h-48 overflow-y-auto">
+                                            {isLoadingRiddle ? (
+                                                <span className="animate-pulse">Decrypting intelligence...</span>
+                                            ) : riddle ? (
+                                                `"${riddle.riddle}"`
+                                            ) : (
+                                                "Awaiting mission briefing..."
+                                            )}
                                         </h2>
                                         <div className="w-16 h-1 bg-primary/40 rounded mt-6"></div>
                                     </div>

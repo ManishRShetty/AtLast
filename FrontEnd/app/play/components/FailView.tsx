@@ -5,9 +5,10 @@ import TerminalPanel from './TerminalPanel';
 
 interface FailViewProps {
     resetGame: () => void;
+    cityName?: string;
 }
 
-const FailView: React.FC<FailViewProps> = ({ resetGame }) => {
+const FailView: React.FC<FailViewProps> = ({ resetGame, cityName }) => {
     return (
         <div className="bg-background-light dark:bg-background-dark font-display text-white overflow-hidden h-[calc(100vh-60px)] flex flex-col">
             {/* Main Content */}
@@ -16,8 +17,9 @@ const FailView: React.FC<FailViewProps> = ({ resetGame }) => {
                     { id: '1', type: 'system', text: 'Login successful. User ID: 994-Alpha.' },
                     { id: 'fail1', type: 'error', text: 'CONNECTION TERMINATED' },
                     { id: 'fail2', type: 'error', text: 'SIGNAL LOST' },
-                    { id: 'fail3', type: 'error', text: 'TARGET: CITY DETONATED' },
-                    { id: 'fail4', type: 'system', text: 'System Halted // Terminal ID: OMEGA-9 // ERROR_CODE: 0x4B2' }
+                    { id: 'fail3', type: 'error', text: `TARGET CITY WAS: ${cityName?.toUpperCase() || 'UNKNOWN'}` },
+                    { id: 'fail4', type: 'info', text: `The answer was "${cityName || 'Unknown'}"` },
+                    { id: 'fail5', type: 'system', text: 'System Halted // Terminal ID: OMEGA-9 // ERROR_CODE: 0x4B2' }
                 ]} />
 
                 {/* Content Section */}

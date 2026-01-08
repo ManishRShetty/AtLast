@@ -100,6 +100,16 @@ async def agent_riddle_generation(session_id: str, difficulty: str = "Medium", t
     # ------------------------------------------------------------------
     # AGENTIC WORKFLOW
     # ------------------------------------------------------------------
+    
+    # Get already used cities for this session (to avoid repeats)
+    used_cities = []
+    if redis_client:
+        used_cities_key = f"used_cities:{session_id}"
+        used_cities = await redis_client.smembers(used_cities_key) or []
+        used_cities = list(used_cities)
+        if used_cities:
+            await redis_client.publish(channel, f"Excluding {len(used_cities)} previously visited targets...")
+    
     # 1. Agent: Select Target City (AI Generated)
     if redis_client:
         await redis_client.publish(channel, f"Mission Control: Scouting global targets related to {topic} [Difficulty: {difficulty.upper()}]...")
@@ -115,13 +125,23 @@ async def agent_riddle_generation(session_id: str, difficulty: str = "Medium", t
     from polyglot_ai import generate_riddle_with_timeout
     
     # This function now handles: Dynamic City, Difficulty, Riddle Gen, Validation, DB Fallback/Save
-    # We pass difficulty to it.
-    riddle_result = await loop.run_in_executor(None, generate_riddle_with_timeout, 15, difficulty)
+    # We pass difficulty and used_cities to it.
+    riddle_result = await loop.run_in_executor(
+        None, 
+        lambda: generate_riddle_with_timeout(15, difficulty, used_cities)
+    )
     
     # Extract data
     riddle_text = riddle_result["riddle"]
     stats = riddle_result["stats"]
     location = riddle_result["location"]
+    
+    # Track this city as used for this session
+    if redis_client and location.get("name"):
+        used_cities_key = f"used_cities:{session_id}"
+        await redis_client.sadd(used_cities_key, location["name"])
+        # Set expiry to match session (1 hour)
+        await redis_client.expire(used_cities_key, 3600)
     
     # Log the result
     if redis_client:
@@ -131,7 +151,7 @@ async def agent_riddle_generation(session_id: str, difficulty: str = "Medium", t
         else:
             await redis_client.publish(
                 channel, 
-                f"✅ Target Locked: {location['name']}. Riddle generated in {stats['total_time_ms']}ms!"
+                f"✅ Target Locked. Riddle generated in {stats['total_time_ms']}ms!"
             )
             await redis_client.publish(
                 channel,

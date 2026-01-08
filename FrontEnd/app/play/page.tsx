@@ -21,14 +21,32 @@ const Battlespace = () => {
 
     const stopLogStreamRef = useRef<(() => void) | null>(null);
 
+    // Map frontend difficulty names to backend names
+    const mapDifficulty = (frontendDifficulty: string): string => {
+        const mapping: Record<string, string> = {
+            'RECRUIT': 'Easy',
+            'AGENT': 'Medium',
+            'VETERAN': 'Hard'
+        };
+        return mapping[frontendDifficulty] || 'Medium';
+    };
+
     // Initialize session and fetch first riddle when game starts
     const initializeGame = useCallback(async () => {
         try {
             setIsLoadingRiddle(true);
             setAgentLogs(['Initializing secure connection...']);
 
-            // Start a new session
-            const newSessionId = await startSession();
+            // Get difficulty from localStorage (set by AgentRegistrationModal)
+            const storedDifficulty = typeof window !== 'undefined'
+                ? localStorage.getItem('atlast_difficulty') || 'AGENT'
+                : 'AGENT';
+            const backendDifficulty = mapDifficulty(storedDifficulty);
+
+            setAgentLogs(prev => [...prev, `Difficulty: ${backendDifficulty.toUpperCase()}`]);
+
+            // Start a new session with difficulty
+            const newSessionId = await startSession(backendDifficulty);
             setSessionId(newSessionId);
             setAgentLogs(prev => [...prev, `Session established: ${newSessionId.slice(0, 8)}...`]);
 
@@ -50,7 +68,7 @@ const Battlespace = () => {
             setAgentLogs(prev => [...prev, 'Requesting target intelligence...']);
             const riddleData = await getQuestion(newSessionId);
             setRiddle(riddleData);
-            setAgentLogs(prev => [...prev, `Target acquired: ${riddleData.location?.name || 'Unknown'}`]);
+            setAgentLogs(prev => [...prev, 'Target acquired: [REDACTED]']);
             setAgentLogs(prev => [...prev, 'MISSION READY. AWAITING AGENT INPUT.']);
 
             setGameState('playing');
@@ -163,12 +181,43 @@ const Battlespace = () => {
         setAgentLogs([]);
     };
 
+    // Load next riddle without resetting the entire game (for correct answers)
+    const loadNextRiddle = useCallback(async () => {
+        if (!sessionId) {
+            // If no session, fall back to full reset
+            resetGame();
+            return;
+        }
+
+        try {
+            setIsLoadingRiddle(true);
+            setGameState('playing');
+            setTimeRemaining(60); // Reset timer for new riddle
+
+            setAgentLogs(prev => [...prev, '--- NEW TARGET ---']);
+            setAgentLogs(prev => [...prev, 'Requesting next target intelligence...']);
+
+            // Fetch the next riddle using existing session
+            const riddleData = await getQuestion(sessionId);
+            setRiddle(riddleData);
+            setAgentLogs(prev => [...prev, 'Target acquired: [REDACTED]']);
+            setAgentLogs(prev => [...prev, 'MISSION READY. AWAITING AGENT INPUT.']);
+        } catch (error) {
+            console.error('Failed to load next riddle:', error);
+            setAgentLogs(prev => [...prev, `ERROR: ${error instanceof Error ? error.message : 'Failed to get next target'}`]);
+            // Fall back to reset on error
+            resetGame();
+        } finally {
+            setIsLoadingRiddle(false);
+        }
+    }, [sessionId]);
+
     if (gameState === 'success') {
-        return <SuccessView resetGame={resetGame} />;
+        return <SuccessView resetGame={loadNextRiddle} />;
     }
 
     if (gameState === 'fail') {
-        return <FailView resetGame={resetGame} />;
+        return <FailView resetGame={resetGame} cityName={riddle?.answer} />;
     }
 
     if (gameState === 'incorrect') {
