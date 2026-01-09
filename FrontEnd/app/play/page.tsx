@@ -19,6 +19,9 @@ const Battlespace = () => {
     const [agentLogs, setAgentLogs] = useState<string[]>([]);
     const [isLoadingRiddle, setIsLoadingRiddle] = useState(false);
 
+    // Track if fail logs have been added to prevent duplicates
+    const [failLogsAdded, setFailLogsAdded] = useState(false);
+
     const stopLogStreamRef = useRef<(() => void) | null>(null);
 
     // Map frontend difficulty names to backend names
@@ -98,6 +101,24 @@ const Battlespace = () => {
         }
         return () => clearInterval(interval);
     }, [gameState, timeRemaining, isGameStarted, isLoadingRiddle]);
+
+    // Handle Fail State Logs
+    useEffect(() => {
+        if (gameState === 'fail' && !failLogsAdded) {
+            setAgentLogs(prev => [
+                ...prev,
+                '[ERROR] CONNECTION TERMINATED',
+                '[ERROR] SIGNAL LOST',
+                `[ERROR] TARGET CITY WAS: ${riddle?.answer?.toUpperCase() || 'UNKNOWN'}`,
+                `[INFO] The answer was "${riddle?.answer || 'Unknown'}"`,
+                '[SYSTEM] System Halted // Terminal ID: OMEGA-9 // ERROR_CODE: 0x4B2'
+            ]);
+            setFailLogsAdded(true);
+        } else if (gameState !== 'fail') {
+            setFailLogsAdded(false);
+        }
+    }, [gameState, failLogsAdded, riddle]);
+
 
     // Audio Logic
     const heartbeatAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -179,6 +200,7 @@ const Battlespace = () => {
         setSessionId(null);
         setRiddle(null);
         setAgentLogs([]);
+        setFailLogsAdded(false);
     };
 
     // Load next riddle without resetting the entire game (for correct answers)
@@ -211,13 +233,9 @@ const Battlespace = () => {
             setIsLoadingRiddle(false);
         }
     }, [sessionId]);
-    //return <FailView resetGame={resetGame} cityName="Neo Tokyo" />;
+
     if (gameState === 'success') {
         return <SuccessView resetGame={loadNextRiddle} />;
-    }
-
-    if (gameState === 'fail') {
-        return <FailView resetGame={resetGame} cityName={riddle?.answer} />;
     }
 
     if (gameState === 'incorrect') {
@@ -225,15 +243,20 @@ const Battlespace = () => {
     }
 
     return (
-        <PlayView
-            handleSend={handleSend}
-            timeRemaining={timeRemaining}
-            isGameStarted={isGameStarted}
-            onStartGame={handleStartGame}
-            riddle={riddle}
-            agentLogs={agentLogs}
-            isLoadingRiddle={isLoadingRiddle}
-        />
+        <>
+            <PlayView
+                handleSend={handleSend}
+                timeRemaining={timeRemaining}
+                isGameStarted={isGameStarted}
+                onStartGame={handleStartGame}
+                riddle={riddle}
+                agentLogs={agentLogs}
+                isLoadingRiddle={isLoadingRiddle}
+            />
+            {gameState === 'fail' && (
+                <FailView resetGame={resetGame} cityName={riddle?.answer} />
+            )}
+        </>
     );
 };
 
