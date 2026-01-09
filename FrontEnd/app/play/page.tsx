@@ -234,6 +234,25 @@ const Battlespace = () => {
         }
     }, [sessionId]);
 
+    const restartGame = useCallback(async () => {
+        // Cleanup previous session
+        if (stopLogStreamRef.current) {
+            stopLogStreamRef.current();
+            stopLogStreamRef.current = null;
+        }
+
+        setGameState('loading');
+        setTimeRemaining(60);
+        // Do NOT set isGameStarted to false, so HandoffModal is skipped.
+
+        setSessionId(null);
+        setRiddle(null);
+        setAgentLogs([]);
+        setFailLogsAdded(false);
+
+        await initializeGame();
+    }, [initializeGame]);
+
     if (gameState === 'success') {
         return <SuccessView resetGame={loadNextRiddle} />;
     }
@@ -254,7 +273,7 @@ const Battlespace = () => {
                 isLoadingRiddle={isLoadingRiddle}
             />
             {gameState === 'fail' && (
-                <FailView resetGame={resetGame} cityName={riddle?.answer} />
+                <FailView resetGame={restartGame} cityName={riddle?.answer} />
             )}
         </>
     );
