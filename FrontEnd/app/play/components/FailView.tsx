@@ -10,9 +10,10 @@ interface FailViewProps {
 
 const FailView: React.FC<FailViewProps> = ({ resetGame, cityName }) => {
     return (
-        <div className="bg-background-light dark:bg-background-dark font-display text-white overflow-hidden h-[calc(100vh-60px)] flex flex-col">
+        <div className="bg-background-light dark:bg-background-dark font-display text-white h-screen flex flex-col">
             {/* Main Content */}
-            <main className="flex-1 flex overflow-hidden relative">
+            {/* USER FIX: Removed 'overflow-hidden' and added 'pt-12' (3rem) to match layout alignment */}
+            <main className="flex-1 flex relative pt-36">
                 <TerminalPanel logs={[
                     { id: '1', type: 'system', text: 'Login successful. User ID: 994-Alpha.' },
                     { id: 'fail1', type: 'error', text: 'CONNECTION TERMINATED' },
@@ -22,17 +23,18 @@ const FailView: React.FC<FailViewProps> = ({ resetGame, cityName }) => {
                     { id: 'fail5', type: 'system', text: 'System Halted // Terminal ID: OMEGA-9 // ERROR_CODE: 0x4B2' }
                 ]} />
 
-                {/* Content Section */}
-                <div className="flex-1 flex flex-col items-center justify-center p-4 pt-[70px] relative bg-background-dark">
+                {/* Right Panel Wrapper */}
+                <div className="flex-1 flex flex-col relative bg-background-dark">
+
                     {/* Background Elements */}
                     <div className="absolute inset-0 z-0 opacity-20 bg-noise pointer-events-none" style={{ backgroundImage: "url('/noise.png')" }}></div>
                     <div className="absolute inset-0 z-0 bg-cover bg-center opacity-10 mix-blend-overlay" style={{ backgroundImage: "url('/bg-map.png')" }}></div>
                     <div className="absolute inset-0 z-0 bg-gradient-to-t from-background-dark via-background-dark/95 to-transparent"></div>
-                    {/* Decorative Scanlines */}
                     <div className="absolute inset-0 z-10 pointer-events-none bg-[size:100%_4px] bg-scanline opacity-10"></div>
 
-                    {/* Main Content Wrapper */}
-                    <div className="relative z-20 flex flex-col items-center w-full max-w-[800px] gap-8">
+                    {/* Content Container - Centered vertically in the remaining space */}
+                    <div className="flex-1 flex flex-col items-center justify-center p-4 relative z-20 w-full gap-8">
+
                         {/* Warning Badge */}
                         <div className="flex items-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/30 rounded text-red-500 text-xs font-bold tracking-[0.2em] animate-pulse">
                             <AlertTriangle size={14} />
@@ -50,7 +52,7 @@ const FailView: React.FC<FailViewProps> = ({ resetGame, cityName }) => {
                         </div>
 
                         {/* Stats Grid */}
-                        <div className="w-full grid grid-cols-1 md:grid-cols-3 gap-4 p-6 bg-[#111822]/80 backdrop-blur-sm border border-[#324867] rounded-xl shadow-2xl relative overflow-hidden group">
+                        <div className="w-full max-w-[800px] grid grid-cols-1 md:grid-cols-3 gap-4 p-6 bg-[#111822]/80 backdrop-blur-sm border border-[#324867] rounded-xl shadow-2xl relative overflow-hidden group">
                             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
                             <div className="flex flex-col items-center justify-center p-4 border-b md:border-b-0 md:border-r border-[#324867]/50 relative">
                                 <div className="text-[#92a9c9] text-xs font-medium tracking-widest uppercase mb-1">Final Score</div>

@@ -211,7 +211,7 @@ const Battlespace = () => {
             setIsLoadingRiddle(false);
         }
     }, [sessionId]);
-
+    //return <FailView resetGame={resetGame} cityName="Neo Tokyo" />;
     if (gameState === 'success') {
         return <SuccessView resetGame={loadNextRiddle} />;
     }

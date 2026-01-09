@@ -33,7 +33,7 @@ export const startSession = async (difficulty: string = 'Medium'): Promise<strin
  */
 export const getQuestion = async (
     sessionId: string,
-    maxRetries: number = 5
+    maxRetries: number = 15
 ): Promise<RiddleData> => {
     let retries = 0;
 
