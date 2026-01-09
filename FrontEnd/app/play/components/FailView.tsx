@@ -23,7 +23,7 @@ const FailView: React.FC<FailViewProps> = ({ resetGame, cityName }) => {
                 ]} />
 
                 {/* Content Section */}
-                <div className="flex-1 flex flex-col items-center justify-center p-4 relative bg-background-dark">
+                <div className="flex-1 flex flex-col items-center justify-center p-4 pt-[70px] relative bg-background-dark">
                     {/* Background Elements */}
                     <div className="absolute inset-0 z-0 opacity-20 bg-noise pointer-events-none" style={{ backgroundImage: "url('/noise.png')" }}></div>
                     <div className="absolute inset-0 z-0 bg-cover bg-center opacity-10 mix-blend-overlay" style={{ backgroundImage: "url('/bg-map.png')" }}></div>
@@ -99,8 +99,10 @@ const FailView: React.FC<FailViewProps> = ({ resetGame, cityName }) => {
                             </p>
                         </div>
                     </div>
+                </div>
+            </main>
 
-                    <style jsx global>{`
+            <style jsx global>{`
                 .bg-noise { background-image: url(/noise.png); }
                 .glitch-text { position: relative; }
                 .glitch-text::before, .glitch-text::after {
@@ -122,8 +124,6 @@ const FailView: React.FC<FailViewProps> = ({ resetGame, cityName }) => {
                     100% { transform: translateX(100%); }
                 }
             `}</style>
-                </div>
-            </main>
         </div>
     );
 };
