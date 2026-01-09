@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { AlertTriangle, Plus, Minus, Crosshair, Send, Lock, Radar, ShieldAlert } from 'lucide-react';
+import { AlertTriangle, Plus, Minus, Crosshair, Send, Lock, ShieldAlert } from 'lucide-react';
 import TerminalPanel, { LogEntry } from './TerminalPanel';
 import HandoffModal from './HandoffModal';
 import { RiddleData } from '@/types';
+import { searchCities } from '@/services/apiService';
 
 interface PlayViewProps {
     handleSend: (command: string) => boolean | Promise<boolean>;
@@ -12,6 +13,8 @@ interface PlayViewProps {
     riddle?: RiddleData | null;
     agentLogs?: string[];
     isLoadingRiddle?: boolean;
+    score: number;
+    difficulty: string;
 }
 
 const PlayView: React.FC<PlayViewProps> = ({
@@ -21,7 +24,9 @@ const PlayView: React.FC<PlayViewProps> = ({
     onStartGame,
     riddle,
     agentLogs = [],
-    isLoadingRiddle = false
+    isLoadingRiddle = false,
+    score,
+    difficulty
 }) => {
     // Format time as MM:SS (or just SS since it's 60s max usually)
     const formatTime = (seconds: number) => {
@@ -35,6 +40,11 @@ const PlayView: React.FC<PlayViewProps> = ({
     const [isError, setIsError] = useState(false);
     const [showTryAgain, setShowTryAgain] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // Autocomplete State
+    const [suggestions, setSuggestions] = useState<string[]>([]);
+    const [showSuggestions, setShowSuggestions] = useState(false);
+    const searchTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
     // Convert agent logs to terminal entries
     const logs: LogEntry[] = agentLogs.map((log, index) => ({
@@ -76,8 +86,36 @@ const PlayView: React.FC<PlayViewProps> = ({
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
+            setShowSuggestions(false);
             onSend();
         }
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setInputValue(value);
+
+        if (searchTimeoutRef.current) {
+            clearTimeout(searchTimeoutRef.current);
+        }
+
+        if (value.trim().length < 2) {
+            setSuggestions([]);
+            setShowSuggestions(false);
+            return;
+        }
+
+        searchTimeoutRef.current = setTimeout(async () => {
+            const results = await searchCities(value);
+            setSuggestions(results);
+            setShowSuggestions(true);
+        }, 300);
+    };
+
+    const handleSuggestionClick = (suggestion: string) => {
+        setInputValue(suggestion);
+        setSuggestions([]);
+        setShowSuggestions(false);
     };
 
     const handleMapInteraction = (id: string) => {
@@ -123,11 +161,19 @@ const PlayView: React.FC<PlayViewProps> = ({
                         </div>
                         <div className="relative z-10 flex-1 flex flex-col">
                             <div className="px-8 py-6 flex justify-between items-start pointer-events-none">
-                                <div className="bg-background-dark/80 backdrop-blur-md border border-[#233348] rounded-lg p-3 pointer-events-auto">
-                                    <div className="text-xs text-slate-400 uppercase tracking-wider mb-1">Target Region</div>
-                                    <div className="text-xl font-bold text-white flex items-center gap-2">
-                                        <Radar size={24} className="text-primary" />
-                                        LATAM SECTOR 4
+                                <div className="bg-background-dark/80 backdrop-blur-md border border-[#233348] rounded-lg p-3 pointer-events-auto min-w-[200px]">
+                                    <div className="text-xs text-slate-400 uppercase tracking-wider mb-2 border-b border-[#233348] pb-1">Mission Status</div>
+                                    <div className="flex flex-col gap-1">
+                                        <div className="flex justify-between items-center text-sm">
+                                            <span className="text-slate-500 font-mono">DIFFICULTY</span>
+                                            <span className={`font-bold font-mono ${difficulty === 'Hard' ? 'text-red-500' : difficulty === 'Medium' ? 'text-blue-500' : 'text-emerald-500'}`}>
+                                                {difficulty?.toUpperCase() || 'UNKNOWN'}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between items-center text-sm">
+                                            <span className="text-slate-500 font-mono">SCORE</span>
+                                            <span className="font-bold text-white font-mono">{score.toLocaleString()}</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="flex flex-col gap-2 pointer-events-auto items-end">
@@ -191,7 +237,7 @@ const PlayView: React.FC<PlayViewProps> = ({
                                     {/* Glow Effect */}
                                     <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 rounded-xl opacity-20 group-hover:opacity-40 transition duration-500 blur-md"></div>
 
-                                    <div className="relative flex items-center bg-[#0B1016]/95 border border-[#233348] rounded-xl shadow-2xl overflow-hidden transition-all backdrop-blur-xl">
+                                    <div className="relative flex items-center bg-[#0B1016]/95 border border-[#233348] rounded-xl shadow-2xl transition-all backdrop-blur-xl">
                                         {/* Decoration Lines */}
                                         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
                                         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1/2 h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
@@ -210,9 +256,29 @@ const PlayView: React.FC<PlayViewProps> = ({
                                             spellCheck="false"
                                             type="text"
                                             value={inputValue}
-                                            onChange={(e) => setInputValue(e.target.value)}
+                                            onChange={handleInputChange}
                                             onKeyDown={handleKeyDown}
+                                            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
                                         />
+
+                                        {/* Autocomplete Dropdown */}
+                                        {showSuggestions && suggestions.length > 0 && (
+                                            <div className="absolute top-full left-0 w-full bg-[#0B1016] border border-[#233348] border-t-0 rounded-b-xl overflow-hidden shadow-2xl z-[90] animate-in slide-in-from-top-2 fade-in">
+                                                <ul className="max-h-60 overflow-y-auto scrollbar-hide py-2">
+                                                    {suggestions.map((suggestion, index) => (
+                                                        <li
+                                                            key={index}
+                                                            onClick={() => handleSuggestionClick(suggestion)}
+                                                            className="px-6 py-3 hover:bg-primary/20 cursor-pointer text-slate-300 hover:text-white font-mono text-lg transition-colors border-l-2 border-transparent hover:border-primary flex items-center justify-between group"
+                                                        >
+                                                            <span>{suggestion}</span>
+                                                            <span className="text-[10px] text-primary/50 group-hover:text-primary opacity-0 group-hover:opacity-100 transition-opacity tracking-widest uppercase">Select</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                                <div className="h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+                                            </div>
+                                        )}
 
                                         <div className="pr-3 pl-2 flex items-center">
                                             <button

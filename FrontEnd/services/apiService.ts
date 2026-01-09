@@ -123,3 +123,22 @@ export const submitAnswer = async (
         throw new Error('Failed to verify answer with backend.');
     }
 };
+
+/**
+ * Search for city suggestions
+ */
+export const searchCities = async (query: string): Promise<string[]> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/search_city?q=${encodeURIComponent(query)}`);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.results || [];
+    } catch (error) {
+        console.error('Failed to search cities:', error);
+        return [];
+    }
+};

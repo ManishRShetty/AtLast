@@ -4,9 +4,10 @@ import TerminalPanel from './TerminalPanel';
 
 interface SuccessViewProps {
     resetGame: () => void;
+    score: number;
 }
 
-const SuccessView: React.FC<SuccessViewProps> = ({ resetGame }) => {
+const SuccessView: React.FC<SuccessViewProps> = ({ resetGame, score }) => {
     return (
         <div className="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden h-[calc(100vh-60px)] flex flex-col relative animate-in fade-in duration-500">
             {/* Green Glow Effects */}
@@ -48,7 +49,7 @@ const SuccessView: React.FC<SuccessViewProps> = ({ resetGame }) => {
                             </div>
                             <div className="mt-6 flex items-center gap-2 bg-black/60 backdrop-blur border border-emerald-500/50 rounded-full px-6 py-2">
                                 <ShieldAlert className="text-emerald-400 text-xl" />
-                                <span className="text-emerald-400 font-mono text-xl font-bold tracking-widest">+5000 XP</span>
+                                <span className="text-emerald-400 font-mono text-xl font-bold tracking-widest">+{score} XP</span>
                             </div>
                         </div>
                         <button onClick={resetGame} className="pointer-events-auto mt-16 group relative overflow-hidden bg-emerald-500 hover:bg-emerald-400 text-[#0B1016] transition-all duration-300 transform -skew-x-12 shadow-[0_0_40px_rgba(16,185,129,0.5)] hover:shadow-[0_0_60px_rgba(16,185,129,0.8)] hover:scale-105 active:scale-95 ring-2 ring-emerald-300 ring-offset-2 ring-offset-black/50">

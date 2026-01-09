@@ -1,13 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { AlertTriangle, RotateCcw, List, LogOut } from 'lucide-react';
+import { AlertTriangle, RotateCcw, List, LogOut, Gauge } from 'lucide-react';
 
 interface FailViewProps {
     resetGame: () => void;
     cityName?: string;
+    score?: number;
 }
 
-const FailView: React.FC<FailViewProps> = ({ resetGame, cityName }) => {
+const FailView: React.FC<FailViewProps> = ({ resetGame, cityName, score = 0 }) => {
+    const [difficulty, setDifficulty] = useState('AGENT');
+
+    useEffect(() => {
+        const stored = localStorage.getItem('atlast_difficulty');
+        if (stored) setDifficulty(stored);
+    }, []);
+
+    const cycleDifficulty = () => {
+        const levels = ['INDIA_EASY', 'INDIA_HARD', 'GLOBAL_EASY', 'GLOBAL_HARD'];
+        const currentIndex = levels.indexOf(difficulty);
+        const nextIndex = (currentIndex + 1) % levels.length;
+        const nextLevel = levels[nextIndex];
+
+        setDifficulty(nextLevel);
+        localStorage.setItem('atlast_difficulty', nextLevel);
+    };
+
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center font-display">
             {/* Backdrop with Blur */}
@@ -44,7 +62,7 @@ const FailView: React.FC<FailViewProps> = ({ resetGame, cityName }) => {
                     {/* Score */}
                     <div className="flex flex-col items-center justify-center p-4 border-b md:border-b-0 md:border-r border-[#324867]/50 relative">
                         <div className="text-[#92a9c9] text-xs font-medium tracking-widest uppercase mb-1">Final Score</div>
-                        <div className="text-4xl font-bold text-slate-200 drop-shadow-md">14,250</div>
+                        <div className="text-4xl font-bold text-slate-200 drop-shadow-md">{score.toLocaleString()}</div>
                         <div className="text-[#556987] text-[10px] mt-1">NEW PERSONAL BEST</div>
                     </div>
 
@@ -56,13 +74,13 @@ const FailView: React.FC<FailViewProps> = ({ resetGame, cityName }) => {
                     </div>
 
                     {/* Locations */}
+                    {/* Missed Target */}
                     <div className="flex flex-col items-center justify-center p-4">
-                        <div className="text-[#92a9c9] text-xs font-medium tracking-widest uppercase mb-1">Locations Secured</div>
-                        <div className="flex items-baseline gap-1">
-                            <span className="text-3xl font-bold text-white">12</span>
-                            <span className="text-xl text-[#556987] font-medium">/ 20</span>
+                        <div className="text-[#92a9c9] text-xs font-medium tracking-widest uppercase mb-1">Missed Target</div>
+                        <div className="text-2xl font-bold text-white tracking-wider text-center break-words w-full px-2 drop-shadow-md">
+                            {cityName ? cityName.toUpperCase() : 'UNKNOWN'}
                         </div>
-                        <div className="text-red-500/70 text-[10px] mt-1 font-bold">INCOMPLETE</div>
+                        <div className="text-red-500/70 text-[10px] mt-1 font-bold">REGION COMPROMISED</div>
                     </div>
                 </div>
 
@@ -72,6 +90,18 @@ const FailView: React.FC<FailViewProps> = ({ resetGame, cityName }) => {
                         <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
                         <RotateCcw className="mr-2 text-white/90" size={20} />
                         <span className="text-white text-lg font-bold uppercase tracking-wider">Re-Initialize Protocol</span>
+                    </button>
+
+                    {/* Difficulty Toggle */}
+                    <button
+                        onClick={cycleDifficulty}
+                        className="flex w-full cursor-pointer items-center justify-center rounded-lg h-12 px-8 bg-[#1a2332]/50 hover:bg-[#233348] border border-[#324867] hover:border-primary/50 transition-all duration-300 group"
+                    >
+                        <Gauge className={`mr-2 transition-colors ${difficulty.includes('HARD') ? 'text-red-500' : difficulty.includes('INDIA') ? 'text-emerald-500' : 'text-blue-500'}`} size={18} />
+                        <span className="text-[#92a9c9] text-sm font-bold uppercase tracking-wide mr-2">Difficulty:</span>
+                        <span className={`text-sm font-bold uppercase tracking-widest ${difficulty.includes('HARD') ? 'text-red-400' : difficulty.includes('INDIA') ? 'text-emerald-400' : 'text-blue-400'}`}>
+                            {difficulty.replace('_', ' // ')}
+                        </span>
                     </button>
                     <div className="flex gap-4">
                         <button className="flex-1 flex cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-[#233348] hover:bg-[#2c405a] border border-[#324867] text-[#92a9c9] hover:text-white transition-colors text-sm font-bold uppercase tracking-wide">

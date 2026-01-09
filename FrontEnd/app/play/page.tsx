@@ -19,6 +19,11 @@ const Battlespace = () => {
     const [agentLogs, setAgentLogs] = useState<string[]>([]);
     const [isLoadingRiddle, setIsLoadingRiddle] = useState(false);
 
+    // New State for Scoring Mechanism
+    const [wrongAttempts, setWrongAttempts] = useState(0);
+    const [score, setScore] = useState(0);
+    const [currentDifficulty, setCurrentDifficulty] = useState<string>('Medium');
+
     // Track if fail logs have been added to prevent duplicates
     const [failLogsAdded, setFailLogsAdded] = useState(false);
 
@@ -29,7 +34,11 @@ const Battlespace = () => {
         const mapping: Record<string, string> = {
             'RECRUIT': 'Easy',
             'AGENT': 'Medium',
-            'VETERAN': 'Hard'
+            'VETERAN': 'Hard',
+            'INDIA_EASY': 'INDIA_EASY',
+            'INDIA_HARD': 'INDIA_HARD',
+            'GLOBAL_EASY': 'GLOBAL_EASY',
+            'GLOBAL_HARD': 'GLOBAL_HARD'
         };
         return mapping[frontendDifficulty] || 'Medium';
     };
@@ -45,6 +54,7 @@ const Battlespace = () => {
                 ? localStorage.getItem('atlast_difficulty') || 'AGENT'
                 : 'AGENT';
             const backendDifficulty = mapDifficulty(storedDifficulty);
+            setCurrentDifficulty(backendDifficulty);
 
             setAgentLogs(prev => [...prev, `Difficulty: ${backendDifficulty.toUpperCase()}`]);
 
@@ -97,6 +107,7 @@ const Battlespace = () => {
                 setTimeRemaining((prev) => prev - 1);
             }, 1000);
         } else if (timeRemaining === 0 && gameState === 'playing' && isGameStarted) {
+            setScore(0);
             setGameState('fail');
         }
         return () => clearInterval(interval);
@@ -159,6 +170,24 @@ const Battlespace = () => {
         };
     }, []);
 
+    // Scoring Logic Helper
+    const calculateScore = (actualTimeRemaining: number) => {
+        let baseScore = 250;
+        if (currentDifficulty === 'INDIA_EASY') baseScore = 150;
+        if (currentDifficulty === 'GLOBAL_EASY') baseScore = 150;
+        if (currentDifficulty === 'INDIA_HARD') baseScore = 400;
+        if (currentDifficulty === 'GLOBAL_HARD') baseScore = 600;
+
+        // Effective Time used in Formula: 60 - actualTimeRemaining (which has already been penalized)
+        const effectiveTime = 60 - actualTimeRemaining;
+
+        // If effective time > 60 (should represent failure), but for calculation safe guard:
+        if (effectiveTime >= 60) return 0;
+
+        const calculated = baseScore * (0.2 + 0.8 * ((60 - effectiveTime) / 60));
+        return Math.floor(calculated);
+    };
+
     const handleSend = async (command: string): Promise<boolean> => {
         if (!sessionId) {
             console.error('No session ID');
@@ -169,20 +198,44 @@ const Battlespace = () => {
             const result = await submitAnswer(sessionId, command);
 
             if (result.correct) {
+                const finalScore = calculateScore(timeRemaining);
+                setScore(prev => prev + finalScore);
                 setGameState('success');
                 return true;
             } else {
-                setTimeRemaining((prev) => Math.max(0, prev - 10));
+                // Wrong Answer Logic
+                setWrongAttempts(prev => prev + 1);
+
+                // Applying penalty to state (which affects effective time)
+                setTimeRemaining((prev) => {
+                    const nextTime = Math.max(0, prev - 10);
+                    if (nextTime === 0) {
+                        setScore(0);
+                        setGameState('fail');
+                    }
+                    return nextTime;
+                });
                 return false;
             }
         } catch (error) {
             console.error('Failed to verify answer:', error);
             // Fallback to local check if API fails
             if (riddle && command.toLowerCase().trim() === riddle.answer.toLowerCase().trim()) {
+                const finalScore = calculateScore(timeRemaining);
+                setScore(prev => prev + finalScore);
                 setGameState('success');
                 return true;
             }
-            setTimeRemaining((prev) => Math.max(0, prev - 10));
+            // Fallback Wrong Answer Logic
+            setWrongAttempts(prev => prev + 1);
+            setTimeRemaining((prev) => {
+                const nextTime = Math.max(0, prev - 10);
+                if (nextTime === 0) {
+                    setScore(0);
+                    setGameState('fail');
+                }
+                return nextTime;
+            });
             return false;
         }
     };
@@ -199,8 +252,11 @@ const Battlespace = () => {
         setIsGameStarted(false);
         setSessionId(null);
         setRiddle(null);
+        setRiddle(null);
         setAgentLogs([]);
         setFailLogsAdded(false);
+        setScore(0);
+        setWrongAttempts(0);
     };
 
     // Load next riddle without resetting the entire game (for correct answers)
@@ -247,14 +303,17 @@ const Battlespace = () => {
 
         setSessionId(null);
         setRiddle(null);
+        setRiddle(null);
         setAgentLogs([]);
         setFailLogsAdded(false);
+        setScore(0);
+        setWrongAttempts(0);
 
         await initializeGame();
     }, [initializeGame]);
 
     if (gameState === 'success') {
-        return <SuccessView resetGame={loadNextRiddle} />;
+        return <SuccessView resetGame={loadNextRiddle} score={score} />;
     }
 
     if (gameState === 'incorrect') {
@@ -271,9 +330,11 @@ const Battlespace = () => {
                 riddle={riddle}
                 agentLogs={agentLogs}
                 isLoadingRiddle={isLoadingRiddle}
+                score={score}
+                difficulty={currentDifficulty}
             />
             {gameState === 'fail' && (
-                <FailView resetGame={restartGame} cityName={riddle?.answer} />
+                <FailView resetGame={restartGame} cityName={riddle?.answer} score={score} />
             )}
         </>
     );

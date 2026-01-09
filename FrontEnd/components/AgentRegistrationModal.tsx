@@ -156,36 +156,37 @@ const AgentRegistrationModal: React.FC<AgentRegistrationModalProps> = ({ isOpen,
                                             exit={{ opacity: 0, x: -20 }}
                                             className="w-full flex flex-col gap-6"
                                         >
-                                            <div className="grid grid-cols-1 gap-3">
-                                                {[
-                                                    { id: 'RECRUIT', label: 'Recruit', icon: Shield, color: 'text-emerald-400', border: 'hover:border-emerald-500', selectedBorder: 'border-emerald-500', bg: 'hover:bg-emerald-500/10', glow: 'shadow-[0_0_20px_rgba(16,185,129,0.2)]' },
-                                                    { id: 'AGENT', label: 'Agent', icon: Zap, color: 'text-primary', border: 'hover:border-primary', selectedBorder: 'border-primary', bg: 'hover:bg-primary/10', glow: 'shadow-[0_0_20px_rgba(19,109,236,0.2)]' },
-                                                    { id: 'VETERAN', label: 'Veteran', icon: Skull, color: 'text-red-500', border: 'hover:border-red-500', selectedBorder: 'border-red-500', bg: 'hover:bg-red-500/10', glow: 'shadow-[0_0_20px_rgba(239,68,68,0.2)]' }
-                                                ].map((option) => (
-                                                    <button
-                                                        key={option.id}
-                                                        onClick={() => setDifficulty(option.id)}
-                                                        className={`
-                                                            relative p-4 rounded-lg border transition-all duration-300 text-left group
-                                                            ${difficulty === option.id
-                                                                ? `${option.selectedBorder} bg-[#1a2332]/80 ${option.glow} scale-[1.02]`
-                                                                : `border-[#233348] bg-[#0B1016] ${option.border} ${option.bg} opacity-70 hover:opacity-100 hover:scale-[1.01]`
-                                                            }
-                                                        `}
-                                                    >
-                                                        <div className="flex items-center justify-between mb-1">
-                                                            <span className={`text-sm md:text-base font-bold uppercase tracking-widest transition-colors ${difficulty === option.id ? option.color : 'text-slate-400 group-hover:text-white'}`}>
-                                                                {option.label}
-                                                            </span>
-                                                            <option.icon size={18} className={`${difficulty === option.id ? option.color : 'text-slate-600'} transition-colors`} />
-                                                        </div>
-                                                        <div className="text-[10px] text-slate-500 font-mono uppercase tracking-wide">
-                                                            {option.id === 'RECRUIT' && 'Threat Level: Low // Training Details'}
-                                                            {option.id === 'AGENT' && 'Threat Level: Normal // Standard Ops'}
-                                                            {option.id === 'VETERAN' && 'Threat Level: Critical // Real World'}
-                                                        </div>
-                                                    </button>
-                                                ))}
+                                            <div className="w-full">
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                    {[
+                                                        { id: 'INDIA_EASY', label: 'India // Recruit', desc: 'Major Metros', icon: Shield, color: 'text-emerald-400', border: 'hover:border-emerald-500', selectedBorder: 'border-emerald-500', bg: 'hover:bg-emerald-500/10', glow: 'shadow-[0_0_20px_rgba(16,185,129,0.2)]' },
+                                                        { id: 'INDIA_HARD', label: 'India // Veteran', desc: 'Tier-2 & History', icon: Zap, color: 'text-amber-400', border: 'hover:border-amber-500', selectedBorder: 'border-amber-500', bg: 'hover:bg-amber-500/10', glow: 'shadow-[0_0_20px_rgba(245,158,11,0.2)]' },
+                                                        { id: 'GLOBAL_EASY', label: 'Global // Recruit', desc: 'Capital Cities', icon: Shield, color: 'text-blue-400', border: 'hover:border-blue-500', selectedBorder: 'border-blue-500', bg: 'hover:bg-blue-500/10', glow: 'shadow-[0_0_20px_rgba(59,130,246,0.2)]' },
+                                                        { id: 'GLOBAL_HARD', label: 'Global // Veteran', desc: 'Obscure World', icon: Skull, color: 'text-red-500', border: 'hover:border-red-500', selectedBorder: 'border-red-500', bg: 'hover:bg-red-500/10', glow: 'shadow-[0_0_20px_rgba(239,68,68,0.2)]' }
+                                                    ].map((option) => (
+                                                        <button
+                                                            key={option.id}
+                                                            onClick={() => setDifficulty(option.id)}
+                                                            className={`
+                                                                relative p-3 rounded-lg border transition-all duration-300 text-left group flex flex-col justify-between min-h-[80px]
+                                                                ${difficulty === option.id
+                                                                    ? `${option.selectedBorder} bg-[#1a2332]/80 ${option.glow} scale-[1.02]`
+                                                                    : `border-[#233348] bg-[#0B1016] ${option.border} ${option.bg} opacity-70 hover:opacity-100 hover:scale-[1.01]`
+                                                                }
+                                                            `}
+                                                        >
+                                                            <div className="flex items-center justify-between mb-1">
+                                                                <span className={`text-xs md:text-sm font-bold uppercase tracking-widest transition-colors ${difficulty === option.id ? option.color : 'text-slate-400 group-hover:text-white'}`}>
+                                                                    {option.label}
+                                                                </span>
+                                                                <option.icon size={16} className={`${difficulty === option.id ? option.color : 'text-slate-600'} transition-colors`} />
+                                                            </div>
+                                                            <div className="text-[10px] text-slate-500 font-mono uppercase tracking-wide">
+                                                                {option.desc}
+                                                            </div>
+                                                        </button>
+                                                    ))}
+                                                </div>
                                             </div>
 
                                             <div className="flex justify-center relative group/btn pt-2">

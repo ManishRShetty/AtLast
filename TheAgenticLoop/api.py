@@ -17,7 +17,8 @@ except ImportError:
     FAKEREDIS_AVAILABLE = False
 
 # Import Polyglot AI riddle generator (multi-provider: Groq, Cohere, Gemini)
-from polyglot_ai import generate_riddle_with_timeout
+# Import Polyglot AI riddle generator (multi-provider: Groq, Cohere, Gemini)
+from polyglot_ai import generate_riddle_with_timeout, search_city_names
 
 # ==========================================
 # CONFIGURATION & CONSTANTS
@@ -176,7 +177,7 @@ async def buffer_worker(session_id: str, difficulty: str = "Medium", count: int 
         print("❌ Worker failed: No Redis connection")
         return
 
-    print(f"⚙️ Background Task: Generating {count} questions for {session_id} [{difficulty}]")
+    print(f"⚙️ Background Task: Generating {count} questions for {session_id} [Difficulty: {difficulty}]")
     
     for _ in range(count):
         # Generate the content (Slow operation)
@@ -206,8 +207,11 @@ async def start_session(request: Request, background_tasks: BackgroundTasks):
     try:
         body = await request.json()
         difficulty = body.get("difficulty", "Medium")
-    except:
+    except Exception as e:
+        print(f"❌ Error parsing start_session body: {e}")
         difficulty = "Medium"
+
+    print(f"🔔 START_SESSION Received Difficulty: [{difficulty}]")
 
     session_id = str(uuid.uuid4())
     
@@ -337,12 +341,25 @@ async def verify_answer(request: Request):
             "attempts": attempts,
             "message": f"Correct! It's {answer_data.get('answer')}!"
         }
-    else:
         return {
             "correct": False,
             "attempts": attempts,
             "message": "Incorrect answer. Try again!"
         }
+
+@app.get("/search_city")
+async def search_city(q: str):
+    """
+    Search for city names in the DB matching the query.
+    Used for autocomplete suggestions.
+    """
+    if not q:
+        return {"results": []}
+
+    loop = asyncio.get_event_loop()
+    # search_city_names is synchronous (uses blocking supabase client), run in executor
+    results = await loop.run_in_executor(None, lambda: search_city_names(q))
+    return {"results": results}
 
 @app.get("/stream_logs/{session_id}")
 async def stream_logs(session_id: str, request: Request):
