@@ -38,14 +38,14 @@ const BreachPage = () => {
             {/* Transition Overlay (Fade to Black) */}
             <div className={`fixed inset-0 z-[100] bg-black pointer-events-none transition-opacity duration-1000 ease-in-out ${isTransitioning ? 'opacity-100' : 'opacity-0'}`}></div>
 
-            {/* Full Background Image */}
+            {/* Full Background Image - Fixed to cover entire viewport including behind navbar */}
             <div
-                className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                className="fixed inset-0 bg-cover bg-center bg-no-repeat -mt-[60px]"
                 style={{ backgroundImage: "url('/atlastbg.png')" }}
             />
 
             {/* Subtle Overlay for better contrast */}
-            <div className="absolute inset-0 bg-black/20" />
+            <div className="fixed inset-0 bg-black/20 -mt-[60px]" />
 
             {/* Main Content - Centered */}
             <div className="relative z-10 flex flex-col items-center justify-center h-full">
@@ -116,6 +116,9 @@ const BreachPage = () => {
                             </span>
                         </div>
                     </div>
+
+                    {/* Dark Rectangle Below Button */}
+                    <div className="mt-2 w-full h-3 bg-black/60 skew-x-[-8deg] border border-neutral-800/50" />
                 </motion.button>
             </div>
         </div>
