@@ -17,8 +17,7 @@ except ImportError:
     FAKEREDIS_AVAILABLE = False
 
 # Import Polyglot AI riddle generator (multi-provider: Groq, Cohere, Gemini)
-# Import Polyglot AI riddle generator (multi-provider: Groq, Cohere, Gemini)
-from polyglot_ai import generate_riddle_with_timeout, search_city_names
+from polyglot_ai import generate_riddle_optimized, search_city_names, get_distance_hint
 
 # ==========================================
 # CONFIGURATION & CONSTANTS
@@ -121,15 +120,11 @@ async def agent_riddle_generation(session_id: str, difficulty: str = "Medium", t
         await redis_client.publish(channel, "🚀 Invoking Polyglot AI System (Groq + Cohere + Gemini)...")
     await asyncio.sleep(0.3)
     
-    # Run in executor to avoid blocking the event loop
-    loop = asyncio.get_event_loop()
-    from polyglot_ai import generate_riddle_with_timeout
-    
-    # This function now handles: Dynamic City, Difficulty, Riddle Gen, Validation, DB Fallback/Save
-    # We pass difficulty and used_cities to it.
-    riddle_result = await loop.run_in_executor(
-        None, 
-        lambda: generate_riddle_with_timeout(15, difficulty, used_cities)
+    # Call the new async function directly (no executor needed)
+    riddle_result = await generate_riddle_optimized(
+        difficulty=difficulty,
+        exclude_cities=used_cities,
+        timeout_sec=15
     )
     
     # Extract data
@@ -195,31 +190,39 @@ async def buffer_worker(session_id: str, difficulty: str = "Medium", count: int 
 
 
 class StartSessionRequest(BaseModel):
-    difficulty: str = "Medium" # Default if not provided
+    difficulty: str = "Medium"
+    exclude_cities: list[str] = []
 
 @app.post("/start_session")
 async def start_session(request: Request, background_tasks: BackgroundTasks):
     """
     Initializes a user session with a specific difficulty.
     """
-    # Parse body manually or use Pydantic model above if we change signature
-    # But since we used Request before, let's stick to it or switch to Body
     try:
         body = await request.json()
         difficulty = body.get("difficulty", "Medium")
+        exclude_cities = body.get("exclude_cities", [])
     except Exception as e:
         print(f"❌ Error parsing start_session body: {e}")
         difficulty = "Medium"
+        exclude_cities = []
 
-    print(f"🔔 START_SESSION Received Difficulty: [{difficulty}]")
+    print(f"🔔 START_SESSION Received Difficulty: [{difficulty}], Excluding: {len(exclude_cities)} cities")
 
     session_id = str(uuid.uuid4())
     
-    # Store session config (difficulty) in Redis so we know what to generate later
+    # Store session config
     if redis_client:
         config_key = f"config:{session_id}"
         await redis_client.hset(config_key, mapping={"difficulty": difficulty})
-        await redis_client.expire(config_key, 3600) # 1 hour session
+        await redis_client.expire(config_key, 3600)
+
+        # Pre-seed used cities from frontend history
+        if exclude_cities:
+            used_cities_key = f"used_cities:{session_id}"
+            await redis_client.sadd(used_cities_key, *exclude_cities)
+            await redis_client.expire(used_cities_key, 3600)
+            print(f"🚫 Seeded {len(exclude_cities)} excluded cities for session {session_id}")
 
     # Fire and forget: Fill the buffer immediately
     background_tasks.add_task(buffer_worker, session_id, difficulty, BUFFER_SIZE)
@@ -341,10 +344,29 @@ async def verify_answer(request: Request):
             "attempts": attempts,
             "message": f"Correct! It's {answer_data.get('answer')}!"
         }
+    else:
+        # Calculate distance hint if we have coordinates for the guessed city
+        hint = None
+        hint_message = "Incorrect answer. Try again!"
+        
+        if location and location.get("lat") and location.get("lng"):
+            # Get original user answer (before lowercase)
+            original_answer = data.get("user_answer", "").strip()
+            hint = get_distance_hint(original_answer, location["lat"], location["lng"])
+            
+            if hint:
+                distance = hint["distance_km"]
+                direction = hint["direction"]
+                # Format distance with commas for readability
+                distance_str = f"{distance:,}"
+                hint_message = f"❌ {original_answer.title()} is {distance_str} km {direction} of the target!"
+                print(f"📍 Distance Hint: {original_answer} → Target = {distance_str} km {direction}")
+        
         return {
             "correct": False,
             "attempts": attempts,
-            "message": "Incorrect answer. Try again!"
+            "message": hint_message,
+            "hint": hint  # Contains distance_km, direction, guessed_coords (if available)
         }
 
 @app.get("/search_city")

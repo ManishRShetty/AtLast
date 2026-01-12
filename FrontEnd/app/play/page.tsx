@@ -27,6 +27,25 @@ const Battlespace = () => {
     // Track if fail logs have been added to prevent duplicates
     const [failLogsAdded, setFailLogsAdded] = useState(false);
 
+    // Persistent History of Seen Cities (to avoid repeats across sessions)
+    const [seenCities, setSeenCities] = useState<string[]>([]);
+
+    useEffect(() => {
+        const stored = localStorage.getItem('atlast_seen_cities');
+        if (stored) {
+            try { setSeenCities(JSON.parse(stored)); } catch { setSeenCities([]); }
+        }
+    }, []);
+
+    const addToSeenCities = (city: string) => {
+        if (!city) return;
+        setSeenCities(prev => {
+            const next = [...new Set([...prev, city])].slice(-50); // Keep last 50
+            localStorage.setItem('atlast_seen_cities', JSON.stringify(next));
+            return next;
+        });
+    };
+
     const stopLogStreamRef = useRef<(() => void) | null>(null);
 
     // Map frontend difficulty names to backend names
@@ -59,7 +78,8 @@ const Battlespace = () => {
             setAgentLogs(prev => [...prev, `Difficulty: ${backendDifficulty.toUpperCase()}`]);
 
             // Start a new session with difficulty
-            const newSessionId = await startSession(backendDifficulty);
+            // Start a new session with difficulty AND exclude list
+            const newSessionId = await startSession(backendDifficulty, seenCities);
             setSessionId(newSessionId);
             setAgentLogs(prev => [...prev, `Session established: ${newSessionId.slice(0, 8)}...`]);
 
@@ -81,6 +101,7 @@ const Battlespace = () => {
             setAgentLogs(prev => [...prev, 'Requesting target intelligence...']);
             const riddleData = await getQuestion(newSessionId);
             setRiddle(riddleData);
+            if (riddleData?.location?.name) addToSeenCities(riddleData.location.name);
             setAgentLogs(prev => [...prev, 'Target acquired: [REDACTED]']);
             setAgentLogs(prev => [...prev, 'MISSION READY. AWAITING AGENT INPUT.']);
 
@@ -206,6 +227,15 @@ const Battlespace = () => {
                 // Wrong Answer Logic
                 setWrongAttempts(prev => prev + 1);
 
+                // Add distance hint to terminal logs if available
+                if (result.hint) {
+                    const distance = result.hint.distance_km.toLocaleString();
+                    const direction = result.hint.direction;
+                    setAgentLogs(prev => [...prev, `📍 ${command.toUpperCase()} is ${distance} km ${direction} of the target!`]);
+                } else {
+                    setAgentLogs(prev => [...prev, `❌ Incorrect: "${command}" - Unknown location`]);
+                }
+
                 // Applying penalty to state (which affects effective time)
                 setTimeRemaining((prev) => {
                     const nextTime = Math.max(0, prev - 10);
@@ -278,6 +308,7 @@ const Battlespace = () => {
             // Fetch the next riddle using existing session
             const riddleData = await getQuestion(sessionId);
             setRiddle(riddleData);
+            if (riddleData?.location?.name) addToSeenCities(riddleData.location.name);
             setAgentLogs(prev => [...prev, 'Target acquired: [REDACTED]']);
             setAgentLogs(prev => [...prev, 'MISSION READY. AWAITING AGENT INPUT.']);
         } catch (error) {

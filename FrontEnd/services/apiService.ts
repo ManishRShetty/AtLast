@@ -6,14 +6,14 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
  * Initialize a new game session with the backend
  * @param difficulty - 'Easy', 'Medium', or 'Hard'
  */
-export const startSession = async (difficulty: string = 'Medium'): Promise<string> => {
+export const startSession = async (difficulty: string = 'Medium', excludeCities: string[] = []): Promise<string> => {
     try {
         const response = await fetch(`${API_BASE_URL}/start_session`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ difficulty }),
+            body: JSON.stringify({ difficulty, exclude_cities: excludeCities }),
         });
 
         if (!response.ok) {

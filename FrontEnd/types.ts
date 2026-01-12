@@ -64,4 +64,12 @@ export interface AnswerResponse {
   };
   attempts: number;
   message: string;
+  hint?: {
+    distance_km: number;
+    direction: string;
+    guessed_coords?: {
+      lat: number;
+      lng: number;
+    };
+  };
 }
