@@ -15,7 +15,7 @@ type Step = 'NAME' | 'DIFFICULTY';
 const AgentRegistrationModal: React.FC<AgentRegistrationModalProps> = ({ isOpen, onComplete }) => {
     const [step, setStep] = useState<Step>('NAME');
     const [name, setName] = useState('');
-    const [difficulty, setDifficulty] = useState('AGENT'); // Default to Normal
+    const [difficulty, setDifficulty] = useState('AGENT');
     const [error, setError] = useState(false);
     const [isExiting, setIsExiting] = useState(false);
 
@@ -32,23 +32,35 @@ const AgentRegistrationModal: React.FC<AgentRegistrationModalProps> = ({ isOpen,
         setIsExiting(true);
         setTimeout(() => {
             onComplete(name, difficulty);
-        }, 500); // Wait for fade to black
+        }, 500);
     };
+
+    const difficultyOptions = [
+        { id: 'INDIA_EASY', label: 'India // Recruit', desc: 'Major Metros', icon: Shield, color: 'text-emerald-400', borderColor: 'border-emerald-500', bgColor: 'bg-emerald-500/10' },
+        { id: 'INDIA_HARD', label: 'India // Veteran', desc: 'Tier-2 & History', icon: Zap, color: 'text-amber-400', borderColor: 'border-amber-500', bgColor: 'bg-amber-500/10' },
+        { id: 'GLOBAL_EASY', label: 'Global // Recruit', desc: 'Capital Cities', icon: Shield, color: 'text-blue-400', borderColor: 'border-blue-500', bgColor: 'bg-blue-500/10' },
+        { id: 'GLOBAL_HARD', label: 'Global // Veteran', desc: 'Obscure World', icon: Skull, color: 'text-red-500', borderColor: 'border-red-500', bgColor: 'bg-red-500/10' }
+    ];
 
     return (
         <AnimatePresence>
             {isOpen && (
                 <div className={`fixed inset-0 z-[100] flex items-center justify-center font-display ${isExiting ? 'pointer-events-none' : ''}`}>
-                    {/* Backdrop with Blur */}
+                    {/* Background - Same as breach page */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.5 }}
-                        className={`absolute inset-0 bg-black/90 backdrop-blur-sm ${isExiting ? 'opacity-0' : ''}`}
+                        className="absolute inset-0"
                     >
-                        <div className="absolute inset-0 z-0 opacity-20 bg-[url('/noise.png')] pointer-events-none"></div>
-                        <div className="absolute inset-0 z-10 pointer-events-none bg-[size:100%_4px] bg-[linear-gradient(to_bottom,rgba(255,255,255,0),rgba(255,255,255,0)_50%,rgba(0,0,0,0.2)_50%,rgba(0,0,0,0.2))] opacity-10"></div>
+                        {/* Apocalyptic Background */}
+                        <div
+                            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                            style={{ backgroundImage: "url('/atlastbg.png')" }}
+                        />
+                        {/* Dark overlay for better readability */}
+                        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
                     </motion.div>
 
                     {/* Fade to Black Overlay */}
@@ -60,158 +72,126 @@ const AgentRegistrationModal: React.FC<AgentRegistrationModalProps> = ({ isOpen,
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ duration: 0.4, ease: "easeOut" }}
-                        className={`relative z-10 w-full max-w-4xl p-4 ${isExiting ? 'animate-out fade-out zoom-out-95 duration-500 fill-mode-forwards' : ''}`}
+                        className={`relative z-10 w-full max-w-2xl p-4 ${isExiting ? 'animate-out fade-out zoom-out-95 duration-500 fill-mode-forwards' : ''}`}
                     >
-                        {/* Central HUD */}
-                        <div className="flex flex-col w-full bg-[#111822]/95 backdrop-blur-xl border border-primary/30 rounded-xl shadow-[0_0_60px_rgba(19,109,236,0.3)] overflow-hidden relative group ring-1 ring-primary/20">
-                            {/* Corner Accents */}
-                            <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-primary rounded-tl-lg"></div>
-                            <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-primary rounded-tr-lg"></div>
-                            <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-primary rounded-bl-lg"></div>
-                            <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-primary rounded-br-lg"></div>
-
-                            {/* Header Gradient Line */}
-                            <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-80"></div>
-
-                            {/* Header Banner */}
-                            <div className="py-6 px-6 text-center relative overflow-hidden">
-                                <h2 className="text-white text-lg md:text-xl font-bold leading-tight tracking-[0.1em] flex items-center justify-center gap-3 relative z-10 uppercase drop-shadow-lg">
-                                    <Shield className="size-6 text-primary animate-pulse" />
-                                    AGENT AUTHENTICATION
-                                    <Shield className="size-6 text-primary animate-pulse" />
+                        {/* Modal Card */}
+                        <div className="relative bg-black/80 border border-neutral-700/50 rounded-xl overflow-hidden backdrop-blur-xl">
+                            {/* Header */}
+                            <div className="py-6 px-6 text-center border-b border-neutral-700/30">
+                                <h2
+                                    className="text-white text-3xl md:text-4xl font-bold tracking-wider drop-shadow-lg"
+                                    style={{ fontFamily: "'Road Rage', cursive" }}
+                                >
+                                    {step === 'NAME' ? 'ENTER CODENAME' : 'SELECT DIFFICULTY'}
                                 </h2>
-                                <div className="flex justify-center mt-2">
-                                    <div className="flex items-center gap-2 bg-primary/10 px-3 py-1 rounded-full border border-primary/30">
-                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/50 animate-pulse"></span>
-                                        <span className="text-primary text-[10px] font-bold tracking-[0.2em] uppercase">Secure Connection</span>
-                                    </div>
-                                </div>
                             </div>
 
-                            <div className="p-8 md:p-12 flex flex-col items-center relative pt-4">
-                                {/* Background Grid */}
-                                <div className="absolute inset-0 grid-bg opacity-10 pointer-events-none"></div>
-
-                                {/* Dynamic Content Area (The Steps) */}
-                                <div className="relative w-full max-w-md mx-auto z-20 min-h-[250px] flex flex-col justify-center">
-                                    <h3 className="text-white text-2xl md:text-3xl font-bold leading-tight mb-8 tracking-wide font-display text-center drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">
-                                        {step === 'NAME' ? 'IDENTIFY AGENT' : 'SELECT PARAMETERS'}
-                                    </h3>
-
-                                    {step === 'NAME' && (
-                                        <motion.div
-                                            initial={{ opacity: 0, x: -20 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            exit={{ opacity: 0, x: 20 }}
-                                            className="w-full"
-                                        >
-                                            <form onSubmit={handleNameSubmit} className="flex flex-col gap-8">
-                                                <div className="relative group">
-                                                    <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/0 via-primary/50 to-primary/0 rounded-xl opacity-20 group-hover:opacity-40 transition duration-500 blur-md"></div>
-                                                    <div className="relative flex items-center bg-[#0B1016]/95 border border-[#233348] rounded-xl overflow-hidden transition-all group-focus-within:border-primary/60 group-focus-within:shadow-[0_0_20px_rgba(19,109,236,0.2)] backdrop-blur-xl">
-                                                        <div className="pl-4 pr-2 text-primary flex items-center pointer-events-none select-none h-full shrink-0">
-                                                            <span className="font-mono text-xs md:text-sm tracking-widest font-bold opacity-80 drop-shadow-[0_0_5px_rgba(19,109,236,0.5)]">CODENAME //</span>
-                                                        </div>
-                                                        <div className="w-[1px] h-8 bg-[#233348]"></div>
-                                                        <input
-                                                            type="text"
-                                                            value={name}
-                                                            onChange={(e) => {
-                                                                setName(e.target.value);
-                                                                setError(false);
-                                                            }}
-                                                            className="w-full bg-transparent border-none outline-none text-white font-mono text-lg md:text-xl py-4 px-4 focus:ring-0 focus:outline-none focus:border-none placeholder-slate-700 tracking-wider uppercase"
-                                                            placeholder="ENTER_ID..."
-                                                            autoFocus
-                                                            autoComplete="off"
-                                                        />
+                            {/* Body */}
+                            <div className="p-6 md:p-8">
+                                {/* Name Step */}
+                                {step === 'NAME' && (
+                                    <motion.div
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: 20 }}
+                                        className="w-full"
+                                    >
+                                        <form onSubmit={handleNameSubmit} className="flex flex-col gap-6">
+                                            {/* Input Field */}
+                                            <div className="relative">
+                                                <input
+                                                    type="text"
+                                                    value={name}
+                                                    onChange={(e) => {
+                                                        setName(e.target.value);
+                                                        setError(false);
+                                                    }}
+                                                    className="w-full bg-black/60 border-2 border-neutral-600 rounded-lg text-white text-xl md:text-2xl py-4 px-6 focus:outline-none focus:border-red-600 placeholder-neutral-500 tracking-wider uppercase transition-colors"
+                                                    placeholder="YOUR NAME..."
+                                                    autoFocus
+                                                    autoComplete="off"
+                                                />
+                                                {error && (
+                                                    <div className="absolute top-full left-0 mt-2 text-red-500 text-sm font-mono flex items-center gap-2">
+                                                        <TriangleAlert size={14} />
+                                                        <span>Name must be at least 2 characters</span>
                                                     </div>
-                                                    {error && (
-                                                        <div className="absolute top-full left-0 mt-2 text-red-500 text-xs font-mono tracking-widest flex items-center gap-1 animate-in fade-in slide-in-from-top-1">
-                                                            <TriangleAlert size={12} />
-                                                            <span>ERROR: INVALID IDENTIFIER</span>
-                                                        </div>
-                                                    )}
-                                                </div>
-
-                                                <div className="flex justify-center relative group/btn">
-                                                    <div className="absolute -inset-1 bg-gradient-to-r from-primary to-blue-400 rounded-lg blur opacity-25 group-hover/btn:opacity-75 transition duration-500"></div>
-                                                    <button
-                                                        type="submit"
-                                                        className="relative flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 bg-primary hover:bg-blue-600 transition-all duration-300 shadow-[0_0_20px_rgba(19,109,236,0.3)] hover:shadow-[0_0_30px_rgba(19,109,236,0.5)] border border-primary/50"
-                                                    >
-                                                        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
-                                                        <span className="text-white text-lg font-bold leading-normal tracking-widest uppercase mr-2">Proceed</span>
-                                                        <ChevronRight size={20} className="text-white" />
-                                                    </button>
-                                                </div>
-                                            </form>
-                                        </motion.div>
-                                    )}
-
-                                    {step === 'DIFFICULTY' && (
-                                        <motion.div
-                                            initial={{ opacity: 0, x: 20 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            exit={{ opacity: 0, x: -20 }}
-                                            className="w-full flex flex-col gap-6"
-                                        >
-                                            <div className="w-full">
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                    {[
-                                                        { id: 'INDIA_EASY', label: 'India // Recruit', desc: 'Major Metros', icon: Shield, color: 'text-emerald-400', border: 'hover:border-emerald-500', selectedBorder: 'border-emerald-500', bg: 'hover:bg-emerald-500/10', glow: 'shadow-[0_0_20px_rgba(16,185,129,0.2)]' },
-                                                        { id: 'INDIA_HARD', label: 'India // Veteran', desc: 'Tier-2 & History', icon: Zap, color: 'text-amber-400', border: 'hover:border-amber-500', selectedBorder: 'border-amber-500', bg: 'hover:bg-amber-500/10', glow: 'shadow-[0_0_20px_rgba(245,158,11,0.2)]' },
-                                                        { id: 'GLOBAL_EASY', label: 'Global // Recruit', desc: 'Capital Cities', icon: Shield, color: 'text-blue-400', border: 'hover:border-blue-500', selectedBorder: 'border-blue-500', bg: 'hover:bg-blue-500/10', glow: 'shadow-[0_0_20px_rgba(59,130,246,0.2)]' },
-                                                        { id: 'GLOBAL_HARD', label: 'Global // Veteran', desc: 'Obscure World', icon: Skull, color: 'text-red-500', border: 'hover:border-red-500', selectedBorder: 'border-red-500', bg: 'hover:bg-red-500/10', glow: 'shadow-[0_0_20px_rgba(239,68,68,0.2)]' }
-                                                    ].map((option) => (
-                                                        <button
-                                                            key={option.id}
-                                                            onClick={() => setDifficulty(option.id)}
-                                                            className={`
-                                                                relative p-3 rounded-lg border transition-all duration-300 text-left group flex flex-col justify-between min-h-[80px]
-                                                                ${difficulty === option.id
-                                                                    ? `${option.selectedBorder} bg-[#1a2332]/80 ${option.glow} scale-[1.02]`
-                                                                    : `border-[#233348] bg-[#0B1016] ${option.border} ${option.bg} opacity-70 hover:opacity-100 hover:scale-[1.01]`
-                                                                }
-                                                            `}
-                                                        >
-                                                            <div className="flex items-center justify-between mb-1">
-                                                                <span className={`text-xs md:text-sm font-bold uppercase tracking-widest transition-colors ${difficulty === option.id ? option.color : 'text-slate-400 group-hover:text-white'}`}>
-                                                                    {option.label}
-                                                                </span>
-                                                                <option.icon size={16} className={`${difficulty === option.id ? option.color : 'text-slate-600'} transition-colors`} />
-                                                            </div>
-                                                            <div className="text-[10px] text-slate-500 font-mono uppercase tracking-wide">
-                                                                {option.desc}
-                                                            </div>
-                                                        </button>
-                                                    ))}
-                                                </div>
+                                                )}
                                             </div>
 
-                                            <div className="flex justify-center relative group/btn pt-2">
-                                                <div className="absolute -inset-1 bg-gradient-to-r from-primary to-blue-400 rounded-lg blur opacity-25 group-hover/btn:opacity-75 transition duration-500"></div>
-                                                <button
-                                                    onClick={handleFinalSubmit}
-                                                    className="relative flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 bg-primary hover:bg-blue-600 transition-all duration-300 shadow-[0_0_20px_rgba(19,109,236,0.3)] hover:shadow-[0_0_30px_rgba(19,109,236,0.5)] border border-primary/50"
-                                                >
-                                                    <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
-                                                    <Power className="mr-3 animate-pulse size-5 text-white" />
-                                                    <span className="text-white text-lg font-bold leading-normal tracking-widest uppercase">Initiate Mission</span>
+                                            {/* Proceed Button - Skewed Red Style */}
+                                            <div className="flex justify-center pt-4">
+                                                <button type="submit" className="relative group">
+                                                    <div className="absolute inset-0 bg-red-600/40 blur-xl skew-x-[-8deg] group-hover:bg-red-500/60 transition-colors duration-300" />
+                                                    <div className="relative bg-gradient-to-r from-red-800 via-red-700 to-red-800 px-12 py-4 skew-x-[-8deg] group-hover:from-red-700 group-hover:via-red-600 group-hover:to-red-700 transition-all duration-300 border-t border-red-500/30">
+                                                        <span
+                                                            className="flex items-center gap-2 text-white text-xl font-bold tracking-wider skew-x-[8deg] drop-shadow-lg"
+                                                            style={{ fontFamily: "'Road Rage', cursive" }}
+                                                        >
+                                                            PROCEED
+                                                            <ChevronRight size={24} />
+                                                        </span>
+                                                    </div>
+                                                    <div className="mt-1 w-full h-2 bg-black/60 skew-x-[-8deg] border border-neutral-800/50" />
                                                 </button>
                                             </div>
-                                        </motion.div>
-                                    )}
-                                </div>
-                            </div>
+                                        </form>
+                                    </motion.div>
+                                )}
 
-                            {/* Footer */}
-                            <div className="relative z-20 bg-[#080c10] p-3 border-t border-[#233348] flex justify-between items-center text-[10px] text-slate-600 font-mono uppercase tracking-widest">
-                                <span className="flex items-center gap-1.5">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/50 animate-pulse"></span>
-                                    System Ready
-                                </span>
-                                <span>v.2.0.4 // PROTOCOL OMEGA</span>
+                                {/* Difficulty Step */}
+                                {step === 'DIFFICULTY' && (
+                                    <motion.div
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        exit={{ opacity: 0, x: -20 }}
+                                        className="w-full flex flex-col gap-6"
+                                    >
+                                        {/* Difficulty Options Grid */}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                            {difficultyOptions.map((option) => (
+                                                <button
+                                                    key={option.id}
+                                                    onClick={() => setDifficulty(option.id)}
+                                                    className={`
+                                                        relative p-4 rounded-lg border-2 transition-all duration-300 text-left group
+                                                        ${difficulty === option.id
+                                                            ? `${option.borderColor} ${option.bgColor} scale-[1.02]`
+                                                            : 'border-neutral-700 bg-black/40 hover:border-neutral-500 opacity-70 hover:opacity-100'
+                                                        }
+                                                    `}
+                                                >
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <span className={`text-sm font-bold uppercase tracking-widest ${difficulty === option.id ? option.color : 'text-neutral-400'}`}>
+                                                            {option.label}
+                                                        </span>
+                                                        <option.icon size={18} className={difficulty === option.id ? option.color : 'text-neutral-600'} />
+                                                    </div>
+                                                    <div className="text-xs text-neutral-500 font-mono uppercase tracking-wide">
+                                                        {option.desc}
+                                                    </div>
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        {/* Start Mission Button - Skewed Red Style */}
+                                        <div className="flex justify-center pt-4">
+                                            <button onClick={handleFinalSubmit} className="relative group">
+                                                <div className="absolute inset-0 bg-red-600/40 blur-xl skew-x-[-8deg] group-hover:bg-red-500/60 transition-colors duration-300" />
+                                                <div className="relative bg-gradient-to-r from-red-800 via-red-700 to-red-800 px-12 py-4 skew-x-[-8deg] group-hover:from-red-700 group-hover:via-red-600 group-hover:to-red-700 transition-all duration-300 border-t border-red-500/30">
+                                                    <span
+                                                        className="flex items-center gap-3 text-white text-xl font-bold tracking-wider skew-x-[8deg] drop-shadow-lg"
+                                                        style={{ fontFamily: "'Road Rage', cursive" }}
+                                                    >
+                                                        <Power className="animate-pulse" size={22} />
+                                                        START MISSION
+                                                    </span>
+                                                </div>
+                                                <div className="mt-1 w-full h-2 bg-black/60 skew-x-[-8deg] border border-neutral-800/50" />
+                                            </button>
+                                        </div>
+                                    </motion.div>
+                                )}
                             </div>
                         </div>
                     </motion.div>
