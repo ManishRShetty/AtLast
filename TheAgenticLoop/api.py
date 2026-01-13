@@ -22,7 +22,8 @@ from polyglot_ai import generate_riddle_optimized, search_city_names, get_distan
 # ==========================================
 # CONFIGURATION & CONSTANTS
 # ==========================================
-REDIS_URL = "redis://localhost:6379"
+import os
+REDIS_URL = os.environ.get("REDIS_URL", "redis://localhost:6379")
 QUEUE_PREFIX = "queue"
 LOG_CHANNEL_PREFIX = "logs"
 BUFFER_SIZE = 3  # Target number of questions to keep in queue
