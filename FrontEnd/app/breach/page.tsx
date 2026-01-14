@@ -39,7 +39,7 @@ const BreachPage = () => {
     };
 
     return (
-        <div className="relative w-full h-[calc(100vh-60px)] overflow-hidden">
+        <div className="relative w-full h-screen overflow-hidden bg-black font-display text-white">
             {/* Modal */}
             <AgentRegistrationModal
                 isOpen={isModalOpen}
@@ -55,113 +55,187 @@ const BreachPage = () => {
             {/* Transition Overlay (Fade to Black) */}
             <div className={`fixed inset-0 z-[100] bg-black pointer-events-none transition-opacity duration-1000 ease-in-out ${isTransitioning ? 'opacity-100' : 'opacity-0'}`}></div>
 
-            {/* Full Background Image - Fixed to cover entire viewport including behind navbar */}
+            {/* Full Background Image */}
             <div
-                className="fixed inset-0 bg-cover bg-center bg-no-repeat -mt-[60px]"
-                style={{ backgroundImage: "url('/atlastbg.png')" }}
+                className="fixed inset-0 bg-cover bg-center bg-no-repeat opacity-60"
+                style={{ backgroundImage: "url('/atlastbg.webp')" }}
             />
 
-            {/* Subtle Overlay for better contrast */}
-            <div className="fixed inset-0 bg-black/20 -mt-[60px]" />
+            {/* Vignette / Dark Overlay */}
+            <div className="fixed inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/80 z-0" />
 
-            {/* Login Status & Button */}
-            <div className="absolute top-4 right-4 z-50">
-                {isAuthenticated ? (
-                    <div className="flex items-center gap-4">
-                        <span className="text-green-500 font-mono text-sm tracking-wider">
-                            AGENT: {username?.toUpperCase()}
-                        </span>
-                        <button
-                            onClick={logout}
-                            className="text-red-500 text-xs hover:text-red-400 font-mono border border-red-500/50 px-2 py-1 rounded"
-                        >
-                            LOGOUT
-                        </button>
-                    </div>
-                ) : (
-                    <button
-                        onClick={() => setIsLoginModalOpen(true)}
-                        className="bg-green-900/40 border border-green-500/50 text-green-400 px-4 py-2 font-mono text-sm hover:bg-green-500/20 transition-all shadow-[0_0_10px_rgba(34,197,94,0.2)]"
-                    >
-                        ACCESS TERMINAL
-                    </button>
-                )}
-            </div>
-
-            {/* Main Content - Centered */}
-            <div className="relative z-10 flex flex-col items-center justify-center h-full">
-
-                {/* Logo and Text Container */}
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="flex items-center gap-4 md:gap-6"
-                >
-                    {/* Alien Logo */}
-                    <motion.div
-                        initial={{ scale: 0, rotate: -180 }}
-                        animate={{ scale: 1, rotate: 0 }}
-                        transition={{ duration: 0.6, delay: 0.2, type: "spring", stiffness: 100 }}
-                    >
-                        <Image
-                            src="/logo.png"
-                            alt="AtLast Logo"
-                            width={180}
-                            height={220}
-                            className="w-32 h-40 md:w-44 md:h-56 object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.3)]"
-                            priority
-                        />
-                    </motion.div>
-
-                    {/* Text Logo - ATLAST */}
-                    <motion.div
-                        initial={{ opacity: 0, x: 50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.6, delay: 0.4 }}
-                    >
-                        <Image
-                            src="/Text.png"
-                            alt="ATLAST"
-                            width={400}
-                            height={100}
-                            className="w-64 md:w-96 h-auto object-contain"
-                            priority
-                        />
-                    </motion.div>
-                </motion.div>
-
-                {/* Start Game Button */}
-                <motion.button
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.8 }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={handleStartGame}
-                    className="mt-8 md:mt-12 relative group"
-                >
-                    {/* Button Background - Skewed Red Rectangle */}
+            {/* Top Bar */}
+            <header className="fixed top-0 left-0 right-0 z-50 h-16 flex items-center justify-between px-8 bg-gradient-to-b from-black/90 to-transparent">
+                <div className="flex items-center gap-3">
                     <div className="relative">
-                        {/* Glow Effect */}
-                        <div className="absolute inset-0 bg-red-600/40 blur-xl skew-x-[-8deg] group-hover:bg-red-500/50 transition-colors duration-300" />
+                        <Image
+                            src="/logow.png"
+                            alt="Icon"
+                            width={28}
+                            height={28}
+                            className="w-7 h-auto object-contain brightness-200"
+                        />
+                    </div>
+                    <span className="text-white font-bold tracking-[0.15em] text-lg uppercase font-display drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]">
+                        ATLAST: PROTOCOL OMEGA
+                    </span>
+                </div>
 
-                        {/* Main Button */}
-                        <div className="relative bg-gradient-to-r from-red-800 via-red-700 to-red-800 px-12 py-4 md:px-16 md:py-5 skew-x-[-8deg] shadow-lg shadow-red-900/50 group-hover:from-red-700 group-hover:via-red-600 group-hover:to-red-700 transition-all duration-300 border-t border-red-500/30">
-                            {/* Button Text */}
-                            <span
-                                className="block text-white text-2xl md:text-3xl font-bold tracking-wider skew-x-[8deg] drop-shadow-lg"
-                                style={{ fontFamily: "'Road Rage', cursive" }}
+                <div className="flex items-center gap-6">
+                    {isAuthenticated && (
+                        <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2 font-mono text-xs tracking-wider">
+                                <span className="text-slate-500">AGENT:</span>
+                                <span className="text-emerald-500 font-bold">{username?.toUpperCase()}</span>
+                            </div>
+                            <button
+                                onClick={logout}
+                                className="border border-cyan-500/30 bg-cyan-950/30 hover:bg-cyan-900/50 hover:border-cyan-400/60 text-cyan-400 text-[10px] px-3 py-1 font-bold tracking-widest transition-all uppercase rounded-sm backdrop-blur-sm"
                             >
-                                START GAME
-                            </span>
+                                LOGOUT
+                            </button>
+                        </div>
+                    )}                </div>
+            </header>
+
+            {/* Main Content */}
+            <div className="relative z-10 flex flex-col items-center justify-center h-full w-full">
+
+                {/* Logo and Text Group */}
+                <div className="flex items-center gap-2 md:gap-4 mb-12">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8, rotate: -20 }}
+                        animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                    >
+                        <Image
+                            src="/logo.webp"
+                            alt="Alien Logo"
+                            width={180}
+                            height={180}
+                            className="w-32 md:w-44 h-auto object-contain drop-shadow-[0_0_25px_rgba(0,255,255,0.5)]"
+                        />
+                    </motion.div>
+
+                    <motion.div
+                        initial={{ opacity: 0, x: 40 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.8, delay: 0.2 }}
+                    >
+                        <Image
+                            src="/text.webp"
+                            alt="ATLAST"
+                            width={450}
+                            height={140}
+                            className="w-72 md:w-96 h-auto drop-shadow-[0_0_15px_rgba(0,255,255,0.3)] contrast-125"
+                        />
+                    </motion.div>
+                </div>
+
+                {/* Buttons Container */}
+                <div className="flex flex-col md:flex-row items-center gap-8 mt-16">
+
+                    {/* Enter as Rogue Button (Guest) */}
+                    <div className="relative group flex flex-col items-center gap-3">
+                        <motion.button
+                            onClick={handleStartGame}
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ duration: 0.8, delay: 0.5 }}
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            className="relative z-10"
+                        >
+                            {/* Button Shape */}
+                            <div
+                                className="bg-emerald-900/20 md:w-64 w-56 h-12 md:h-14 flex items-center justify-center relative backdrop-blur-sm border border-emerald-500/30 group-hover:border-emerald-500/80 transition-colors"
+                                style={{
+                                    clipPath: 'polygon(10% 0, 100% 0, 90% 100%, 0% 100%)'
+                                }}
+                            >
+                                <div className="absolute inset-0 bg-emerald-500/10 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+
+                                <span className="relative z-10 text-emerald-400 font-display font-bold text-lg tracking-widest uppercase group-hover:text-emerald-300 transition-colors drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                                    {isAuthenticated ? 'ENTER' : 'ENTER AS ROGUE'}
+                                </span>
+                            </div>
+                        </motion.button>
+
+                        {/* Hover Annotation */}
+                        <div className="absolute top-full mt-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 text-center pointer-events-none">
+                            <p className="text-[10px] text-emerald-500/70 font-mono tracking-widest uppercase bg-black/80 px-2 py-1 border-x border-emerald-500/30">
+                                // NO SAVE DATA RECORDED
+                            </p>
                         </div>
                     </div>
 
-                    {/* Dark Rectangle Below Button */}
-                    <div className="mt-2 w-full h-3 bg-black/60 skew-x-[-8deg] border border-neutral-800/50" />
-                </motion.button>
+                    {/* Authenticate Button (Login) */}
+                    {!isAuthenticated && (
+                        <div className="relative group flex flex-col items-center gap-3">
+                            <motion.button
+                                onClick={() => setIsLoginModalOpen(true)}
+                                initial={{ opacity: 0, x: 20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.8, delay: 0.6 }}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                className="relative z-10"
+                            >
+                                {/* Button Shape */}
+                                <div
+                                    className="bg-cyan-900/20 md:w-64 w-56 h-12 md:h-14 flex items-center justify-center relative backdrop-blur-sm border border-cyan-500/30 group-hover:border-cyan-500/80 transition-colors"
+                                    style={{
+                                        clipPath: 'polygon(10% 0, 100% 0, 90% 100%, 0% 100%)'
+                                    }}
+                                >
+                                    <div className="absolute inset-0 bg-cyan-500/10 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+
+                                    <span className="relative z-10 text-cyan-400 font-display font-bold text-lg tracking-widest uppercase group-hover:text-cyan-300 transition-colors drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                                        AUTHENTICATE
+                                    </span>
+                                </div>
+                            </motion.button>
+                            {/* Hover Annotation */}
+                            <div className="absolute top-full mt-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 text-center pointer-events-none">
+                                <p className="text-[10px] text-cyan-500/70 font-mono tracking-widest uppercase bg-black/80 px-2 py-1 border-x border-cyan-500/30">
+                                    // SAVE PROGRESS & STATS
+                                </p>
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
+
+            {/* HUD Elements */}
+            <div className="absolute top-24 right-12 hidden md:flex flex-col items-end opacity-70">
+                <div className="flex items-center gap-3 text-emerald-500/60 font-mono text-[10px] tracking-wider uppercase">
+                    <span>Repelling</span>
+                    <span>10:35</span>
+                    <span>[ DEMO-0-SPECIAL ]</span>
+                </div>
+                <div className="h-px w-full bg-emerald-500/20 mt-1"></div>
+            </div>
+
+            {/* Honeycomb pattern decor */}
+            <div className="absolute top-10 right-10 w-48 h-48 opacity-10 pointer-events-none"
+                style={{
+                    backgroundImage: 'radial-gradient(circle, transparent 20%, #000 20%, #000 80%, transparent 80%, transparent), radial-gradient(circle, transparent 20%, #000 20%, #000 80%, transparent 80%, transparent) ',
+                    backgroundSize: '30px 30px',
+                    backgroundPosition: '0 0, 15px 15px'
+                }}
+            >
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/20 to-transparent clip-path-polygon" />
+            </div>
+
+            {/* Bottom Right Decoration */}
+            <div className="absolute bottom-10 right-10">
+                <div className="relative">
+                    <div className="w-8 h-8 rotate-45 border border-white/50 bg-white/10 flex items-center justify-center">
+                        <div className="w-4 h-4 bg-white/80 rotate-45 blur-[2px]"></div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     );
 };

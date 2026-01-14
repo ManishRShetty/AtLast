@@ -15,7 +15,7 @@ type Step = 'NAME' | 'DIFFICULTY';
 const AgentRegistrationModal: React.FC<AgentRegistrationModalProps> = ({ isOpen, onComplete }) => {
     const [step, setStep] = useState<Step>('NAME');
     const [name, setName] = useState('');
-    const [difficulty, setDifficulty] = useState('AGENT');
+    const [difficulty, setDifficulty] = useState('INDIA_EASY');
     const [error, setError] = useState(false);
     const [isExiting, setIsExiting] = useState(false);
 
@@ -46,24 +46,38 @@ const AgentRegistrationModal: React.FC<AgentRegistrationModalProps> = ({ isOpen,
         <AnimatePresence>
             {isOpen && (
                 <div className={`fixed inset-0 z-[100] flex items-center justify-center font-display ${isExiting ? 'pointer-events-none' : ''}`}>
-                    {/* Background - Same as breach page */}
+
+                    {/* Layer 1: Dark Apocalyptic City Silhouette */}
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.5 }}
-                        className="absolute inset-0"
+                        className="fixed inset-0 bg-black"
                     >
-                        {/* Apocalyptic Background */}
                         <div
-                            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                            style={{ backgroundImage: "url('/atlastbg.png')" }}
+                            className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40 mix-blend-luminosity"
+                            style={{ backgroundImage: "url('/atlastbg.webp')" }}
                         />
-                        {/* Dark overlay for better readability */}
-                        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+
+                        {/* Layer 2: Grid Pattern Overlay */}
+                        <div
+                            className="absolute inset-0 z-0 opacity-10 pointer-events-none"
+                            style={{
+                                backgroundImage: `
+                                    linear-gradient(to right, rgba(0, 255, 255, 0.3) 1px, transparent 1px),
+                                    linear-gradient(to bottom, rgba(0, 255, 255, 0.3) 1px, transparent 1px)
+                                `,
+                                backgroundSize: '40px 40px'
+                            }}
+                        />
+
+                        {/* Layer 3: Heavy Radial Gradient Vignette */}
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#000000_90%)]" />
                     </motion.div>
 
-                    {/* Fade to Black Overlay */}
+
+                    {/* Fade to Black Overlay (Exit) */}
                     <div className={`fixed inset-0 z-[100] bg-black transition-opacity duration-500 pointer-events-none ${isExiting ? 'opacity-100' : 'opacity-0'}`}></div>
 
                     {/* Content Container */}
@@ -74,20 +88,27 @@ const AgentRegistrationModal: React.FC<AgentRegistrationModalProps> = ({ isOpen,
                         transition={{ duration: 0.4, ease: "easeOut" }}
                         className={`relative z-10 w-full max-w-2xl p-4 ${isExiting ? 'animate-out fade-out zoom-out-95 duration-500 fill-mode-forwards' : ''}`}
                     >
-                        {/* Modal Card */}
-                        <div className="relative bg-black/80 border border-neutral-700/50 rounded-xl overflow-hidden backdrop-blur-xl">
+                        {/* Modal Card - Styled to match Cyberpunk/Tactical Dystopia */}
+                        <div className="relative bg-[#050a10]/90 border border-cyan-900/50 backdrop-blur-xl shadow-[0_0_50px_rgba(0,255,255,0.1)] overflow-hidden">
+
+                            {/* Decorative Corner Markers */}
+                            <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-cyan-500"></div>
+                            <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-cyan-500"></div>
+                            <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-cyan-500"></div>
+                            <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-cyan-500"></div>
+
                             {/* Header */}
-                            <div className="py-6 px-6 text-center border-b border-neutral-700/30">
+                            <div className="py-8 px-8 text-center border-b border-cyan-900/30 relative">
                                 <h2
-                                    className="text-white text-3xl md:text-4xl font-bold tracking-wider drop-shadow-lg"
-                                    style={{ fontFamily: "'Road Rage', cursive" }}
+                                    className="text-white text-3xl md:text-4xl font-bold tracking-[0.2em] drop-shadow-[0_0_10px_rgba(0,255,255,0.5)] uppercase"
                                 >
-                                    {step === 'NAME' ? 'ENTER CODENAME' : 'SELECT DIFFICULTY'}
+                                    {step === 'NAME' ? 'Identity Verification' : 'Mission Parameters'}
                                 </h2>
+                                <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent"></div>
                             </div>
 
                             {/* Body */}
-                            <div className="p-6 md:p-8">
+                            <div className="p-8 md:p-10">
                                 {/* Name Step */}
                                 {step === 'NAME' && (
                                     <motion.div
@@ -96,9 +117,12 @@ const AgentRegistrationModal: React.FC<AgentRegistrationModalProps> = ({ isOpen,
                                         exit={{ opacity: 0, x: 20 }}
                                         className="w-full"
                                     >
-                                        <form onSubmit={handleNameSubmit} className="flex flex-col gap-6">
+                                        <form onSubmit={handleNameSubmit} className="flex flex-col gap-8">
                                             {/* Input Field */}
-                                            <div className="relative">
+                                            <div className="relative group">
+                                                <div className="absolute -top-3 left-4 bg-[#050a10] px-2 text-xs font-mono text-cyan-500 tracking-widest uppercase z-10">
+                                                    Agent Codename
+                                                </div>
                                                 <input
                                                     type="text"
                                                     value={name}
@@ -106,33 +130,38 @@ const AgentRegistrationModal: React.FC<AgentRegistrationModalProps> = ({ isOpen,
                                                         setName(e.target.value);
                                                         setError(false);
                                                     }}
-                                                    className="w-full bg-black/60 border-2 border-neutral-600 rounded-lg text-white text-xl md:text-2xl py-4 px-6 focus:outline-none focus:border-red-600 placeholder-neutral-500 tracking-wider uppercase transition-colors"
-                                                    placeholder="YOUR NAME..."
+                                                    className="w-full bg-[#0a1520]/80 border border-cyan-900/50 text-white text-xl md:text-2xl py-5 px-6 focus:outline-none focus:border-cyan-400 placeholder-slate-700 tracking-[0.1em] font-mono transition-all clip-path-input focus:shadow-[0_0_20px_rgba(0,255,255,0.1)]"
+                                                    placeholder="ENTER ALIAS..."
                                                     autoFocus
                                                     autoComplete="off"
                                                 />
                                                 {error && (
-                                                    <div className="absolute top-full left-0 mt-2 text-red-500 text-sm font-mono flex items-center gap-2">
-                                                        <TriangleAlert size={14} />
-                                                        <span>Name must be at least 2 characters</span>
+                                                    <div className="absolute top-full left-0 mt-3 text-red-500 text-xs font-mono flex items-center gap-2 bg-red-950/30 px-3 py-1 border border-red-500/30 w-full animate-shake">
+                                                        <TriangleAlert size={12} />
+                                                        <span>ERROR: INVALID IDENTIFIER LENGTH</span>
                                                     </div>
                                                 )}
                                             </div>
 
-                                            {/* Proceed Button - Skewed Red Style */}
-                                            <div className="flex justify-center pt-4">
-                                                <button type="submit" className="relative group">
-                                                    <div className="absolute inset-0 bg-red-600/40 blur-xl skew-x-[-8deg] group-hover:bg-red-500/60 transition-colors duration-300" />
-                                                    <div className="relative bg-gradient-to-r from-red-800 via-red-700 to-red-800 px-12 py-4 skew-x-[-8deg] group-hover:from-red-700 group-hover:via-red-600 group-hover:to-red-700 transition-all duration-300 border-t border-red-500/30">
+                                            {/* Proceed Button - Tactical Skewed */}
+                                            <div className="flex justify-center pt-2">
+                                                <button type="submit" className="relative group perspective-distant">
+                                                    <div
+                                                        className="relative bg-cyan-950/40 border border-cyan-500/50 px-16 py-4 overflow-hidden group-hover:border-cyan-400 transition-colors"
+                                                        style={{ transform: 'skew(-12deg)' }}
+                                                    >
+                                                        <div className="absolute inset-0 bg-cyan-500/10 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                                                        <div className="absolute inset-0 bg-cyan-400/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+
+                                                        {/* Glitch Effect on Hover */}
                                                         <span
-                                                            className="flex items-center gap-2 text-white text-xl font-bold tracking-wider skew-x-[8deg] drop-shadow-lg"
-                                                            style={{ fontFamily: "'Road Rage', cursive" }}
+                                                            className="flex items-center gap-3 text-cyan-400 text-xl font-bold tracking-widest group-hover:text-white transition-colors relative z-10 group-hover:animate-glitch"
+                                                            style={{ transform: 'skew(12deg)' }}
                                                         >
-                                                            PROCEED
-                                                            <ChevronRight size={24} />
+                                                            CONFIRM IDENTITY
+                                                            <ChevronRight size={20} />
                                                         </span>
                                                     </div>
-                                                    <div className="mt-1 w-full h-2 bg-black/60 skew-x-[-8deg] border border-neutral-800/50" />
                                                 </button>
                                             </div>
                                         </form>
@@ -145,53 +174,69 @@ const AgentRegistrationModal: React.FC<AgentRegistrationModalProps> = ({ isOpen,
                                         initial={{ opacity: 0, x: 20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         exit={{ opacity: 0, x: -20 }}
-                                        className="w-full flex flex-col gap-6"
+                                        className="w-full flex flex-col gap-8"
                                     >
                                         {/* Difficulty Options Grid */}
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             {difficultyOptions.map((option) => (
                                                 <button
                                                     key={option.id}
                                                     onClick={() => setDifficulty(option.id)}
                                                     className={`
-                                                        relative p-4 rounded-lg border-2 transition-all duration-300 text-left group
+                                                        relative p-5 transition-all duration-300 text-left group overflow-hidden
                                                         ${difficulty === option.id
-                                                            ? `${option.borderColor} ${option.bgColor} scale-[1.02]`
-                                                            : 'border-neutral-700 bg-black/40 hover:border-neutral-500 opacity-70 hover:opacity-100'
+                                                            ? `border-l-4 ${option.borderColor} bg-[rgba(0,0,0,0.4)]`
+                                                            : 'border-l-4 border-transparent bg-[rgba(0,0,0,0.2)] hover:bg-[rgba(0,255,255,0.05)] hover:border-cyan-500/30'
                                                         }
                                                     `}
                                                 >
+                                                    {/* Selection Glow */}
+                                                    {difficulty === option.id && (
+                                                        <div className={`absolute inset-0 ${option.bgColor} opacity-20 pointer-events-none`}></div>
+                                                    )}
+
                                                     <div className="flex items-center justify-between mb-2">
-                                                        <span className={`text-sm font-bold uppercase tracking-widest ${difficulty === option.id ? option.color : 'text-neutral-400'}`}>
+                                                        <span className={`text-sm font-bold uppercase tracking-widest ${difficulty === option.id ? option.color : 'text-slate-400 group-hover:text-cyan-300'}`}>
                                                             {option.label}
                                                         </span>
-                                                        <option.icon size={18} className={difficulty === option.id ? option.color : 'text-neutral-600'} />
+                                                        <option.icon size={16} className={difficulty === option.id ? option.color : 'text-slate-600'} />
                                                     </div>
-                                                    <div className="text-xs text-neutral-500 font-mono uppercase tracking-wide">
-                                                        {option.desc}
+                                                    <div className="text-[10px] text-slate-500 font-mono uppercase tracking-wide group-hover:text-slate-400 transition-colors">
+                                                        [{option.desc}]
                                                     </div>
                                                 </button>
                                             ))}
                                         </div>
 
-                                        {/* Start Mission Button - Skewed Red Style */}
-                                        <div className="flex justify-center pt-4">
+                                        {/* Start Mission Button - Tactical Skewed (Green/Teal) */}
+                                        <div className="flex justify-center pt-2">
                                             <button onClick={handleFinalSubmit} className="relative group">
-                                                <div className="absolute inset-0 bg-red-600/40 blur-xl skew-x-[-8deg] group-hover:bg-red-500/60 transition-colors duration-300" />
-                                                <div className="relative bg-gradient-to-r from-red-800 via-red-700 to-red-800 px-12 py-4 skew-x-[-8deg] group-hover:from-red-700 group-hover:via-red-600 group-hover:to-red-700 transition-all duration-300 border-t border-red-500/30">
+                                                <div
+                                                    className="relative bg-emerald-950/40 border border-emerald-500/50 px-16 py-4 overflow-hidden group-hover:border-emerald-400 transition-colors shadow-[0_0_20px_rgba(16,185,129,0.1)]"
+                                                    style={{ transform: 'skew(-12deg)' }}
+                                                >
+                                                    <div className="absolute inset-0 bg-emerald-500/10 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+                                                    <div className="absolute inset-0 bg-emerald-400/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+
                                                     <span
-                                                        className="flex items-center gap-3 text-white text-xl font-bold tracking-wider skew-x-[8deg] drop-shadow-lg"
-                                                        style={{ fontFamily: "'Road Rage', cursive" }}
+                                                        className="flex items-center gap-3 text-emerald-400 text-xl font-bold tracking-widest group-hover:text-white transition-colors relative z-10 group-hover:animate-glitch"
+                                                        style={{ transform: 'skew(12deg)' }}
                                                     >
-                                                        <Power className="animate-pulse" size={22} />
-                                                        START MISSION
+                                                        <Power className="mr-1" size={18} />
+                                                        ENGAGE LINK
                                                     </span>
                                                 </div>
-                                                <div className="mt-1 w-full h-2 bg-black/60 skew-x-[-8deg] border border-neutral-800/50" />
                                             </button>
                                         </div>
                                     </motion.div>
                                 )}
+                            </div>
+
+                            {/* Footer Decor */}
+                            <div className="h-2 bg-[#0a1520] w-full border-t border-cyan-900/30 flex items-center justify-end px-4 gap-1">
+                                <div className="w-1 h-1 bg-cyan-500 rounded-full animate-pulse"></div>
+                                <div className="w-1 h-1 bg-cyan-500/50 rounded-full"></div>
+                                <div className="w-1 h-1 bg-cyan-500/30 rounded-full"></div>
                             </div>
                         </div>
                     </motion.div>
