@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
-import { Wifi, Satellite, Activity, ShieldCheck, FastForward } from 'lucide-react';
+
+
 
 type Speaker = 'LANCE' | 'Ø' | 'USER' | 'SYSTEM';
 type VisualTheme = 'BLUE' | 'RED' | 'GRAY';
@@ -163,8 +164,7 @@ const IntroPage = () => {
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const [displayedText, setDisplayedText] = useState('');
     const [isTyping, setIsTyping] = useState(false);
-    const [agentCodename, setAgentCodename] = useState('FAILSAFE');
-    const [isLoaded, setIsLoaded] = useState(false);
+
 
     // Derived state
     const currentStep = dialogueSequence[currentStepIndex];
@@ -174,19 +174,19 @@ const IntroPage = () => {
     const typingIntervalRef = useRef<NodeJS.Timeout | null>(null);
     const typingAudioRef = useRef<HTMLAudioElement | null>(null);
 
-    const [frequency, setFrequency] = useState('142.885');
+
 
     useEffect(() => {
         // Initialize Audio
-        typingAudioRef.current = new Audio('/audio/typing.mp3');
-        typingAudioRef.current.loop = true;
-        typingAudioRef.current.volume = 0.2; // Low volume background noise
+        if (typeof window !== 'undefined') {
+            typingAudioRef.current = new Audio('/audio/typing.mp3');
+            typingAudioRef.current.loop = true;
+            typingAudioRef.current.volume = 0.2; // Low volume background noise
+        }
 
-        const interval = setInterval(() => {
-            setFrequency((142.800 + Math.random() * 0.199).toFixed(3));
-        }, 150);
+
         return () => {
-            clearInterval(interval);
+
             if (typingAudioRef.current) {
                 typingAudioRef.current.pause();
                 typingAudioRef.current = null;
@@ -194,14 +194,9 @@ const IntroPage = () => {
         };
     }, []);
 
-    // Scroll to top on mount and fetch agent name
+    // Scroll to top on mount
     useEffect(() => {
         window.scrollTo(0, 0);
-        setIsLoaded(true);
-        const storedName = localStorage.getItem('atlast_agent_name');
-        if (storedName) {
-            setAgentCodename(storedName.toUpperCase());
-        }
     }, []);
 
     // Handle step change & typing effect
@@ -283,249 +278,113 @@ const IntroPage = () => {
         }
     };
 
-    // Calculate dynamic styles based on theme
-    const getThemeColors = () => {
-        switch (currentStep.theme) {
-            case 'RED':
-                return {
-                    text: 'text-red-500',
-                    border: 'border-red-500/50',
-                    bg: 'bg-red-900/10',
-                    shadow: 'shadow-red-500/20',
-                    fill: 'fill-red-500',
-                    gradient: 'from-red-900',
-                    accent: 'bg-red-500'
-                };
-            case 'GRAY':
-                return {
-                    text: 'text-slate-400',
-                    border: 'border-slate-500/30',
-                    bg: 'bg-slate-900/10',
-                    shadow: 'shadow-slate-500/10',
-                    fill: 'fill-slate-400',
-                    gradient: 'from-slate-900',
-                    accent: 'bg-slate-500'
-                };
-            case 'BLUE':
-            default:
-                return {
-                    text: 'text-primary',
-                    border: 'border-border-tech',
-                    bg: 'bg-background-dark/50',
-                    shadow: 'shadow-primary/5',
-                    fill: 'fill-primary',
-                    gradient: 'from-background-dark',
-                    accent: 'bg-primary'
-                };
-        }
-    };
 
-    const theme = getThemeColors();
+
+
+
+    const isUser = currentStep.speaker === 'USER';
+    const alignRight = isUser; // User on right, others on left
+
+    // Character Image Source
+    const characterImage = currentStep.speaker === 'LANCE' ? '/vance.png' :
+        currentStep.speaker === 'Ø' ? '/alien.png' :
+            currentStep.speaker === 'USER' ? '/bg-map.png' : ''; // Fallback
 
     return (
-        <div className="relative flex min-h-[calc(100vh-60px)] w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-hidden tech-grid-bg text-white">
+        <div className="relative h-screen w-full bg-black overflow-hidden flex flex-col items-center justify-end pb-12 font-sans select-none">
 
-            {/* Fade In Overlay */}
-            <div className={`fixed inset-0 z-[100] bg-black transition-opacity duration-[500ms] pointer-events-none ${isLoaded ? 'opacity-0' : 'opacity-100'}`}></div>
+            {/* Background Atmosphere */}
+            <div className="absolute inset-0 z-0">
+                {/* Dark Dystopian City or Tech Background - Placeholder using existing tech grid class but darkened */}
+                <div className="absolute inset-0 bg-background-dark opacity-90"></div>
+                <div className="absolute inset-0 bg-[url('/atlastbg.webp')] opacity-80 bg-cover bg-center bg-no-repeat"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/50"></div>
+            </div>
 
-            <style jsx global>{`
-                @keyframes glitched {
-                    0% { transform: translate(0) }
-                    20% { transform: translate(-2px, 2px) }
-                    40% { transform: translate(-2px, -2px) }
-                    60% { transform: translate(2px, 2px) }
-                    80% { transform: translate(2px, -2px) }
-                    100% { transform: translate(0) }
-                }
-                .animate-shake {
-                    animation: glitched 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
-                }
-                .animate-glitch-text {
-                     animation: glitched 0.5s infinite;
-                }
-            `}</style>
+            {/* Character Layer - Dynamic Positioning */}
+            <div className={`absolute bottom-0 z-10 w-full flex pointer-events-none transition-all duration-700 ease-in-out ${alignRight ? 'justify-end pr-10 md:pr-32' : 'justify-start pl-10 md:pl-32'}`}>
+                {/* Character Image with fade effect */}
+                <div
+                    key={currentStep.speaker} // Key forces re-render/animation on speaker change
+                    className={`relative h-[60vh] md:h-[80vh] w-auto aspect-[2/3] transition-all duration-500 ${isPhase2 ? 'animate-shake filter contrast-125 sepia-[.5] hue-rotate-[-50deg]' : ''} ${alignRight ? 'origin-bottom-right' : 'origin-bottom-left'} animate-in fade-in slide-in-from-bottom-10`}
+                >
+                    <img
+                        src={characterImage}
+                        alt={currentStep.speaker}
+                        className="h-full w-full object-contain drop-shadow-[0_0_50px_rgba(0,0,0,0.8)]"
+                    />
+                </div>
+            </div>
 
-            {/* Main Content */}
-            <main className={`flex-1 flex flex-col items-center justify-center p-4 pb-40 relative overflow-y-auto ${isPhase2 ? 'animate-shake' : ''}`}>
-                <div className={`w-full max-w-4xl flex flex-col gap-6 ${isPhase2 ? 'contrast-125 saturate-150' : ''}`}>
+            {/* Dialog Container */}
+            <div className="relative z-20 w-full max-w-5xl px-4 md:px-0 mb-8">
 
-                    {/* Stats Row */}
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-                        <div className={`flex flex-col gap-1 rounded border ${theme.border} ${theme.bg} p-3 relative overflow-hidden group transition-colors duration-500`}>
-                            <div className="absolute top-0 right-0 p-1 opacity-50"><ShieldCheck size={18} className={theme.text} /></div>
-                            <p className="text-slate-400 text-xs font-medium uppercase tracking-wider">Encryption</p>
-                            <p className={`text-lg md:text-xl font-bold leading-none tracking-tight transition-colors duration-300 ${isPhase2 ? 'text-red-500' : 'text-white'}`}>
-                                {currentStep.stats.encryption}
-                            </p>
-                        </div>
-                        <div className={`flex flex-col gap-1 rounded border ${theme.border} ${theme.bg} p-3 relative overflow-hidden transition-colors duration-500`}>
-                            <div className="absolute top-0 right-0 p-1 opacity-50"><Wifi size={18} className={currentStep.theme === 'RED' ? 'text-red-500' : 'text-green-500'} /></div>
-                            <p className="text-slate-400 text-xs font-medium uppercase tracking-wider">Connection</p>
-                            <p className={`text-lg md:text-xl font-bold leading-none tracking-tight transition-colors duration-300 ${currentStep.theme === 'RED' ? 'text-red-500' : (currentStep.theme === 'GRAY' ? 'text-slate-500' : 'text-green-400')}`}>
-                                {currentStep.stats.connection}
-                            </p>
-                        </div>
-                        <div className={`flex flex-col gap-1 rounded border ${theme.border} ${theme.bg} p-3 relative overflow-hidden col-span-2 md:col-span-1 transition-colors duration-500`}>
-                            <div className="absolute top-0 right-0 p-1 opacity-50"><Satellite size={18} className={theme.text} /></div>
-                            <p className="text-slate-400 text-xs font-medium uppercase tracking-wider">Uplink</p>
-                            <p className={`text-lg md:text-xl font-bold leading-none tracking-tight transition-colors duration-300 ${theme.text}`}>
-                                {currentStep.stats.uplink}
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Central Visualizer */}
-                    <div className={`relative w-full rounded-lg border ${theme.border} bg-background-dark overflow-hidden shadow-2xl transition-all duration-500`}>
-                        <div className={`absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-${currentStep.theme === 'RED' ? 'red-500' : (currentStep.theme === 'GRAY' ? 'slate-500' : 'primary')} to-transparent opacity-50`}></div>
-
-                        <div className="flex flex-col md:flex-row items-stretch">
-                            <div className={`relative w-full md:w-2/3 h-64 md:h-auto bg-black/40 flex items-center justify-center p-6 border-b md:border-b-0 md:border-r ${theme.border}`}>
-                                {/* CSS Animated Visualizer */}
-                                <style dangerouslySetInnerHTML={{
-                                    __html: `
-                                    @keyframes equalizer {
-                                        0% { height: 20%; transform: scaleY(0.2); }
-                                        50% { height: 100%; transform: scaleY(1); }
-                                        100% { height: 20%; transform: scaleY(0.2); }
-                                    }
-                                `}} />
-                                <div className="absolute inset-0 flex items-center justify-between gap-0.5 opacity-60 px-2">
-                                    {[...Array(64)].map((_, i) => (
-                                        <div
-                                            key={i}
-                                            className={`w-full rounded-full transition-colors duration-300 ${isPhase2 ? 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]' : (currentStep.theme === 'GRAY' ? 'bg-slate-600' : 'bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.5)]')}`}
-                                            style={{
-                                                height: '40%',
-                                                animation: `equalizer ${1.5 + Math.sin(i * 1324) * 0.8}s ease-in-out infinite`,
-                                                animationDelay: `-${Math.abs(Math.cos(i * 743)) * 2}s`
-                                            }}
-                                        />
-                                    ))}
-                                </div>
-                                <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-background-dark/20"></div>
-
-                                <div className={`absolute bottom-4 right-4 text-xs font-mono hidden md:block ${theme.text} opacity-60`}>FREQ: {frequency} MHz</div>
-
-
-                            </div>
-
-                            <div className="w-full md:w-1/3 p-6 flex flex-col justify-center gap-4 bg-background-dark/80">
-                                <div>
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <div className={`h-1.5 w-1.5 rounded-full ${currentStep.theme === 'GRAY' ? 'bg-slate-500' : 'bg-red-500'} ${currentStep.theme === 'GRAY' ? '' : 'animate-pulse'}`}></div>
-                                        <span className={`text-xs font-bold tracking-widest uppercase ${currentStep.theme === 'GRAY' ? 'text-slate-500' : 'text-red-500'}`}>Live Feed</span>
-                                    </div>
-                                    <h2 className={`text-2xl font-bold leading-tight uppercase tracking-tight transition-colors duration-300 ${isPhase2 ? 'text-red-500 animate-glitch-text' : 'text-white'}`}>
-                                        {currentStep.liveFeed.name}
-                                    </h2>
-                                    <p className={`text-sm font-medium tracking-wide border-l-2 pl-2 mt-1 transition-colors duration-300 ${theme.text} ${theme.border}`}>
-                                        {currentStep.liveFeed.title}
-                                    </p>
-                                </div>
-                                <div className={`h-px w-full ${theme.bg}`}></div>
-                                <div className="flex flex-col gap-2">
-                                    <div className="flex justify-between text-xs text-slate-400">
-                                        <span>SIGNAL</span>
-                                        <span className={isPhase2 ? 'text-red-500 font-bold' : 'text-white'}>{currentStep.stats.signal}%</span>
-                                    </div>
-                                    <div className="w-full bg-slate-800 rounded-full h-1">
-                                        <div
-                                            className={`h-1 rounded-full transition-all duration-700 ease-out ${theme.accent}`}
-                                            style={{ width: `${currentStep.stats.signal}%` }}
-                                        ></div>
-                                    </div>
-                                </div>
-                                <div className="flex flex-col gap-2">
-                                    <div className="flex justify-between text-xs text-slate-400">
-                                        <span>VOICE MATCH</span>
-                                        <span className={isPhase2 ? 'text-red-500 animate-pulse' : 'text-white'}>
-                                            {currentStep.liveFeed.status}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Transcription Box */}
-                    <div className={`w-full rounded-lg border bg-slate-900/50 backdrop-blur-md p-5 md:p-6 shadow-lg transition-colors duration-500 ${theme.border}`}>
-                        <div className="flex gap-4 items-start">
-                            <div className="hidden sm:flex flex-col items-center gap-1 mt-1">
-                                <div
-                                    className={`bg-center bg-no-repeat aspect-square bg-cover rounded border size-10 ${theme.border} ${currentStep.speaker === 'Ø' ? 'grayscale-0 contrast-125' : 'grayscale'}`}
-                                    style={{
-                                        backgroundImage: `url('${currentStep.speaker === 'LANCE' ? '/director-vance.jpg' :
-                                            currentStep.speaker === 'Ø' ? '/alien.png' :
-                                                '/bg-map.png'
-                                            }')`
-                                    }}
-                                ></div>
-                            </div>
-                            <div className="flex-1 space-y-2">
-                                <p className={`text-xs font-bold tracking-widest uppercase mb-1 transition-colors ${theme.text} flex justify-between`}>
-                                    <span>
-                                        {currentStep.speaker === 'USER' ? `OUTGOING // ${agentCodename}` :
-                                            currentStep.speaker === 'Ø' ? 'INTERCEPT // UNKNOWN' :
-                                                'INCOMING // LANCE'}
-                                    </span>
-                                    <span className="opacity-50 font-mono">
-                                        {currentStep.speaker === 'USER' ? 'TX_ID: 0x99' : 'RX_ID: 0x0A'}
-                                    </span>
-                                </p>
-                                <p className={`text-sm md:text-base font-light leading-relaxed font-mono h-[4.5rem] overflow-hidden line-clamp-2 ${isPhase2 ? 'text-red-100' : 'text-white'}`}>
-                                    <span className={`${theme.text} font-bold mr-2 uppercase tracking-wide text-sm`}>
-                                        {currentStep.speaker === 'USER' ? `[${agentCodename}]` : `[${currentStep.speaker}]`}
-                                    </span>
-                                    {displayedText}
-                                    <span className="inline-block w-2 h-5 bg-current ml-1 animate-pulse align-middle opacity-70"></span>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                    {/* Skip Button */}
-                    <div className="fixed bottom-6 right-6 z-50">
-                        <button onClick={handleSkip} className="flex items-center gap-2 text-slate-500 hover:text-white transition-colors group/skip cursor-pointer">
-                            <span className="text-[10px] font-mono tracking-widest uppercase">Skip Cutscene</span>
-                            <FastForward size={16} className="text-slate-500 group-hover/skip:text-white transition-colors" />
-                        </button>
+                {/* Name Badge */}
+                <div className="relative mb-[-2px] ml-8 z-30 w-max">
+                    <div className={`
+                        px-12 py-2 
+                        ${currentStep.theme === 'RED' ? 'bg-red-600' : 'bg-cyan-500'}
+                        clip-path-chamfer-top
+                        text-black font-bold text-xl tracking-widest uppercase
+                        shadow-[0_0_15px_rgba(6,182,212,0.6)]
+                    `} style={{ clipPath: 'polygon(15px 0, 100% 0, 100% 100%, 0 100%, 0 15px)' }}>
+                        {currentStep.liveFeed.name}
                     </div>
                 </div>
-            </main>
 
-            {/* Action Area - Moved outside main to avoid shake */}
-            <div className="fixed bottom-8 left-0 right-0 z-40 flex justify-center pointer-events-none">
-                <button
-                    onClick={handleNext}
-                    disabled={isTyping}
-                    className={`pointer-events-auto relative overflow-hidden rounded border transition-all duration-300 ${theme.border} ${currentStep.theme === 'BLUE' ? 'bg-[rgb(37,99,235)]' : theme.bg} w-72 h-16 flex items-center justify-center group hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_20px_rgba(0,0,0,0.5)]`}
-                >
-                    <div className={`absolute top-2 right-2 opacity-50 transition-colors ${currentStep.theme === 'BLUE' ? 'text-white/70' : theme.text}`}>
-                        <Activity size={16} className={isTyping ? "animate-pulse" : ""} />
+                {/* Dialog Box */}
+                <div className={`
+                    relative w-full p-[3px] 
+                    ${currentStep.theme === 'RED' ? 'bg-gradient-to-r from-red-500 via-red-900 to-red-500' : 'bg-gradient-to-r from-cyan-500 via-blue-600 to-cyan-500'}
+                    rounded-3xl rounded-tl-none
+                `} style={{ clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 20px 100%, 0 calc(100% - 20px))' }}>
+
+                    {/* Inner Black Box */}
+                    <div className="w-full h-full bg-black/90 p-8 flex flex-col gap-4 text-white"
+                        style={{ clipPath: 'polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 20px 100%, 0 calc(100% - 20px))' }}>
+
+                        {/* Text Content */}
+                        <p className={`text-xl md:text-2xl font-medium tracking-wide leading-relaxed min-h-[4rem] ${currentStep.theme === 'RED' ? 'text-red-100 font-mono' : 'text-slate-100'}`}>
+                            {displayedText}
+                            <span className={`inline-block w-2.5 h-6 ml-1 align-middle animate-pulse ${currentStep.theme === 'RED' ? 'bg-red-500' : 'bg-cyan-400'}`}></span>
+                        </p>
+
+                        {/* Action Button Area (Inside Dialog) */}
+                        <div className="flex justify-end pt-2">
+                            {currentStep.buttonText && !isTyping && (
+                                <button
+                                    onClick={handleNext}
+                                    className={`
+                                        group relative px-6 py-2 overflow-hidden
+                                        ${currentStep.theme === 'RED' ? 'text-red-400 hover:text-red-900' : 'text-cyan-400 hover:text-black'}
+                                        transition-colors duration-300
+                                    `}
+                                >
+                                    <span className={`absolute inset-0 border ${currentStep.theme === 'RED' ? 'border-red-500' : 'border-cyan-500'} group-hover:bg-current opacity-100 transition-all`}></span>
+                                    <span className="relative font-bold uppercase tracking-widest text-sm flex items-center gap-2">
+                                        {currentStep.buttonText} <span className="text-lg">›</span>
+                                    </span>
+                                </button>
+                            )}
+
+                            {/* Simple Next Prompt if no button text */}
+                            {!currentStep.buttonText && !isTyping && (
+                                <button onClick={handleNext} className="animate-bounce opacity-70 hover:opacity-100">
+                                    <div className={`w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[10px] ${currentStep.theme === 'RED' ? 'border-t-red-500' : 'border-t-cyan-500'}`}></div>
+                                </button>
+                            )}
+                        </div>
                     </div>
+                </div>
+            </div>
 
-                    <div className="flex items-center gap-2">
-                        <span className={`text-lg font-bold leading-none tracking-tight uppercase transition-all ${isTyping ? 'animate-pulse text-slate-400' : (currentStep.theme === 'BLUE' ? 'text-white' : theme.text)} group-hover:translate-x-1`}>
-                            {isTyping ? 'RECEIVING...' : (currentStep.buttonText || 'ACKNOWLEDGE')}
-                        </span>
-                        {!isTyping && (
-                            <span className={`opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 ${theme.text}`}>
-                                →
-                            </span>
-                        )}
-                    </div>
-
-                    {/* Hover Effect Gradient */}
-                    <div className={`absolute inset-0 bg-gradient-to-r ${theme.accent} opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none`}></div>
+            {/* Skip Option */}
+            <div className="absolute top-6 right-6 z-50">
+                <button onClick={handleSkip} className="text-white/30 hover:text-white text-xs uppercase tracking-[0.2em] transition-colors">
+                    {isTyping ? 'Fast Forward' : 'Skip Intro'}
                 </button>
             </div>
 
-            {/* Footer */}
-            <footer className="w-full py-2 border-t border-border-tech/30 bg-background-dark/90 text-center">
-                <p className="text-[10px] text-slate-600 font-mono tracking-widest">SERVER LOCATION: [REDACTED] // PROTOCOL OMEGA V.2.0.4</p>
-            </footer>
         </div>
     );
 };
