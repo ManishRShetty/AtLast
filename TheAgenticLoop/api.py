@@ -18,6 +18,7 @@ except ImportError:
 
 # Import Polyglot AI riddle generator (multi-provider: Groq, Cohere, Gemini)
 from polyglot_ai import generate_riddle_optimized, search_city_names, get_distance_hint
+from services.db import db_service
 
 # ==========================================
 # CONFIGURATION & CONSTANTS
@@ -193,6 +194,28 @@ class StartSessionRequest(BaseModel):
     difficulty: str = "Medium"
     exclude_cities: list[str] = []
 
+class UserCredentials(BaseModel):
+    username: str
+    password: str
+
+@app.post("/auth/register")
+async def register(creds: UserCredentials):
+    user_id = db_service.create_user(creds.username, creds.password)
+    if not user_id:
+        raise HTTPException(status_code=400, detail="Registration failed. Username may be taken.")
+    return {"user_id": user_id, "message": "User registered successfully"}
+
+@app.post("/auth/login")
+async def login(creds: UserCredentials):
+    user_id = db_service.login_user(creds.username, creds.password)
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    return {"user_id": user_id, "message": "Login successful"}
+
+@app.get("/leaderboard")
+async def leaderboard():
+    return db_service.get_leaderboard()
+
 @app.post("/start_session")
 async def start_session(request: Request, background_tasks: BackgroundTasks):
     """
@@ -313,6 +336,9 @@ async def verify_answer(request: Request):
     data = await request.json()
     session_id = data.get("session_id")
     user_answer = data.get("user_answer", "").strip().lower()
+    user_id = data.get("user_id")
+    time_remaining = data.get("time_remaining", 0)  # Expecting frontend to send this
+
     
     if not session_id or not user_answer:
         raise HTTPException(status_code=400, detail="Missing session_id or user_answer")
@@ -338,6 +364,11 @@ async def verify_answer(request: Request):
     is_correct = user_answer == correct_answer
     
     if is_correct:
+        if user_id:
+            # Simple scoring: 100 base + time bonus
+            score = 100 + int(time_remaining)
+            db_service.save_score(user_id, score, int(time_remaining))
+            
         return {
             "correct": True,
             "location": location,
