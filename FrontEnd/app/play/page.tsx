@@ -7,6 +7,7 @@ import IncorrectView from './components/IncorrectView';
 import PlayView from './components/PlayView';
 import { startSession, getQuestion, submitAnswer, streamLogs } from '@/services/apiService';
 import { RiddleData } from '@/types';
+import { useAuth } from '@/context/AuthContext';
 
 type GameState = 'loading' | 'playing' | 'success' | 'fail' | 'incorrect';
 
@@ -18,6 +19,7 @@ const Battlespace = () => {
     const [riddle, setRiddle] = useState<RiddleData | null>(null);
     const [agentLogs, setAgentLogs] = useState<string[]>([]);
     const [isLoadingRiddle, setIsLoadingRiddle] = useState(false);
+    const { userId } = useAuth();
 
     // New State for Scoring Mechanism
     const [wrongAttempts, setWrongAttempts] = useState(0);
@@ -216,7 +218,12 @@ const Battlespace = () => {
         }
 
         try {
-            const result = await submitAnswer(sessionId, command);
+            const result = await submitAnswer(
+                sessionId,
+                command,
+                userId || undefined,
+                timeRemaining
+            );
 
             if (result.correct) {
                 const finalScore = calculateScore(timeRemaining);

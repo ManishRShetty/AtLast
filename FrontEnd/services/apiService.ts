@@ -1,4 +1,4 @@
-import { SessionResponse, QuestionResponse, RiddleData, AnswerResponse } from '@/types';
+import { SessionResponse, QuestionResponse, RiddleData, AnswerResponse, UserCredentials, AuthResponse, LeaderboardEntry } from '@/types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
@@ -98,7 +98,9 @@ export const streamLogs = (
  */
 export const submitAnswer = async (
     sessionId: string,
-    userAnswer: string
+    userAnswer: string,
+    userId?: string,
+    timeRemaining?: number
 ): Promise<AnswerResponse> => {
     try {
         const response = await fetch(`${API_BASE_URL}/verify_answer`, {
@@ -109,6 +111,8 @@ export const submitAnswer = async (
             body: JSON.stringify({
                 session_id: sessionId,
                 user_answer: userAnswer,
+                user_id: userId,
+                time_remaining: timeRemaining
             }),
         });
 
@@ -139,6 +143,57 @@ export const searchCities = async (query: string): Promise<string[]> => {
         return data.results || [];
     } catch (error) {
         console.error('Failed to search cities:', error);
+        return [];
+    }
+};
+/**
+ * Register a new user
+ */
+export const registerUser = async (credentials: UserCredentials): Promise<AuthResponse> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(credentials),
+        });
+
+        if (!response.ok) throw new Error('Registration failed');
+        return await response.json();
+    } catch (error) {
+        console.error('Registration error:', error);
+        throw error;
+    }
+};
+
+/**
+ * Login existing user
+ */
+export const loginUser = async (credentials: UserCredentials): Promise<AuthResponse> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(credentials),
+        });
+
+        if (!response.ok) throw new Error('Login failed');
+        return await response.json();
+    } catch (error) {
+        console.error('Login error:', error);
+        throw error;
+    }
+};
+
+/**
+ * Fetch leaderboard data
+ */
+export const getLeaderboard = async (): Promise<LeaderboardEntry[]> => {
+    try {
+        const response = await fetch(`${API_BASE_URL}/leaderboard`);
+        if (!response.ok) throw new Error('Failed to fetch leaderboard');
+        return await response.json();
+    } catch (error) {
+        console.error('Leaderboard error:', error);
         return [];
     }
 };

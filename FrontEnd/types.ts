@@ -73,3 +73,19 @@ export interface AnswerResponse {
     };
   };
 }
+
+export interface UserCredentials {
+  username: string;
+  password?: string;
+}
+
+export interface AuthResponse {
+  user_id: string;
+  message: string;
+}
+
+export interface LeaderboardEntry {
+  username: string;
+  total_score: number;
+  games_played: number;
+}

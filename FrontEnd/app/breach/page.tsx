@@ -5,14 +5,26 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import AgentRegistrationModal from '@/components/AgentRegistrationModal';
+import LoginModal from '@/components/LoginModal';
+import { useAuth } from '@/context/AuthContext';
 
 const BreachPage = () => {
     const router = useRouter();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isTransitioning, setIsTransitioning] = useState(false);
+    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+    const { isAuthenticated, username, logout } = useAuth();
 
     const handleStartGame = () => {
-        setIsModalOpen(true);
+        if (isAuthenticated) {
+            // Skip registration if logged in
+            setIsTransitioning(true);
+            setTimeout(() => {
+                router.push('/intro');
+            }, 2000);
+        } else {
+            setIsModalOpen(true);
+        }
     };
 
     const handleModalComplete = (agentName: string, difficulty: string) => {
@@ -35,6 +47,11 @@ const BreachPage = () => {
                 onCancel={() => setIsModalOpen(false)}
             />
 
+            <LoginModal
+                isOpen={isLoginModalOpen}
+                onClose={() => setIsLoginModalOpen(false)}
+            />
+
             {/* Transition Overlay (Fade to Black) */}
             <div className={`fixed inset-0 z-[100] bg-black pointer-events-none transition-opacity duration-1000 ease-in-out ${isTransitioning ? 'opacity-100' : 'opacity-0'}`}></div>
 
@@ -46,6 +63,30 @@ const BreachPage = () => {
 
             {/* Subtle Overlay for better contrast */}
             <div className="fixed inset-0 bg-black/20 -mt-[60px]" />
+
+            {/* Login Status & Button */}
+            <div className="absolute top-4 right-4 z-50">
+                {isAuthenticated ? (
+                    <div className="flex items-center gap-4">
+                        <span className="text-green-500 font-mono text-sm tracking-wider">
+                            AGENT: {username?.toUpperCase()}
+                        </span>
+                        <button
+                            onClick={logout}
+                            className="text-red-500 text-xs hover:text-red-400 font-mono border border-red-500/50 px-2 py-1 rounded"
+                        >
+                            LOGOUT
+                        </button>
+                    </div>
+                ) : (
+                    <button
+                        onClick={() => setIsLoginModalOpen(true)}
+                        className="bg-green-900/40 border border-green-500/50 text-green-400 px-4 py-2 font-mono text-sm hover:bg-green-500/20 transition-all shadow-[0_0_10px_rgba(34,197,94,0.2)]"
+                    >
+                        ACCESS TERMINAL
+                    </button>
+                )}
+            </div>
 
             {/* Main Content - Centered */}
             <div className="relative z-10 flex flex-col items-center justify-center h-full">

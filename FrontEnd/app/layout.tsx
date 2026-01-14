@@ -3,7 +3,7 @@ import { Inter, Fira_Code, Rajdhani } from 'next/font/google';
 import './globals.css';
 import Navbar from '../components/Navbar';
 import SecurityLayer from '../components/SecurityLayer';
-
+import { AuthProvider } from '../context/AuthContext';
 import SoundEffects from '../components/SoundEffects';
 
 const inter = Inter({
@@ -41,12 +41,14 @@ export default function RootLayout({
     return (
         <html lang="en" className="dark">
             <body className={`${inter.variable} ${firaCode.variable} ${rajdhani.variable} font-sans antialiased bg-black`}>
-                <SoundEffects />
-                <SecurityLayer />
-                <Navbar />
-                <div className="pt-[60px] min-h-screen">
-                    {children}
-                </div>
+                <AuthProvider>
+                    <SoundEffects />
+                    <SecurityLayer />
+                    <Navbar />
+                    <div className="pt-[60px] min-h-screen">
+                        {children}
+                    </div>
+                </AuthProvider>
             </body>
         </html>
     );
