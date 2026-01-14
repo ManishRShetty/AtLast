@@ -21,6 +21,8 @@ const config: Config = {
                 },
                 'neon-cyan': '#00FFFF',
                 'deep-black': '#000000',
+                'neon-teal': '#00FFFF',
+                'deep-blue': '#0000FF',
             },
             animation: {
                 'glitch': 'glitch 1s linear infinite',
