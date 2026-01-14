@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { AlertTriangle, RotateCcw, List, LogOut, Gauge } from 'lucide-react';
+import { AlertTriangle, RotateCcw, List, LogOut, Gauge, Globe } from 'lucide-react';
+import Leaderboard from '@/components/Leaderboard';
 
 interface FailViewProps {
     resetGame: () => void;
@@ -10,6 +11,7 @@ interface FailViewProps {
 
 const FailView: React.FC<FailViewProps> = ({ resetGame, cityName, score = 0 }) => {
     const [difficulty, setDifficulty] = useState('AGENT');
+    const [showLeaderboard, setShowLeaderboard] = useState(false);
 
     useEffect(() => {
         const stored = localStorage.getItem('atlast_difficulty');
@@ -40,80 +42,105 @@ const FailView: React.FC<FailViewProps> = ({ resetGame, cityName, score = 0 }) =
             <div className="relative z-10 w-full max-w-5xl p-4 animate-in zoom-in-95 duration-500 flex flex-col items-center gap-8">
 
                 {/* Warning Badge */}
-                <div className="flex items-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/30 rounded text-red-500 text-xs font-bold tracking-[0.2em] animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.2)]">
-                    <AlertTriangle size={14} />
-                    <span>CONNECTION TERMINATED</span>
-                </div>
+                {!showLeaderboard && (
+                    <div className="flex items-center gap-2 px-3 py-1 bg-red-500/10 border border-red-500/30 rounded text-red-500 text-xs font-bold tracking-[0.2em] animate-pulse shadow-[0_0_15px_rgba(239,68,68,0.2)]">
+                        <AlertTriangle size={14} />
+                        <span>CONNECTION TERMINATED</span>
+                    </div>
+                )}
 
                 {/* Hero Text Section */}
-                <div className="text-center space-y-2">
-                    <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-none glitch-text select-none drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]" data-text="SIGNAL LOST">
-                        SIGNAL LOST
-                    </h1>
-                    <p className="text-red-500 text-xl md:text-2xl font-bold tracking-[0.2em] uppercase opacity-90 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]">
-                        TARGET: CITY DETONATED
-                    </p>
-                </div>
-
-                {/* Stats Grid */}
-                <div className="w-full max-w-[800px] grid grid-cols-1 md:grid-cols-3 gap-4 p-6 bg-[#111822]/95 backdrop-blur-xl border border-[#324867] rounded-xl shadow-[0_0_60px_rgba(0,0,0,0.5)] relative overflow-hidden group ring-1 ring-red-500/20">
-                    <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent pointer-events-none"></div>
-
-                    {/* Score */}
-                    <div className="flex flex-col items-center justify-center p-4 border-b md:border-b-0 md:border-r border-[#324867]/50 relative">
-                        <div className="text-[#92a9c9] text-xs font-medium tracking-widest uppercase mb-1">Final Score</div>
-                        <div className="text-4xl font-bold text-slate-200 drop-shadow-md">{score.toLocaleString()}</div>
-                        <div className="text-[#556987] text-[10px] mt-1">NEW PERSONAL BEST</div>
+                {!showLeaderboard && (
+                    <div className="text-center space-y-2">
+                        <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-none glitch-text select-none drop-shadow-[0_0_20px_rgba(239,68,68,0.5)]" data-text="SIGNAL LOST">
+                            SIGNAL LOST
+                        </h1>
+                        <p className="text-red-500 text-xl md:text-2xl font-bold tracking-[0.2em] uppercase opacity-90 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]">
+                            TARGET: CITY DETONATED
+                        </p>
                     </div>
+                )}
 
-                    {/* Time */}
-                    <div className="flex flex-col items-center justify-center p-4 border-b md:border-b-0 md:border-r border-[#324867]/50">
-                        <div className="text-[#92a9c9] text-xs font-medium tracking-widest uppercase mb-1">Time Elapsed</div>
-                        <div className="text-3xl font-bold text-red-500 tracking-wider">00:00</div>
-                        <div className="text-red-500/70 text-[10px] mt-1 font-bold animate-pulse">LIMIT EXCEEDED</div>
+                {showLeaderboard ? (
+                    <div className="w-full max-w-2xl animate-in zoom-in duration-300 relative z-50">
+                        <Leaderboard />
+                        <button
+                            onClick={() => setShowLeaderboard(false)}
+                            className="mt-6 mx-auto block text-red-500 hover:text-white font-mono text-sm border border-red-500/30 px-4 py-2 rounded transition-colors bg-black/50 backdrop-blur"
+                        >
+                            RETURN TO DEBRIEF
+                        </button>
                     </div>
+                ) : (
+                    /* Stats Grid */
+                    <div className="w-full max-w-[800px] grid grid-cols-1 md:grid-cols-3 gap-4 p-6 bg-[#111822]/95 backdrop-blur-xl border border-[#324867] rounded-xl shadow-[0_0_60px_rgba(0,0,0,0.5)] relative overflow-hidden group ring-1 ring-red-500/20">
+                        <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 to-transparent pointer-events-none"></div>
 
-                    {/* Locations */}
-                    {/* Missed Target */}
-                    <div className="flex flex-col items-center justify-center p-4">
-                        <div className="text-[#92a9c9] text-xs font-medium tracking-widest uppercase mb-1">Missed Target</div>
-                        <div className="text-2xl font-bold text-white tracking-wider text-center break-words w-full px-2 drop-shadow-md">
-                            {cityName ? cityName.toUpperCase() : 'UNKNOWN'}
+                        {/* Score */}
+                        <div className="flex flex-col items-center justify-center p-4 border-b md:border-b-0 md:border-r border-[#324867]/50 relative">
+                            <div className="text-[#92a9c9] text-xs font-medium tracking-widest uppercase mb-1">Final Score</div>
+                            <div className="text-4xl font-bold text-slate-200 drop-shadow-md">{score.toLocaleString()}</div>
+                            <div className="text-[#556987] text-[10px] mt-1">NEW PERSONAL BEST</div>
                         </div>
-                        <div className="text-red-500/70 text-[10px] mt-1 font-bold">REGION COMPROMISED</div>
+
+                        {/* Time */}
+                        <div className="flex flex-col items-center justify-center p-4 border-b md:border-b-0 md:border-r border-[#324867]/50">
+                            <div className="text-[#92a9c9] text-xs font-medium tracking-widest uppercase mb-1">Time Elapsed</div>
+                            <div className="text-3xl font-bold text-red-500 tracking-wider">00:00</div>
+                            <div className="text-red-500/70 text-[10px] mt-1 font-bold animate-pulse">LIMIT EXCEEDED</div>
+                        </div>
+
+                        {/* Locations */}
+                        {/* Missed Target */}
+                        <div className="flex flex-col items-center justify-center p-4">
+                            <div className="text-[#92a9c9] text-xs font-medium tracking-widest uppercase mb-1">Missed Target</div>
+                            <div className="text-2xl font-bold text-white tracking-wider text-center break-words w-full px-2 drop-shadow-md">
+                                {cityName ? cityName.toUpperCase() : 'UNKNOWN'}
+                            </div>
+                            <div className="text-red-500/70 text-[10px] mt-1 font-bold">REGION COMPROMISED</div>
+                        </div>
                     </div>
-                </div>
+                )}
 
                 {/* Action Buttons */}
-                <div className="flex flex-col w-full max-w-[480px] gap-4 relative z-20">
-                    <button onClick={resetGame} className="group relative flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-8 bg-primary hover:bg-primary/90 transition-all duration-300 shadow-[0_0_20px_rgba(19,109,236,0.3)] hover:shadow-[0_0_30px_rgba(19,109,236,0.5)] border border-primary/50">
-                        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
-                        <RotateCcw className="mr-2 text-white/90" size={20} />
-                        <span className="text-white text-lg font-bold uppercase tracking-wider">Re-Initialize Protocol</span>
-                    </button>
-
-                    {/* Difficulty Toggle */}
-                    <button
-                        onClick={cycleDifficulty}
-                        className="flex w-full cursor-pointer items-center justify-center rounded-lg h-12 px-8 bg-[#1a2332]/50 hover:bg-[#233348] border border-[#324867] hover:border-primary/50 transition-all duration-300 group"
-                    >
-                        <Gauge className={`mr-2 transition-colors ${difficulty.includes('HARD') ? 'text-red-500' : difficulty.includes('INDIA') ? 'text-emerald-500' : 'text-blue-500'}`} size={18} />
-                        <span className="text-[#92a9c9] text-sm font-bold uppercase tracking-wide mr-2">Difficulty:</span>
-                        <span className={`text-sm font-bold uppercase tracking-widest ${difficulty.includes('HARD') ? 'text-red-400' : difficulty.includes('INDIA') ? 'text-emerald-400' : 'text-blue-400'}`}>
-                            {difficulty.replace('_', ' // ')}
-                        </span>
-                    </button>
-                    <div className="flex gap-4">
-                        <button className="flex-1 flex cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-[#233348] hover:bg-[#2c405a] border border-[#324867] text-[#92a9c9] hover:text-white transition-colors text-sm font-bold uppercase tracking-wide">
-                            <List className="mr-2" size={16} />
-                            <span>Mission Log</span>
+                {!showLeaderboard && (
+                    <div className="flex flex-col w-full max-w-[480px] gap-4 relative z-20">
+                        <button onClick={resetGame} className="group relative flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-14 px-8 bg-primary hover:bg-primary/90 transition-all duration-300 shadow-[0_0_20px_rgba(19,109,236,0.3)] hover:shadow-[0_0_30px_rgba(19,109,236,0.5)] border border-primary/50">
+                            <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                            <RotateCcw className="mr-2 text-white/90" size={20} />
+                            <span className="text-white text-lg font-bold uppercase tracking-wider">Re-Initialize Protocol</span>
                         </button>
-                        <Link href="/" className="flex-1 flex cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-[#233348] hover:bg-red-900/20 border border-[#324867] hover:border-red-500/50 text-[#92a9c9] hover:text-red-500 transition-all text-sm font-bold uppercase tracking-wide">
-                            <LogOut className="mr-2" size={16} />
-                            <span>Abort</span>
-                        </Link>
+
+                        {/* Difficulty Toggle */}
+                        <button
+                            onClick={cycleDifficulty}
+                            className="flex w-full cursor-pointer items-center justify-center rounded-lg h-12 px-8 bg-[#1a2332]/50 hover:bg-[#233348] border border-[#324867] hover:border-primary/50 transition-all duration-300 group"
+                        >
+                            <Gauge className={`mr-2 transition-colors ${difficulty.includes('HARD') ? 'text-red-500' : difficulty.includes('INDIA') ? 'text-emerald-500' : 'text-blue-500'}`} size={18} />
+                            <span className="text-[#92a9c9] text-sm font-bold uppercase tracking-wide mr-2">Difficulty:</span>
+                            <span className={`text-sm font-bold uppercase tracking-widest ${difficulty.includes('HARD') ? 'text-red-400' : difficulty.includes('INDIA') ? 'text-emerald-400' : 'text-blue-400'}`}>
+                                {difficulty.replace('_', ' // ')}
+                            </span>
+                        </button>
+                        <div className="flex gap-4">
+                            <button className="flex-1 flex cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-[#233348] hover:bg-[#2c405a] border border-[#324867] text-[#92a9c9] hover:text-white transition-colors text-sm font-bold uppercase tracking-wide">
+                                <List className="mr-2" size={16} />
+                                <span>Mission Log</span>
+                            </button>
+                            <Link href="/" className="flex-1 flex cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-[#233348] hover:bg-red-900/20 border border-[#324867] hover:border-red-500/50 text-[#92a9c9] hover:text-red-500 transition-all text-sm font-bold uppercase tracking-wide">
+                                <LogOut className="mr-2" size={16} />
+                                <span>Abort</span>
+                            </Link>
+                        </div>
+                        <button
+                            onClick={() => setShowLeaderboard(true)}
+                            className="w-full mt-2 text-red-500/70 hover:text-red-400 font-mono text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-colors"
+                        >
+                            <Globe size={14} />
+                            View Global Intelligence
+                        </button>
                     </div>
-                </div>
+                )}
 
                 {/* Footer Meta */}
                 <div className="text-center opacity-60">

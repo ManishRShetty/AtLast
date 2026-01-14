@@ -213,8 +213,8 @@ async def login(creds: UserCredentials):
     return {"user_id": user_id, "message": "Login successful"}
 
 @app.get("/leaderboard")
-async def leaderboard():
-    return db_service.get_leaderboard()
+async def leaderboard(region: str = "GLOBAL"):
+    return db_service.get_leaderboard(region=region)
 
 @app.post("/start_session")
 async def start_session(request: Request, background_tasks: BackgroundTasks):
@@ -367,7 +367,13 @@ async def verify_answer(request: Request):
         if user_id:
             # Simple scoring: 100 base + time bonus
             score = 100 + int(time_remaining)
-            db_service.save_score(user_id, score, int(time_remaining))
+            
+            # Retrieve difficulty from config
+            config_key = f"config:{session_id}"
+            difficulty = await redis_client.hget(config_key, "difficulty")
+            if not difficulty: difficulty = "Medium"
+            
+            db_service.save_score(user_id, score, int(time_remaining), difficulty=difficulty)
             
         return {
             "correct": True,

@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LeaderboardEntry } from '@/types';
 import { getLeaderboard } from '@/services/apiService';
-import { Trophy, Medal, User } from 'lucide-react';
+import { Trophy, Medal, User, Globe, MapPin } from 'lucide-react';
 
 export default function Leaderboard() {
     const [data, setData] = useState<LeaderboardEntry[]>([]);
     const [loading, setLoading] = useState(true);
+    const [region, setRegion] = useState<'GLOBAL' | 'INDIA'>('GLOBAL');
 
     useEffect(() => {
         async function fetchLB() {
+            setLoading(true);
             try {
-                const res = await getLeaderboard();
+                const res = await getLeaderboard(region);
                 setData(res);
             } catch (e) {
                 console.error("Failed to load leaderboard", e);
@@ -19,13 +21,38 @@ export default function Leaderboard() {
             }
         }
         fetchLB();
-    }, []);
+    }, [region]);
 
     return (
         <div className="bg-black/80 backdrop-blur-md border border-white/10 p-6 rounded-2xl w-full max-w-2xl mx-auto shadow-2xl">
-            <div className="flex items-center gap-3 mb-6 border-b border-white/10 pb-4">
-                <Trophy className="w-6 h-6 text-yellow-500" />
-                <h2 className="text-xl font-bold text-white tracking-wider uppercase">Global Intelligence Rankings</h2>
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6 border-b border-white/10 pb-4">
+                <div className="flex items-center gap-3">
+                    <Trophy className="w-6 h-6 text-yellow-500" />
+                    <h2 className="text-xl font-bold text-white tracking-wider uppercase">Intelligence Rankings</h2>
+                </div>
+
+                <div className="flex bg-white/5 p-1 rounded-lg">
+                    <button
+                        onClick={() => setRegion('GLOBAL')}
+                        className={`px-4 py-1.5 rounded-md text-xs font-bold tracking-widest transition-all flex items-center gap-2 ${region === 'GLOBAL'
+                            ? 'bg-blue-600 text-white shadow-lg'
+                            : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                            }`}
+                    >
+                        <Globe size={14} />
+                        GLOBAL
+                    </button>
+                    <button
+                        onClick={() => setRegion('INDIA')}
+                        className={`px-4 py-1.5 rounded-md text-xs font-bold tracking-widest transition-all flex items-center gap-2 ${region === 'INDIA'
+                            ? 'bg-orange-600 text-white shadow-lg'
+                            : 'text-zinc-400 hover:text-white hover:bg-white/5'
+                            }`}
+                    >
+                        <MapPin size={14} />
+                        INDIA
+                    </button>
+                </div>
             </div>
 
             {loading ? (

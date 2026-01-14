@@ -187,9 +187,9 @@ export const loginUser = async (credentials: UserCredentials): Promise<AuthRespo
 /**
  * Fetch leaderboard data
  */
-export const getLeaderboard = async (): Promise<LeaderboardEntry[]> => {
+export const getLeaderboard = async (region: string = 'GLOBAL'): Promise<LeaderboardEntry[]> => {
     try {
-        const response = await fetch(`${API_BASE_URL}/leaderboard`);
+        const response = await fetch(`${API_BASE_URL}/leaderboard?region=${region}`);
         if (!response.ok) throw new Error('Failed to fetch leaderboard');
         return await response.json();
     } catch (error) {

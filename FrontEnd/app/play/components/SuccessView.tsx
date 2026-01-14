@@ -1,9 +1,7 @@
-import React from 'react';
-import { CheckCircle, ShieldAlert, Crosshair, Send, Plus, Minus } from 'lucide-react';
+import React, { useState } from 'react';
 import { CheckCircle, ShieldAlert, Crosshair, Send, Plus, Minus, Globe } from 'lucide-react';
 import TerminalPanel from './TerminalPanel';
 import Leaderboard from '@/components/Leaderboard';
-import { useState } from 'react';
 
 interface SuccessViewProps {
     resetGame: () => void;
@@ -45,6 +43,7 @@ const SuccessView: React.FC<SuccessViewProps> = ({ resetGame, score }) => {
                         <div className="absolute inset-0 bg-gradient-to-b from-background-dark/30 via-transparent to-background-dark z-10 pointer-events-none"></div>
                         <img alt="Dark satellite view of Earth from space showing city lights and continents" className="w-full h-full object-cover grayscale contrast-125 brightness-75 scale-[2] origin-[35%_75%] transition-transform duration-[2000ms] ease-out" src="/bg-earth.jpg" />
                     </div>
+
                     <div className="absolute inset-0 z-30 flex flex-col items-center justify-end pb-16 pointer-events-none">
                         {showLeaderboard ? (
                             <div className="pointer-events-auto mb-8 w-full max-w-2xl animate-in zoom-in duration-300">
@@ -57,75 +56,78 @@ const SuccessView: React.FC<SuccessViewProps> = ({ resetGame, score }) => {
                                 </button>
                             </div>
                         ) : (
-                        <div className="relative flex flex-col items-center">
-                            <div className="bg-emerald-600/90 backdrop-blur-md border-y-4 border-emerald-400 text-white shadow-[0_0_60px_rgba(16,185,129,0.6)] transform -skew-x-12">
-                                <div className="px-20 py-6 transform skew-x-12">
-                                    <h1 className="text-6xl font-black tracking-[0.2em] drop-shadow-lg animate-glitch">NEUTRALIZED</h1>
+                            <div className="relative flex flex-col items-center">
+                                <div className="bg-emerald-600/90 backdrop-blur-md border-y-4 border-emerald-400 text-white shadow-[0_0_60px_rgba(16,185,129,0.6)] transform -skew-x-12">
+                                    <div className="px-20 py-6 transform skew-x-12">
+                                        <h1 className="text-6xl font-black tracking-[0.2em] drop-shadow-lg animate-glitch">NEUTRALIZED</h1>
+                                    </div>
+                                </div>
+                                <div className="mt-6 flex items-center gap-2 bg-black/60 backdrop-blur border border-emerald-500/50 rounded-full px-6 py-2">
+                                    <ShieldAlert className="text-emerald-400 text-xl" />
+                                    <span className="text-emerald-400 font-mono text-xl font-bold tracking-widest">+{score} XP</span>
                                 </div>
                             </div>
-                            <div className="mt-6 flex items-center gap-2 bg-black/60 backdrop-blur border border-emerald-500/50 rounded-full px-6 py-2">
-                                <ShieldAlert className="text-emerald-400 text-xl" />
-                                <span className="text-emerald-400 font-mono text-xl font-bold tracking-widest">+{score} XP</span>
-                            </div>
-                        </div>
-                        <button onClick={resetGame} className="pointer-events-auto mt-16 group relative overflow-hidden bg-emerald-500 hover:bg-emerald-400 text-[#0B1016] transition-all duration-300 transform -skew-x-12 shadow-[0_0_40px_rgba(16,185,129,0.5)] hover:shadow-[0_0_60px_rgba(16,185,129,0.8)] hover:scale-105 active:scale-95 ring-2 ring-emerald-300 ring-offset-2 ring-offset-black/50">
-                            <div className="absolute inset-0 bg-[url('/carbon-fibre.png')] opacity-10"></div>
-                            <div className="px-12 py-5 transform skew-x-12 flex items-center gap-4">
-                                <Crosshair className="text-3xl" />
-                                <div className="flex flex-col items-start">
-                                    <span className="text-[10px] font-mono font-bold tracking-[0.2em] opacity-70 leading-none mb-1">COORDINATES ACQUIRED</span>
-                                    <span className="font-black tracking-[0.15em] text-xl uppercase leading-none">GO TO NEXT TARGET</span>
-                                </div>
-                                <Send className="text-3xl group-hover:translate-x-2 transition-transform ml-2" />
-                            </div>
-                        </button>
-                        </button>
                         )}
 
-                    {!showLeaderboard && (
-                        <button
-                            onClick={() => setShowLeaderboard(true)}
-                            className="pointer-events-auto mt-4 text-emerald-500/70 hover:text-emerald-400 font-mono text-xs uppercase tracking-widest flex items-center gap-2 transition-colors"
-                        >
-                            <Globe size={14} />
-                            View Global Intelligence
-                        </button>
-                    )}
-                </div>
-                <div className="relative z-10 flex-1 flex flex-col">
-                    <div className="px-8 py-6 flex justify-between items-start">
-                        <div className="bg-background-dark/80 backdrop-blur-md border border-emerald-500/30 rounded-lg p-3 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-                            <div className="text-xs text-emerald-500/70 uppercase tracking-wider mb-1">Status</div>
-                            <div className="text-xl font-bold text-white flex items-center gap-2">
-                                <CheckCircle className="text-emerald-500" />
-                                TARGET SECURED
+                        {!showLeaderboard && (
+                            <>
+                                <button onClick={resetGame} className="pointer-events-auto mt-16 group relative overflow-hidden bg-emerald-500 hover:bg-emerald-400 text-[#0B1016] transition-all duration-300 transform -skew-x-12 shadow-[0_0_40px_rgba(16,185,129,0.5)] hover:shadow-[0_0_60px_rgba(16,185,129,0.8)] hover:scale-105 active:scale-95 ring-2 ring-emerald-300 ring-offset-2 ring-offset-black/50">
+                                    <div className="absolute inset-0 bg-[url('/carbon-fibre.png')] opacity-10"></div>
+                                    <div className="px-12 py-5 transform skew-x-12 flex items-center gap-4">
+                                        <Crosshair className="text-3xl" />
+                                        <div className="flex flex-col items-start">
+                                            <span className="text-[10px] font-mono font-bold tracking-[0.2em] opacity-70 leading-none mb-1">COORDINATES ACQUIRED</span>
+                                            <span className="font-black tracking-[0.15em] text-xl uppercase leading-none">GO TO NEXT TARGET</span>
+                                        </div>
+                                        <Send className="text-3xl group-hover:translate-x-2 transition-transform ml-2" />
+                                    </div>
+                                </button>
+
+                                <button
+                                    onClick={() => setShowLeaderboard(true)}
+                                    className="pointer-events-auto mt-6 text-emerald-500/70 hover:text-emerald-400 font-mono text-xs uppercase tracking-widest flex items-center gap-2 transition-colors"
+                                >
+                                    <Globe size={14} />
+                                    View Global Intelligence
+                                </button>
+                            </>
+                        )}
+                    </div>
+
+                    <div className="relative z-10 flex-1 flex flex-col">
+                        <div className="px-8 py-6 flex justify-between items-start">
+                            <div className="bg-background-dark/80 backdrop-blur-md border border-emerald-500/30 rounded-lg p-3 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
+                                <div className="text-xs text-emerald-500/70 uppercase tracking-wider mb-1">Status</div>
+                                <div className="text-xl font-bold text-white flex items-center gap-2">
+                                    <CheckCircle className="text-emerald-500" />
+                                    TARGET SECURED
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-2 opacity-50 pointer-events-none">
+                                <button className="size-10 bg-background-dark/80 backdrop-blur-md border border-[#233348] rounded-lg text-white flex items-center justify-center">
+                                    <Plus size={24} />
+                                </button>
+                                <button className="size-10 bg-background-dark/80 backdrop-blur-md border border-[#233348] rounded-lg text-white flex items-center justify-center">
+                                    <Minus size={24} />
+                                </button>
+                                <button className="size-10 bg-background-dark/80 backdrop-blur-md border border-[#233348] rounded-lg text-white flex items-center justify-center mt-2">
+                                    <Crosshair size={24} />
+                                </button>
                             </div>
                         </div>
-                        <div className="flex flex-col gap-2 opacity-50 pointer-events-none">
-                            <button className="size-10 bg-background-dark/80 backdrop-blur-md border border-[#233348] rounded-lg text-white flex items-center justify-center">
-                                <Plus size={24} />
-                            </button>
-                            <button className="size-10 bg-background-dark/80 backdrop-blur-md border border-[#233348] rounded-lg text-white flex items-center justify-center">
-                                <Minus size={24} />
-                            </button>
-                            <button className="size-10 bg-background-dark/80 backdrop-blur-md border border-[#233348] rounded-lg text-white flex items-center justify-center mt-2">
-                                <Crosshair size={24} />
-                            </button>
+                        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0">
+                            <div className="w-[400px] h-[400px] border border-primary/30 rounded-full flex items-center justify-center relative">
+                                <div className="absolute top-0 bottom-0 w-[1px] bg-primary/30"></div>
+                                <div className="absolute left-0 right-0 h-[1px] bg-primary/30"></div>
+                                <div className="w-4 h-4 border border-primary"></div>
+                            </div>
                         </div>
-                    </div>
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0">
-                        <div className="w-[400px] h-[400px] border border-primary/30 rounded-full flex items-center justify-center relative">
-                            <div className="absolute top-0 bottom-0 w-[1px] bg-primary/30"></div>
-                            <div className="absolute left-0 right-0 h-[1px] bg-primary/30"></div>
-                            <div className="w-4 h-4 border border-primary"></div>
-                        </div>
-                    </div>
 
-                </div>
-            </section>
-        </main>
+                    </div>
+                </section>
+            </main>
 
-            {/* Footer */ }
+            {/* Footer */}
             <div className="fixed inset-0 pointer-events-none z-50 mix-blend-overlay opacity-10 bg-[url('/carbon-fibre.png')]"></div>
             <div className="fixed bottom-0 left-0 right-0 h-2 bg-gradient-to-r from-transparent via-emerald-500/80 to-transparent z-50 animate-pulse"></div>
 
@@ -164,7 +166,7 @@ const SuccessView: React.FC<SuccessViewProps> = ({ resetGame, score }) => {
                     animation: glitch-anim 2s cubic-bezier(.25, .46, .45, .94) both infinite;
                 }
             `}</style>
-        </div >
+        </div>
     );
 };
 

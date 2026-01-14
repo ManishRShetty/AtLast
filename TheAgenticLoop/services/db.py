@@ -71,9 +71,9 @@ class SupabaseService:
             print(f"❌ Login Failed: {e}")
             return None
 
-    def save_score(self, user_id: str, score: int, time_left: int, status_val: str = "completed"):
+    def save_score(self, user_id: str, score: int, time_left: int, status_val: str = "completed", difficulty: str = "Medium"):
         """
-        Records a game session score.
+        Records a game session score with difficulty.
         """
         if not self.client: return
 
@@ -82,55 +82,46 @@ class SupabaseService:
                 "user_id": user_id,
                 "score": score,
                 "time_remaining": time_left,
-                "status": status_val
+                "status": status_val,
+                "difficulty": difficulty
             }
             self.client.table("game_sessions").insert(data).execute()
         except Exception as e:
             print(f"❌ Save Score Failed: {e}")
 
-    def get_leaderboard(self, limit: int = 10) -> List[Dict[str, Any]]:
+    def get_leaderboard(self, limit: int = 10, region: str = "GLOBAL") -> List[Dict[str, Any]]:
         """
-        Returns top players by total score.
-        Since we might not have a view, we'll try to fetch aggregated data if possible,
-        or fetch raw sessions and aggregate in python (less efficient but reliable without creating SQL views).
-        
-        However, for a real leaderboard, we usually want:
-        SELECT users.username, SUM(game_sessions.score) as total_score 
-        FROM game_sessions 
-        JOIN users ON game_sessions.user_id = users.id 
-        GROUP BY users.username 
-        ORDER BY total_score DESC
-        
-        Supabase-js client doesn't support aggregate+group_by easily without a view.
-        We will assume there is NO view.
-        We will fetch all game sessions (up to a reasonable limit) and aggregate in Python?
-        Or better: Fetch `users` and `game_sessions` and map them.
-        
-        Actually, for now, let's implement a simpler "Latest High Scores" or similar if we can't do complex SQL.
-        But the requirement is "Sum of score grouped by user_id".
-        
-        Best approach without SQL view access: 
-        1. Fetch all game_sessions (with `select=user_id,score`).
-        2. Aggregate in Python.
-        3. Fetch usernames for the top user_ids.
-        This is not scalable for millions of rows, but for this project it's fine.
+        Returns top players by total score, filtered by region (INDIA or GLOBAL).
+        Region logic:
+        - INDIA: difficulty contains 'INDIA'
+        - GLOBAL: difficulty does NOT contain 'INDIA'
         """
         if not self.client: return []
 
         try:
             # Fetch sessions with score > 0
             # Limit fetch to last 1000 sessions to avoid memory issues
-            resp = self.client.table("game_sessions").select("user_id, score").order("created_at", desc=True).limit(1000).execute()
+            # We select "difficulty" now too
+            resp = self.client.table("game_sessions").select("user_id, score, difficulty").order("created_at", desc=True).limit(2000).execute()
             
             if not resp.data:
                 return []
             
-            # Aggregate
+            # Aggregate based on region filter
             user_scores = {}
             user_games = {}
+            
             for row in resp.data:
                 uid = row.get('user_id')
                 if not uid: continue
+                
+                # Filter Logic
+                row_diff = row.get('difficulty', 'Medium') or 'Medium' # Handle None
+                if region == "INDIA":
+                    if "INDIA" not in row_diff: continue
+                else: # GLOBAL (aka non-India specific)
+                    if "INDIA" in row_diff: continue
+
                 s = row.get('score', 0)
                 user_scores[uid] = user_scores.get(uid, 0) + s
                 user_games[uid] = user_games.get(uid, 0) + 1
