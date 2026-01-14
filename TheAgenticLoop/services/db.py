@@ -90,6 +90,31 @@ class SupabaseService:
         except Exception as e:
             print(f"❌ Save Score Failed: {e}")
 
+    async def get_user_streak(self, user_id: str) -> int:
+        """
+        Calculates the current winning streak for a user.
+        Counts consecutive 'won' statuses from the most recent game backwards.
+        """
+        if not self.client: return 0
+        
+        try:
+            # Fetch last 20 games for the user to check checks
+            # Ordered by played_at desc
+            resp = self.client.table("game_sessions").select("status").eq("user_id", user_id).order("played_at", desc=True).limit(20).execute()
+            
+            streak = 0
+            for row in resp.data:
+                # IMPORTANT: Status is case-sensitive 'won' driven by previous fix
+                if row.get('status') == 'won':
+                    streak += 1
+                else:
+                    # Streak broken
+                    break
+            return streak
+        except Exception as e:
+            print(f"❌ Streak Check Failed: {e}")
+            return 0
+            
     def get_leaderboard(self, limit: int = 10, region: str = "GLOBAL") -> List[Dict[str, Any]]:
         """
         Returns top players by total score, filtered by region (INDIA or GLOBAL).
@@ -126,6 +151,12 @@ class SupabaseService:
 
                 s = row.get('score', 0)
                 user_scores[uid] = user_scores.get(uid, 0) + s
+                
+                # Track max score
+                current_max = user_games.get(f"{uid}_max", 0)
+                if s > current_max:
+                    user_games[f"{uid}_max"] = s
+                    
                 user_games[uid] = user_games.get(uid, 0) + 1
                 
             # Sort
@@ -142,7 +173,8 @@ class SupabaseService:
                     results.append({
                         "username": username,
                         "total_score": param_total_score,
-                        "games_played": user_games[uid]
+                        "games_played": user_games[uid],
+                        "best_mission": user_games.get(f"{uid}_max", 0)
                     })
             
             return results

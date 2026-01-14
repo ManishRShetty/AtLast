@@ -366,7 +366,22 @@ async def verify_answer(request: Request):
     if is_correct:
         if user_id:
             # Simple scoring: 100 base + time bonus
-            score = 100 + int(time_remaining)
+            # Simple scoring: 100 base + time bonus
+            base_score = 100 + int(time_remaining)
+            
+            # Calculate Streak Bonus
+            current_streak = await db_service.get_user_streak(user_id)
+            # Increment current streak by 1 (since this is a win) to get the "new" streak
+            new_streak = current_streak + 1
+            
+            streak_bonus = 0
+            if new_streak == 2: streak_bonus = 10
+            elif new_streak == 3: streak_bonus = 25
+            elif new_streak >= 4: streak_bonus = 50 * (new_streak - 3) + 25 # +50 per extra win
+            
+            # Cap bonus reasonable amount if needed, but let's leave it open for now
+            score = base_score + streak_bonus
+            print(f"💰 Score Calculation: Base({base_score}) + Streak({new_streak}x -> {streak_bonus}) = {score}")
             
             # Retrieve difficulty from config
             config_key = f"config:{session_id}"

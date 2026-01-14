@@ -71,7 +71,8 @@ export default function Leaderboard() {
                                 <th className="pb-3 pl-4">RANK</th>
                                 <th className="pb-3">AGENT ID</th>
                                 <th className="pb-3 text-right">OPS</th>
-                                <th className="pb-3 text-right pr-4">SCORE</th>
+                                <th className="pb-3 text-right text-yellow-500/80">BEST</th>
+                                <th className="pb-3 text-right pr-4">TOTAL</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/5">
@@ -88,6 +89,7 @@ export default function Leaderboard() {
                                         {entry.username}
                                     </td>
                                     <td className="py-3 text-right text-zinc-400">{entry.games_played}</td>
+                                    <td className="py-3 text-right font-mono text-yellow-500/80">{entry.best_mission || 0}</td>
                                     <td className="py-3 text-right pr-4 font-bold text-green-400">{entry.total_score.toLocaleString()}</td>
                                 </tr>
                             ))}

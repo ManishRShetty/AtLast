@@ -88,4 +88,5 @@ export interface LeaderboardEntry {
   username: string;
   total_score: number;
   games_played: number;
+  best_mission?: number;
 }
