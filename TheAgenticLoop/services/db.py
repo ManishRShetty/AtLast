@@ -71,9 +71,9 @@ class SupabaseService:
             print(f"❌ Login Failed: {e}")
             return None
 
-    def save_score(self, user_id: str, score: int, time_left: int, status_val: str = "completed", difficulty: str = "Medium"):
+    def save_score(self, user_id: str, score: int, time_left: int, status_val: str = "won", difficulty: str = "Medium", city_target: str = "Unknown"):
         """
-        Records a game session score with difficulty.
+        Records a game session score with difficulty and target city.
         """
         if not self.client: return
 
@@ -83,7 +83,8 @@ class SupabaseService:
                 "score": score,
                 "time_remaining": time_left,
                 "status": status_val,
-                "difficulty": difficulty
+                "difficulty": difficulty,
+                "city_target": city_target
             }
             self.client.table("game_sessions").insert(data).execute()
         except Exception as e:
@@ -102,7 +103,8 @@ class SupabaseService:
             # Fetch sessions with score > 0
             # Limit fetch to last 1000 sessions to avoid memory issues
             # We select "difficulty" now too
-            resp = self.client.table("game_sessions").select("user_id, score, difficulty").order("created_at", desc=True).limit(2000).execute()
+            # Use 'played_at' as seen in user screenshot
+            resp = self.client.table("game_sessions").select("user_id, score, difficulty").order("played_at", desc=True).limit(2000).execute()
             
             if not resp.data:
                 return []

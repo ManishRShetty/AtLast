@@ -373,7 +373,18 @@ async def verify_answer(request: Request):
             difficulty = await redis_client.hget(config_key, "difficulty")
             if not difficulty: difficulty = "Medium"
             
-            db_service.save_score(user_id, score, int(time_remaining), difficulty=difficulty)
+            # Pass correct_answer (the city name) as city_target
+            # Note: correct_answer is already lowercased, maybe we want original case?
+            # answer_data.get("answer") preserves original casing
+            original_answer = answer_data.get("answer", "Unknown")
+            
+            db_service.save_score(
+                user_id, 
+                score, 
+                int(time_remaining), 
+                difficulty=difficulty,
+                city_target=original_answer
+            )
             
         return {
             "correct": True,
