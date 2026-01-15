@@ -53,12 +53,12 @@ const Navbar = () => {
                     {/* HUD Status Elements (Desktop) */}
                     <div className="hidden md:flex items-center gap-6">
                         <div className="flex flex-col">
-                            <span className="text-[10px] text-slate-500 font-mono uppercase tracking-wider">Sys_Integrity</span>
+                            <span className="text-[10px] text-slate-500 font-mono uppercase tracking-wider">STILL_IN_DEVELOPMENT</span>
                             <div className="flex items-center gap-2">
                                 <div className="h-1 w-16 bg-slate-800 rounded-full overflow-hidden">
-                                    <div className="h-full bg-emerald-500 w-[95%] shadow-[0_0_5px_#10b981]"></div>
+                                    <div className="h-full bg-emerald-500 w-[60%] shadow-[0_0_5px_#10b981]"></div>
                                 </div>
-                                <span className="text-[10px] text-emerald-500 font-bold">98%</span>
+                                <span className="text-[10px] text-emerald-500 font-bold">60%</span>
                             </div>
                         </div>
                     </div>
@@ -67,7 +67,7 @@ const Navbar = () => {
                 {/* Center: Decorative HUD Elements */}
                 <div className="hidden lg:flex items-center gap-2 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-50">
                     <div className="w-12 h-[1px] bg-gradient-to-r from-transparent to-neon-cyan"></div>
-                    <div className="text-[8px] text-neon-cyan font-mono tracking-[0.5em] uppercase">RESTRICTED_ACCESS // LEVEL_5</div>
+                    <div className="text-[8px] text-neon-cyan font-mono tracking-[0.5em] uppercase">CURRENTLY_FRONTEND_DEMO_ONLY</div>
                     <div className="w-12 h-[1px] bg-gradient-to-l from-transparent to-neon-cyan"></div>
                 </div>
 
