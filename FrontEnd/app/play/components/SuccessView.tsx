@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckCircle, ShieldAlert, Crosshair, Send, Globe, Award, Shield } from 'lucide-react';
+import { CheckCircle, Crosshair, Globe, Shield } from 'lucide-react';
 import TerminalPanel, { LogEntry } from './TerminalPanel';
 import Leaderboard from '@/components/Leaderboard';
 

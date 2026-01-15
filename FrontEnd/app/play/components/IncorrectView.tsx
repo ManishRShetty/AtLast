@@ -1,5 +1,5 @@
 import React from 'react';
-import { XCircle, ShieldAlert } from 'lucide-react';
+import { ShieldAlert } from 'lucide-react';
 import TerminalPanel, { LogEntry } from './TerminalPanel';
 
 interface IncorrectViewProps {

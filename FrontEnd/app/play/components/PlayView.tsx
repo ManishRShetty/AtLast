@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { AlertTriangle, Plus, Minus, Crosshair, Send, Lock, ShieldAlert, Cpu, Radio, Shield } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { AlertTriangle, Send, ShieldAlert, Cpu, Radio } from 'lucide-react';
 import TerminalPanel, { LogEntry } from './TerminalPanel';
 import HandoffModal from './HandoffModal';
 import { RiddleData } from '@/types';

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Power, Shield, Radio, Crosshair } from 'lucide-react';
+import { Shield, Radio, Crosshair } from 'lucide-react';
 
 interface HandoffModalProps {
     onStart: () => void;
@@ -7,7 +7,7 @@ interface HandoffModalProps {
 
 const HandoffModal: React.FC<HandoffModalProps> = ({ onStart }) => {
     const [isExiting, setIsExiting] = useState(false);
-    const [glitchIntensity, setGlitchIntensity] = useState(0);
+    const [, setGlitchIntensity] = useState(0);
 
     const handleStart = () => {
         setIsExiting(true);

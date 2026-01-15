@@ -22,7 +22,7 @@ const Battlespace = () => {
     const { userId } = useAuth();
 
     // New State for Scoring Mechanism
-    const [wrongAttempts, setWrongAttempts] = useState(0);
+    const [, setWrongAttempts] = useState(0);
     const [score, setScore] = useState(0);
     const [currentDifficulty, setCurrentDifficulty] = useState<string>('Medium');
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { AlertTriangle, RotateCcw, List, LogOut, Gauge, Globe, ShieldAlert } from 'lucide-react';
+import { RotateCcw, LogOut, Globe, ShieldAlert } from 'lucide-react';
 import Leaderboard from '@/components/Leaderboard';
 
 interface FailViewProps {
