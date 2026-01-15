@@ -1,8 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Settings, Cpu, Shield, Activity, Menu } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Activity } from 'lucide-react';
 
 const Navbar = () => {
     const pathname = usePathname();
@@ -11,7 +10,7 @@ const Navbar = () => {
     if (isLoginPage) return null;
 
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 w-full h-[80px] font-display pointer-events-none">
+        <header className="fixed top-0 left-0 right-0 z-50 w-full h-[60px] font-display pointer-events-none">
             {/* Layered Background Container */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-auto">
                 {/* Layer 1: Dark city silhouette (Placeholder/Image) */}
@@ -35,7 +34,7 @@ const Navbar = () => {
                 {/* Left: Branding & Status */}
                 <div className="flex items-center gap-8">
                     <Link href="/" className="flex items-center gap-3 group relative">
-                        <div className="relative size-10 flex items-center justify-center">
+                        <div className="relative size-8 flex items-center justify-center">
                             {/* Logo Glow Effect */}
                             <div className="absolute inset-0 bg-neon-cyan/20 blur-md rounded-full group-hover:bg-neon-cyan/40 transition-all duration-300"></div>
                             <svg
@@ -81,46 +80,18 @@ const Navbar = () => {
                         <span>ONLINE</span>
                     </div>
 
-                    {/* Tactical Buttons */}
-                    <div className="flex items-center gap-4">
-                        {/* Settings Button */}
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="relative group w-12 h-10 flex items-center justify-center"
-                        >
-                            {/* Shape */}
-                            <div className="absolute inset-0 bg-slate-900/80 border border-neon-cyan/30 transform skew-x-[-12deg] group-hover:bg-neon-cyan/10 group-hover:border-neon-cyan transition-all duration-300"></div>
-                            {/* Icon */}
-                            <Settings size={18} className="relative z-10 text-slate-400 group-hover:text-neon-cyan group-hover:animate-spin-slow transition-colors" />
-                        </motion.button>
+                    {/* Agent Name Display - Skewed Parallelogram Style */}
+                    <div className="relative group min-w-[180px] h-10 flex items-center justify-center">
+                        {/* Static Skewed Background */}
+                        <div className="absolute inset-0 bg-deep-blue/20 border border-blue-400/30 transform skew-x-[-12deg] shadow-[0_0_15px_rgba(0,0,255,0.1)] transition-all duration-300 group-hover:bg-deep-blue/40 group-hover:border-blue-400/60"></div>
 
-                        {/* Menu/Profile Button - Skewed Parallelogram Style */}
-                        <motion.button
-                            whileHover="hover"
-                            className="relative group h-10 px-8 flex items-center justify-center"
-                        >
-                            {/* Glitch Effect Elements */}
-                            <motion.div
-                                variants={{
-                                    hover: {
-                                        clipPath: ["inset(0 0 0 0)", "inset(10% 0 80% 0)", "inset(80% 0 10% 0)", "inset(0 0 0 0)"],
-                                        x: [-2, 2, -1, 0],
-                                        opacity: [1, 0.8, 0.9, 1]
-                                    }
-                                }}
-                                transition={{ duration: 0.2, times: [0, 0.2, 0.8, 1] }}
-                                className="absolute inset-0 bg-deep-blue/80 border border-blue-400/50 transform skew-x-[-12deg] shadow-[0_0_15px_rgba(0,0,255,0.3)] z-0"
-                            ></motion.div>
+                        {/* Glitch Overlay */}
+                        <div className="absolute inset-0 bg-white/0 group-hover:bg-white/5 skew-x-[-12deg] transition-colors duration-100 mix-blend-overlay"></div>
 
-                            {/* Overlay for 'glitch' brightness spike */}
-                            <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 skew-x-[-12deg] transition-colors duration-100 mix-blend-overlay"></div>
-
-                            <div className="relative z-10 flex items-center gap-2 text-white font-bold tracking-widest uppercase text-xs">
-                                <Menu size={16} />
-                                <span className="transform skew-x-[12deg]">Menu</span>
-                            </div>
-                        </motion.button>
+                        <div className="relative z-10 flex items-center gap-2 text-white font-bold tracking-widest uppercase text-xs">
+                            <span className="transform skew-x-[12deg] text-blue-300 text-[10px]">AGENT:</span>
+                            <span className="transform skew-x-[12deg] text-neon-cyan drop-shadow-[0_0_5px_rgba(0,255,255,0.8)]">UNIDENTIFIED</span>
+                        </div>
                     </div>
                 </div>
             </div>

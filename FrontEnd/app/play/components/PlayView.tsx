@@ -152,7 +152,7 @@ const PlayView: React.FC<PlayViewProps> = ({
                         <div className="absolute top-6 left-0 right-0 z-40 flex justify-center pointer-events-none">
                             <div className="relative pointer-events-auto">
                                 {/* Timer Container - Skewed */}
-                                <div className="absolute inset-0 bg-slate-900/90 border border-neon-cyan/30 transform skew-x-[-12deg] shadow-[0_0_20px_rgba(0,255,255,0.1)]"></div>
+                                <div className="absolute inset-0 bg-slate-900 border border-neon-cyan/30 transform skew-x-[-12deg] shadow-[0_0_20px_rgba(0,255,255,0.1)]"></div>
 
                                 <div className="relative px-8 md:px-16 py-3 flex flex-col items-center gap-1 z-10">
                                     <div className="flex items-center gap-2 text-[10px] text-red-500 font-bold tracking-[0.2em] animate-pulse">
@@ -216,13 +216,13 @@ const PlayView: React.FC<PlayViewProps> = ({
                                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-[1px] bg-gradient-to-r from-transparent via-neon-cyan to-transparent"></div>
 
                                     <div className="relative z-10 text-center space-y-6">
-                                        <div className="flex justify-center">
+                                        {/* <div className="flex justify-center">
                                             <div className="inline-flex items-center gap-2 bg-neon-cyan/10 px-4 py-1 rounded-sm border border-neon-cyan/30 text-neon-cyan text-xs font-bold tracking-[0.2em] uppercase animate-pulse">
                                                 <Lock size={12} /> Encrypted Transmission
                                             </div>
-                                        </div>
+                                        </div> */}
 
-                                        <h2 className="text-lg md:text-2xl font-medium leading-relaxed font-sans tracking-wide text-slate-100 min-h-[8rem] flex items-center justify-center">
+                                        <h2 className="text-lg pt-12 md:text-2xl font-medium leading-relaxed font-sans tracking-wide text-slate-100 min-h-[8rem] flex items-center justify-center">
                                             {isLoadingRiddle ? (
                                                 <span className="animate-pulse text-neon-cyan">DECRYPTING INCOMING SIGNAL...</span>
                                             ) : riddle ? (
