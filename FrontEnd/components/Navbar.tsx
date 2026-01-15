@@ -46,7 +46,7 @@ const Navbar = () => {
                             </svg>
                         </div>
                         <h2 className="text-white text-lg font-bold tracking-[0.2em] uppercase group-hover:text-neon-cyan transition-colors drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]">
-                            AtLast<span className="text-neon-cyan text-xs ml-1 align-top opacity-70">OS</span>
+                            AtLast
                         </h2>
                     </Link>
 

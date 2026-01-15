@@ -286,9 +286,9 @@ const IntroPage = () => {
     const alignRight = isUser; // User on right, others on left
 
     // Character Image Source
-    const characterImage = currentStep.speaker === 'LANCE' ? '/vance.png' :
-        currentStep.speaker === 'Ø' ? '/alien.png' :
-            currentStep.speaker === 'USER' ? '/bg-map.png' : ''; // Fallback
+    const characterImage = currentStep.speaker === 'LANCE' ? '/character/vance-new.png' :
+        currentStep.speaker === 'Ø' ? '/character/alien.png' :
+            currentStep.speaker === 'USER' ? '/character/agent.png' : ''; // Fallback
 
     return (
         <div className="relative h-screen w-full bg-black overflow-hidden flex flex-col items-center justify-end pb-12 font-sans select-none">
@@ -297,8 +297,8 @@ const IntroPage = () => {
             <div className="absolute inset-0 z-0">
                 {/* Dark Dystopian City or Tech Background - Placeholder using existing tech grid class but darkened */}
                 <div className="absolute inset-0 bg-background-dark opacity-90"></div>
-                <div className="absolute inset-0 bg-[url('/atlastbg.webp')] opacity-80 bg-cover bg-center bg-no-repeat"></div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/50"></div>
+                <div className={`absolute inset-0 ${currentStep.theme === 'RED' ? "bg-[url('/atlastbg1.png')]" : "bg-[url('/atlastbg.webp')]"} opacity-80 bg-cover bg-center bg-no-repeat `}></div>
+                < div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/50"></div>
             </div>
 
             {/* Character Layer - Dynamic Positioning */}
