@@ -222,7 +222,7 @@ const PlayView: React.FC<PlayViewProps> = ({
                                             </div>
                                         </div> */}
 
-                                        <h2 className="text-lg pt-12 md:text-2xl font-medium leading-relaxed font-sans tracking-wide text-slate-100 min-h-[8rem] flex items-center justify-center">
+                                        <h2 className="text-base pt-12 md:text-xl font-medium leading-relaxed font-sans tracking-wide text-slate-100 min-h-[8rem] flex items-center justify-center">
                                             {isLoadingRiddle ? (
                                                 <span className="animate-pulse text-neon-cyan">DECRYPTING INCOMING SIGNAL...</span>
                                             ) : riddle ? (
