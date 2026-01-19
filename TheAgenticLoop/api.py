@@ -419,11 +419,20 @@ async def verify_answer(request: Request):
             
             if hint:
                 distance = hint["distance_km"]
-                direction = hint["direction"]
+                direction_abbr = hint["direction"]
+                
+                direction_map = {
+                    "N": "North", "NNE": "North-North-East", "NE": "North-East", "ENE": "East-North-East",
+                    "E": "East", "ESE": "East-South-East", "SE": "South-East", "SSE": "South-South-East",
+                    "S": "South", "SSW": "South-South-West", "SW": "South-West", "WSW": "West-South-West",
+                    "W": "West", "WNW": "West-North-West", "NW": "North-West", "NNW": "North-North-West"
+                }
+                direction = direction_map.get(direction_abbr, direction_abbr)
+                
                 # Format distance with commas for readability
                 distance_str = f"{distance:,}"
-                hint_message = f"❌ {original_answer.title()} is {distance_str} km {direction} of the target!"
-                print(f"📍 Distance Hint: {original_answer} → Target = {distance_str} km {direction}")
+                hint_message = f"❌ Target is {distance_str} km {direction} from {original_answer.title()}!"
+                print(f"📍 Distance Hint: Target is {distance_str} km {direction} from {original_answer}")
         
         return {
             "correct": False,

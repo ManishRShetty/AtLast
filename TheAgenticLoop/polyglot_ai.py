@@ -69,7 +69,7 @@ if SUPABASE_URL and SUPABASE_KEY:
 GENERATOR_PROMPT_TEMPLATE = """City: {city}
 Difficulty: {difficulty_hint}
 {feedback_section}
-Write a 3-sentence cryptic riddle. No city name. Focus: landmarks/history/geography."""
+Write a cryptic riddle. Max 4 sentences. No city name. Focus: landmarks/history/geography."""
 
 CRITIC_PROMPT_TEMPLATE = """Target: {city}
 Riddle: {riddle}
@@ -77,7 +77,7 @@ Riddle: {riddle}
 QA Checklist:
 1. Factually correct?
 2. Unique to {city}?
-3. ~3 sentences?
+3. Max 4 sentences?
 4. No city name?
 
 Reply: PASS: [reason] OR FAIL: [issue]"""

@@ -237,8 +237,17 @@ const Battlespace = () => {
                 // Add distance hint to terminal logs if available
                 if (result.hint) {
                     const distance = result.hint.distance_km.toLocaleString();
-                    const direction = result.hint.direction;
-                    setAgentLogs(prev => [...prev, `📍 ${command.toUpperCase()} is ${distance} km ${direction} of the target!`]);
+                    const directionAbbr = result.hint.direction;
+
+                    const directionMap: Record<string, string> = {
+                        'N': 'North', 'NNE': 'North-North-East', 'NE': 'North-East', 'ENE': 'East-North-East',
+                        'E': 'East', 'ESE': 'East-South-East', 'SE': 'South-East', 'SSE': 'South-South-East',
+                        'S': 'South', 'SSW': 'South-South-West', 'SW': 'South-West', 'WSW': 'West-South-West',
+                        'W': 'West', 'WNW': 'West-North-West', 'NW': 'North-West', 'NNW': 'North-North-West'
+                    };
+                    const direction = directionMap[directionAbbr] || directionAbbr;
+
+                    setAgentLogs(prev => [...prev, `📍 Target is ${distance} km ${direction} from ${command.toUpperCase()}!`]);
                 } else {
                     setAgentLogs(prev => [...prev, `❌ Incorrect: "${command}" - Unknown location`]);
                 }
