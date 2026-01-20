@@ -82,7 +82,7 @@ cd atlast
 ```
 ### 2. Backend Setup
 ```bash
-cd backend
+cd TheAgenticLoop
 python -m venv venv
 source venv/bin/activate  # or venv\Scripts\activate on Windows
 pip install -r requirements.txt
