@@ -286,9 +286,9 @@ const IntroPage = () => {
     const alignRight = isUser; // User on right, others on left
 
     // Character Image Source
-    const characterImage = currentStep.speaker === 'LANCE' ? '/character/vance-new.png' :
-        currentStep.speaker === 'Ø' ? '/character/alien.png' :
-            currentStep.speaker === 'USER' ? '/character/agent.png' : ''; // Fallback
+    const characterImage = currentStep.speaker === 'LANCE' ? '/character/vance-new.webp' :
+        currentStep.speaker === 'Ø' ? '/character/alien.webp' :
+            currentStep.speaker === 'USER' ? '/character/agent.webp' : ''; // Fallback
 
     return (
         <div className="relative h-screen w-full bg-black overflow-hidden flex flex-col items-center justify-end pb-12 font-sans select-none">
