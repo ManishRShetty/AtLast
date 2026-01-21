@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import { FastForward, SkipForward } from 'lucide-react';
 
 
 
@@ -302,7 +303,7 @@ const IntroPage = () => {
             </div>
 
             {/* Character Layer - Dynamic Positioning */}
-            <div className={`absolute bottom-0 z-10 w-full flex pointer-events-none transition-all duration-700 ease-in-out ${alignRight ? 'justify-end pr-10 md:pr-32' : 'justify-start pl-10 md:pl-32'}`}>
+            <div className={`absolute bottom-60 md:bottom-28 z-10 w-full flex pointer-events-none transition-all duration-700 ease-in-out ${alignRight ? 'justify-end pr-10 md:pr-32' : 'justify-start pl-10 md:pl-32'}`}>
                 {/* Character Image with fade effect */}
                 <div
                     key={currentStep.speaker} // Key forces re-render/animation on speaker change
@@ -356,7 +357,7 @@ const IntroPage = () => {
                                     onClick={handleNext}
                                     className={`
                                         group relative px-6 py-2 overflow-hidden
-                                        ${currentStep.theme === 'RED' ? 'text-red-400 hover:text-red-900' : 'text-cyan-400 hover:text-black'}
+                                        ${currentStep.theme === 'RED' ? 'text-red-400 hover:text-black hover:bg-red-500' : 'text-cyan-400 hover:text-black   hover:bg-cyan-500'}
                                         transition-colors duration-300
                                     `}
                                 >
@@ -380,8 +381,21 @@ const IntroPage = () => {
 
             {/* Skip Option */}
             <div className="absolute top-6 right-6 z-50">
-                <button onClick={handleSkip} className="text-white/30 hover:text-white text-xs uppercase tracking-[0.2em] transition-colors">
-                    {isTyping ? 'Fast Forward' : 'Skip Intro'}
+                <button
+                    onClick={handleSkip}
+                    className="flex items-center gap-2 text-white/30 hover:text-white text-xs uppercase tracking-[0.2em] transition-colors"
+                >
+                    {isTyping ? (
+                        <>
+                            <span>Fast Forward</span>
+                            <FastForward className="w-4 h-4" />
+                        </>
+                    ) : (
+                        <>
+                            <span>Skip Intro</span>
+                            <SkipForward className="w-4 h-4" />
+                        </>
+                    )}
                 </button>
             </div>
 
