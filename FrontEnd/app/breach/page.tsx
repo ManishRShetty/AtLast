@@ -65,7 +65,7 @@ const BreachPage = () => {
             <div className="fixed inset-0 bg-gradient-to-b from-black/80 via-transparent to-black/80 z-0" />
 
             {/* Top Bar */}
-            <header className="fixed top-0 left-0 right-0 z-50 h-16 flex items-center justify-between px-8 bg-gradient-to-b from-black/90 to-transparent">
+            {/* <header className="fixed top-0 left-0 right-0 z-50 h-16 flex items-center justify-between px-8 bg-gradient-to-b from-black/90 to-transparent">
                 <div className="flex items-center gap-3">
                     <div className="relative">
                         <Image
@@ -96,7 +96,7 @@ const BreachPage = () => {
                             </button>
                         </div>
                     )}                </div>
-            </header>
+            </header> */}
 
             {/* Main Content */}
             <div className="relative z-10 flex flex-col items-center justify-center h-full w-full">
@@ -207,14 +207,14 @@ const BreachPage = () => {
             </div>
 
             {/* HUD Elements */}
-            <div className="absolute top-24 right-12 hidden md:flex flex-col items-end opacity-70">
+            {/* <div className="absolute top-24 right-12 hidden md:flex flex-col items-end opacity-70">
                 <div className="flex items-center gap-3 text-emerald-500/60 font-mono text-[10px] tracking-wider uppercase">
                     <span>Repelling</span>
                     <span>10:35</span>
                     <span>[ DEMO-0-SPECIAL ]</span>
                 </div>
                 <div className="h-px w-full bg-emerald-500/20 mt-1"></div>
-            </div>
+            </div> */}
 
             {/* Honeycomb pattern decor */}
             <div className="absolute top-10 right-10 w-48 h-48 opacity-10 pointer-events-none"
