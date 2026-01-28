@@ -1,61 +1,146 @@
-# AtLast / FrontEnd-ReadMe
+# AtLast — Frontend
 
-> **Status**: Active Development
+> **Status**: Active Development  
 > **Version**: 0.1.0
+> Last updated: 2026-01-28
 
-An immersive hacking simulation interface built with modern web technologies, designed to provide a premium, "Apple-like Dark Mode" aesthetic mixed with high-stakes cyberpunk interactions.
+An immersive hacking-simulation interface built with modern web technologies, aiming for a premium "Apple-like Dark Mode" aesthetic blended with cyberpunk interactions.
 
 ## ⚡ Tech Stack
 
-![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)
-![React](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=for-the-badge&logo=tailwind-css)
-![Framer Motion](https://img.shields.io/badge/Framer_Motion-Motion-black?style=for-the-badge&logo=framer)
-![Leaflet](https://img.shields.io/badge/Leaflet-Maps-199900?style=for-the-badge&logo=leaflet)
-![Lucide React](https://img.shields.io/badge/Lucide_React-Icons-F56565?style=for-the-badge&logo=lucide)
+- Next.js (App Router)
+- React
+- Tailwind CSS
+- Framer Motion
+- Leaflet (maps)
+- Lucide React (icons)
 
-## 🚀 Features
+(Badges removed from this file to keep README lightweight — re-add if you prefer image badges.)
 
-### core / Hacking Simulation
-- **Immersive Intro Sequence**: Cinematic entry into the command center (`/intro`).
-- **Breach Protocol**: Interactive hacking mechanics (`/breach`) with dynamic success/fail states.
-- **Geospatial Tracking**: Integrated real-time map visualizations using Leaflet.
-- **Seamless Handoff**: Dedicated workflows for user state transition (`/handoff`).
+## 🚀 Key Features
 
-### UI / UX
-- **Premium Dark Mode**: "Apple-like" deep blacks and glassmorphism effects.
-- **Fluid Animations**: High-performance transitions powered by Framer Motion.
-- **Responsive Design**: Mobile-first architecture ensuring distinct experiences across devices.
+Core / Hacking Simulation
+- Immersive Intro Sequence: cinematic entry into the command center (`/intro`).
+- Breach Protocol: interactive hacking mechanics (`/breach`) with dynamic success/fail states.
+- Geospatial Tracking: real-time map visualizations using Leaflet.
+- Seamless Handoff: dedicated workflows for user state transition (`/handoff`).
 
-## 🛠️ Getting Started
+UI / UX
+- Premium Dark Mode: deep blacks and glassmorphism effects.
+- Fluid Animations: high-performance transitions powered by Framer Motion.
+- Responsive Design: mobile-first architecture with tailored experiences across devices.
 
-1. **Clone the repository**
+## 🛠️ Quick Start (local development)
+
+1. Clone the repository
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/ManishRShetty/AtLast.git
+   cd AtLast/FrontEnd
    ```
 
-2. **Install dependencies**
+2. Install dependencies
    ```bash
    npm install
+   # or
+   pnpm install
+   # or
+   yarn
    ```
 
-3. **Run the development server**
+3. Run the development server
    ```bash
    npm run dev
+   # or pnpm dev / yarn dev
    ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open http://localhost:3000 in your browser.
+
+## 📦 Available Scripts
+
+From the `FrontEnd` folder:
+
+- `dev` — Run Next.js in development mode.
+- `build` — Create an optimized production build.
+- `start` — Start the production server (after `build`).
+- `lint` — Run linter (if configured).
+- `type-check` — Run TypeScript checks (if applicable).
+- `preview` — Preview the production build locally.
+
+(Exact scripts live in `package.json` — check there for precise commands.)
 
 ## 📂 Project Structure
 
-- **`/app`**: Next.js App Router structure.
-  - **`breach`**: Main hacking game logic.
-  - **`intro`**: Application entry sequence.
-  - **`handoff`**: State transition interface.
-  - **`play`**: Gameplay loop components.
-- **`/components`**: Reusable UI components (buttons, cards, map widgets).
-- **`/public`**: Static assets.
+- `/app` — Next.js App Router
+  - `/breach` — Main hacking game logic
+  - `/intro` — Application entry sequence
+  - `/handoff` — State transition interface
+  - `/play` — Gameplay components
+- `/components` — Reusable UI components (buttons, cards, map widgets)
+- `/public` — Static assets
+- `/styles` — Global and Tailwind configuration (if present)
 
-## 🤝 Contributing
+## 🔧 Environment
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Place runtime configuration (API endpoints, keys) in environment files as appropriate:
+
+- `.env.local` — local development environment variables
+- `.env.production` — production variables (do NOT commit secrets)
+
+Example:
+```
+NEXT_PUBLIC_API_BASE_URL=https://api.example.com
+NEXT_PUBLIC_MAPBOX_TOKEN=your-map-token
+```
+
+## 🚢 Deployment
+
+This project is compatible with common Next.js hosts (Vercel, Netlify, Render). Typical flow:
+
+1. Build: `npm run build`
+2. Start server: `npm start` (or platform-managed)
+
+Ensure environment variables are set in your deployment target.
+
+## ✅ Testing & Quality
+
+- Add unit/integration tests as needed (Jest/React Testing Library recommended).
+- Run type checks and linters before creating PRs.
+- Use CI to enforce checks on branches.
+
+## ♻️ Contributing
+
+Contributions are welcome!
+
+- Fork the repo
+- Create a feature branch: `git checkout -b feat/your-feature`
+- Make changes with clear commit messages
+- Open a Pull Request describing the change and why it's needed
+
+Please follow any CONTRIBUTING.md or CODE_OF_CONDUCT in the root if present.
+
+## 📝 Changelog (recent)
+
+- 2026-01-28 — README updated with improved setup, scripts, environment and deployment guidance.
+
+(For larger changes, maintain a dedicated CHANGELOG.md or use GitHub releases.)
+
+## ⚠️ Known Issues & TODOs
+
+- Add comprehensive tests for core gameplay (`/breach`).
+- Improve accessibility (contrast issues in certain overlays).
+- Add CI workflow to run lint/type/test on PRs.
+- Expand documentation for each route/component.
+
+## 📫 Contact / Support
+
+For questions or help, open an issue or reach out via GitHub Discussions (or create a PR with fixes).
+
+---
+
+If you'd like, I can:
+- Commit this updated README directly to the `main` branch,
+- Create a new branch with the update and open a PR,
+or
+- Make further edits (add badges, more detailed environment examples, or a full CHANGELOG).
+
+Tell me which option you prefer and whether I should push the change now.
